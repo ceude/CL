@@ -1269,6 +1269,7 @@ nav.tabs button:hover{color:var(--ink)}
     <!-- RIGHT COLUMN -->
     <aside class="col-right">
       <div class="panel champ-mini hidden" id="champMini"></div>
+      <div class="panel champ-mini hidden" id="favMini"></div>
       <div class="panel" style="margin-bottom:16px">
         <div class="ph"><span class="ico">🏅</span><h3>Lider Tablosu</h3></div>
         <div class="lb-hint lb-remain" id="lbHintSide"></div>
@@ -2747,12 +2748,12 @@ function openProfile(uid, opts){
     if(prof.fav_team){
       favBlock=`<div class="prof-fav">
         <img src="${favFlagUrl(prof.fav_team)}" alt="">
-        <div class="pf-info"><div class="pf-lab">Desteklediğin takım</div>
+        <div class="pf-info"><div class="pf-lab">Profil resmi</div>
           <div class="pf-name">${esc(trName(prof.fav_team))}</div></div>
         <button class="btn ghost sm" id="profFavBtn">Değiştir</button></div>`;
     } else {
       favBlock=`<div class="prof-fav empty">
-        <div class="pf-info"><div class="pf-lab">Desteklediğin takım</div>
+        <div class="pf-info"><div class="pf-lab">Profil resmi</div>
           <div class="pf-name" style="font-size:13px;color:var(--muted)">Henüz seçmedin</div></div>
         <button class="btn gold sm" id="profFavBtn">Seç</button></div>`;
     }
@@ -3056,7 +3057,7 @@ function maybeShowOpeningPopup(){
   if(me && !me.is_admin && appConfig.prize_on==="1" && paidSet().has(session.user.id) && !prizeThanksSeen(session.user.id)){
     showPrizeThanks(); markPrizeThanksSeen(session.user.id); return;
   }
-  // Sonra: turnuvada desteklediği takımı seçmemişse takım seçimi
+  // Sonra: profil resmini (takımını) seçmemişse seçim ekranı
   if(me && !me.fav_team){ showTeamPicker(true); return; }
   const open=myOpenUnpredicted();
   if(open.length){ showMissingPopup(open); return; }
@@ -3479,9 +3480,9 @@ function showTeamPicker(firstTime){
     </button>`).join("");
   showPopup(`
     <button class="x" id="popupClose">✕</button>
-    <div class="pop-ic">🏳️</div>
-    <h3 class="pop-h">Takımını seç</h3>
-    <p class="pop-p">Turnuvada desteklediğin takımı seç; lider tablosundaki avatarın o ülkenin <b>yuvarlak bayrağı</b> olsun.<br><span style="font-size:12px;color:var(--muted)">Sadece desteklediğin takımı göstermek içindir, puan sistemini etkilemez. İstediğin zaman profilinden değiştirebilirsin.</span></p>
+    <div class="pop-ic">🖼️</div>
+    <h3 class="pop-h">Profil resmini seç</h3>
+    <p class="pop-p">Bir takım seç; lider tablosundaki avatarın o takımın <b>logosu</b> olsun.<br><span style="font-size:12px;color:var(--muted)">Sadece profil resmini belirlemek içindir, puan sistemini etkilemez. İstediğin zaman profilinden değiştirebilirsin.</span></p>
     <div class="tpgrid">${grid}</div>
     ${firstTime?'':'<button class="pop-btn" id="popupClose2">Kapat</button>'}`);
   document.querySelectorAll(".tpick").forEach(b=>b.onclick=()=>setFavTeam(b.dataset.team));
@@ -4173,7 +4174,7 @@ function renderLeaderboardTab(){
 function renderAll(){
   assignColors();
   renderRibbon(); renderStageFilters(); renderGroupFilters(); renderSortFilters();
-  renderMatches(); renderLeaderboard(); renderLeaderboardTab(); renderChart(); renderStats(); renderChampMini(); renderBracket(); renderWinChance();
+  renderMatches(); renderLeaderboard(); renderLeaderboardTab(); renderChart(); renderStats(); renderChampMini(); renderFavMini(); renderBracket(); renderWinChance();
   renderPledgeWidget();
 }
 // Masaüstü, sadece ödeyenlere: sağ altta sabit "katkı tamamlanma" topu + eksik isimler
@@ -4204,6 +4205,18 @@ function renderChampMini(){
     el.innerHTML=`<div class="ph"><span class="ico">🏆</span><h3>Şampiyon Tahmini</h3></div>
       <button class="champ-mini-cta" id="champMiniBtn">Şampiyonu seç → <span class="cm-dl">son: ${esc(championDeadlineStr())}</span></button>`;
     $("#champMiniBtn").onclick=()=>showChampionPicker();
+  } else {
+    el.classList.add("hidden");
+    el.innerHTML="";
+  }
+}
+function renderFavMini(){
+  const el=$("#favMini"); if(!el) return;
+  if(me && !me.fav_team){
+    el.classList.remove("hidden");
+    el.innerHTML=`<div class="ph"><span class="ico">🖼️</span><h3>Profil Resmi</h3></div>
+      <button class="champ-mini-cta" id="favMiniBtn">Profil resmini seç →</button>`;
+    $("#favMiniBtn").onclick=()=>showTeamPicker(false);
   } else {
     el.classList.add("hidden");
     el.innerHTML="";
