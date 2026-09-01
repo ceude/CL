@@ -2463,6 +2463,10 @@ const KO_ORDER = ["po","r16","qf","sf","final"];
 function championProbs(){
   const out={};
   if(appConfig.champion_winner){ out[appConfig.champion_winner]=1; return out; }
+  // Henüz hiç eleme turu maçı oynamamış takım "elenmiş" sayılmasın — herkes turnuva başında
+  // aynı taban ihtimalle (tüm eleme turlarını kazanma ihtimali) başlar.
+  const baseline = Math.pow(0.5, KO_ORDER.length);
+  Object.keys(CHAMPION_POINTS).forEach(t=>{ out[t]=baseline; });
   // Her takımın ulaştığı en ileri eleme turu (üçüncülük maçı şampiyonluk yolu değil)
   const far={};
   matches.forEach(m=>{
