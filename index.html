@@ -179,7 +179,7 @@ nav.tabs button:hover{color:var(--ink)}
 .mrow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
 .team{display:flex;align-items:center;gap:9px;min-width:0}
 .team.away{flex-direction:row-reverse;text-align:right}
-.team .fl{width:30px;height:22px;border-radius:4px;object-fit:cover;flex:0 0 auto;
+.team .fl{width:30px;height:22px;border-radius:4px;object-fit:contain;background:rgba(255,255,255,.06);flex:0 0 auto;
   box-shadow:0 1px 4px rgba(0,0,0,.4);background:#0a1611}
 .team .nm{font-weight:700;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .team .fl.ph{display:grid;place-items:center;font-size:13px;color:var(--muted);background:#0c1d15;border:1px dashed var(--line2)}
@@ -298,7 +298,7 @@ nav.tabs button:hover{color:var(--ink)}
   background:linear-gradient(160deg,#1e3c2a,#0e2017);border:1px solid var(--line2);color:#cfe3d6}
 .lbrow.me .lbav{background:linear-gradient(160deg,var(--gold),#b8860b);color:#241400;border:none}
 .lbav.flag,.av.flag{background:none!important;padding:0;overflow:hidden}
-.avflag{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.avflag{width:100%;height:100%;object-fit:contain;border-radius:50%;display:block;background:rgba(255,255,255,.08)}
 .av.flag{overflow:hidden}
 .lbrow.me .lbav.flag{box-shadow:0 0 0 2px var(--gold)}
 /* Takım seçme grid'i */
@@ -308,7 +308,7 @@ nav.tabs button:hover{color:var(--ink)}
   border-radius:11px;padding:8px 10px;cursor:pointer;transition:all .12s;min-width:0}
 .tpick:hover{border-color:var(--line2);transform:translateY(-1px)}
 .tpick.sel{border-color:var(--gold);background:#1a2a1a;box-shadow:0 0 0 1px var(--gold)}
-.tpick img{width:26px;height:20px;object-fit:cover;border-radius:4px;flex:0 0 auto;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.tpick img{width:26px;height:20px;object-fit:contain;border-radius:4px;background:rgba(255,255,255,.06);flex:0 0 auto;box-shadow:0 1px 3px rgba(0,0,0,.4)}
 .tpick span{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
 .tpgrid.champ{grid-template-columns:repeat(2,1fr)}
 .tpgrid.champ .tpick span{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.25}
@@ -324,7 +324,7 @@ nav.tabs button:hover{color:var(--ink)}
 .tpick.champ span{flex:1}
 .champ-locked{display:flex;align-items:center;gap:12px;justify-content:center;background:var(--panel);
   border:1px solid var(--line2);border-radius:14px;padding:14px 16px}
-.champ-locked img{width:46px;height:34px;object-fit:cover;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.champ-locked img{width:46px;height:34px;object-fit:contain;border-radius:6px;background:rgba(255,255,255,.06);box-shadow:0 2px 6px rgba(0,0,0,.4)}
 .champ-locked .cl-name{font-family:'Anton';font-size:20px;color:#fff;letter-spacing:.5px}
 .champ-locked .cl-pts{font-size:12.5px;color:var(--gold2);font-weight:700}
 .champ-confirm{display:flex;gap:10px;margin-top:6px}
@@ -335,7 +335,7 @@ nav.tabs button:hover{color:var(--ink)}
 /* Sidebar mini kart */
 .champ-mini{margin-bottom:16px;padding:14px}
 .champ-mini-row{display:flex;align-items:center;gap:11px;width:100%;cursor:pointer;background:none;border:none;text-align:left;padding:4px 0 0}
-.champ-mini-row img{width:40px;height:30px;object-fit:cover;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.champ-mini-row img{width:40px;height:30px;object-fit:contain;border-radius:6px;background:rgba(255,255,255,.06);box-shadow:0 2px 6px rgba(0,0,0,.4)}
 .champ-mini-row .cm-name{font-family:'Anton';font-size:17px;color:#fff;letter-spacing:.5px}
 .champ-mini-row .cm-pts{font-size:12px;color:var(--gold2);font-weight:700}
 .champ-mini-cta{width:100%;margin-top:6px;background:linear-gradient(160deg,var(--gold),#d9a91f);color:#241400;
@@ -346,7 +346,7 @@ nav.tabs button:hover{color:var(--ink)}
 .prof-champ{display:flex;align-items:center;gap:12px;margin:14px 18px 4px;padding:12px 14px;
   background:var(--panel);border:1px solid var(--line2);border-radius:13px}
 .prof-champ.won{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset;background:#1a1607}
-.prof-champ img{width:40px;height:30px;object-fit:cover;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.4);flex:0 0 auto}
+.prof-champ img{width:40px;height:30px;object-fit:contain;border-radius:6px;background:rgba(255,255,255,.06);box-shadow:0 2px 6px rgba(0,0,0,.4);flex:0 0 auto}
 .prof-champ .pc-info{flex:1;min-width:0}
 .prof-champ .pc-lab{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
 .prof-champ .pc-name{font-family:'Anton';font-size:18px;color:#fff;letter-spacing:.5px;margin-top:2px}
@@ -357,7 +357,7 @@ nav.tabs button:hover{color:var(--ink)}
 /* Profil içi desteklenen takım */
 .prof-fav{display:flex;align-items:center;gap:12px;margin:14px 18px 0;padding:11px 14px;
   background:var(--panel);border:1px solid var(--line);border-radius:13px}
-.prof-fav img{width:36px;height:27px;object-fit:cover;border-radius:5px;box-shadow:0 2px 6px rgba(0,0,0,.4);flex:0 0 auto}
+.prof-fav img{width:36px;height:27px;object-fit:contain;border-radius:5px;background:rgba(255,255,255,.06);box-shadow:0 2px 6px rgba(0,0,0,.4);flex:0 0 auto}
 .prof-fav .pf-info{flex:1;min-width:0}
 .prof-fav .pf-lab{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
 .prof-fav .pf-name{font-weight:800;font-size:15px;color:#fff;margin-top:1px}
@@ -404,7 +404,7 @@ nav.tabs button:hover{color:var(--ink)}
 .wc-name{text-align:left !important}
 .wc-name{display:flex;align-items:center;gap:7px;font-weight:800;color:#fff}
 .wc-av{width:24px;height:24px;flex:0 0 auto;border-radius:50%;overflow:hidden;display:inline-flex}
-.wc-av img{width:100%;height:100%;object-fit:cover}
+.wc-av img{width:100%;height:100%;object-fit:contain}
 .wc-nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px}
 .wc-pct{position:relative;min-width:82px;font-weight:900}
 .wc-sim{color:var(--muted);font-weight:800;font-variant-numeric:tabular-nums}
@@ -426,7 +426,7 @@ nav.tabs button:hover{color:var(--ink)}
 .mcp-rank{font-weight:900;color:var(--muted);font-size:11px;text-align:center}
 .mcp-row.top .mcp-rank{color:var(--gold)}
 .mcp-av{width:22px;height:22px;border-radius:50%;overflow:hidden;display:inline-flex}
-.mcp-av img{width:100%;height:100%;object-fit:cover}
+.mcp-av img{width:100%;height:100%;object-fit:contain}
 .mcp-name{font-weight:800;color:#fff;font-size:12.5px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mcp-name i{font-style:normal;color:var(--muted);font-weight:700;font-size:10px}
 .mcp-sim{font-weight:800;color:var(--ink);font-size:11.5px;text-align:right;font-variant-numeric:tabular-nums}
@@ -508,7 +508,7 @@ nav.tabs button:hover{color:var(--ink)}
 .lf-team.r{justify-content:flex-end}
 .lf-team b{font-size:clamp(13px,3.6vw,16px);color:#fff;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lf-fl{width:26px;height:19px;border-radius:3px;overflow:hidden;flex:0 0 auto;display:inline-flex}
-.lf-fl img{width:100%;height:100%;object-fit:cover}
+.lf-fl img{width:100%;height:100%;object-fit:contain}
 .lf-score{display:flex;flex-direction:column;align-items:center;flex:0 0 auto;padding:0 6px}
 .lf-score>span,.lf-score em{font-family:'Anton',sans-serif;font-size:clamp(30px,9vw,44px);line-height:1;color:#fff;font-style:normal}
 .lf-score{flex-direction:row;gap:8px;position:relative}
@@ -532,7 +532,7 @@ nav.tabs button:hover{color:var(--ink)}
 .lf-dn{color:#ff6b6b;font-size:10px;font-weight:900;text-align:center}
 .lf-eq{color:var(--muted);font-size:10px;text-align:center}
 .lf-av{width:24px;height:24px;border-radius:50%;overflow:hidden;display:inline-flex}
-.lf-av img{width:100%;height:100%;object-fit:cover}
+.lf-av img{width:100%;height:100%;object-fit:contain}
 .lf-nmwrap{min-width:0}
 .lf-nm{font-weight:800;color:#fff;font-size:13px;display:flex;align-items:center;gap:4px;min-width:0}
 .lf-nm i{font-style:normal;color:var(--muted);font-weight:700;font-size:10px}
@@ -559,7 +559,7 @@ nav.tabs button:hover{color:var(--ink)}
 /* Herkesin şampiyon tahmini çipi (lider tablosu) */
 .champ-pick{display:inline-flex;align-items:center;gap:4px;margin-left:6px;vertical-align:middle;
   background:#13261c;border:1px solid rgba(212,175,55,.35);border-radius:999px;padding:1px 6px 1px 3px;line-height:1}
-.champ-pick img{width:15px;height:11px;object-fit:cover;border-radius:2px;display:block}
+.champ-pick img{width:15px;height:11px;object-fit:contain;border-radius:2px;display:block}
 .champ-pick b{font-size:10.5px;font-weight:900;color:var(--gold2)}
 .champ-pick.dead{border-color:var(--line2);opacity:.55;filter:grayscale(1)}
 .champ-pick.dead b{color:var(--muted)}
@@ -676,7 +676,7 @@ nav.tabs button:hover{color:var(--ink)}
 .tc-head{position:relative;text-align:center;padding:20px 18px 14px;border-bottom:1px solid var(--line)}
 .tc-head .x{position:absolute;top:12px;right:12px;background:#13261c;border:1px solid var(--line2);color:var(--ink);
   width:34px;height:34px;border-radius:9px;font-size:18px;cursor:pointer}
-.tc-flag{width:64px;height:48px;object-fit:cover;border-radius:7px;box-shadow:0 4px 14px rgba(0,0,0,.5);margin-bottom:8px}
+.tc-flag{width:64px;height:48px;object-fit:contain;border-radius:7px;background:rgba(255,255,255,.06);box-shadow:0 4px 14px rgba(0,0,0,.5);margin-bottom:8px}
 .tc-head h3{margin:0;font-size:22px;color:#fff;font-weight:900}
 .tc-sub{font-size:12px;color:var(--muted);font-weight:700;margin-top:3px}
 .tc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px 18px 6px}
@@ -697,7 +697,7 @@ nav.tabs button:hover{color:var(--ink)}
 .tc-l .tc-res{background:#c94a4a;color:#fff}
 .tc-mid{flex:1;min-width:0}
 .tc-opp{display:flex;align-items:center;gap:7px;font-weight:800;color:#fff;font-size:14px}
-.tc-opp img{width:20px;height:15px;object-fit:cover;border-radius:3px;flex:0 0 auto}
+.tc-opp img{width:20px;height:15px;object-fit:contain;border-radius:3px;flex:0 0 auto}
 .tc-live{display:inline-flex;align-items:center}
 .tc-meta{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px}
 .tc-score{flex:0 0 auto;font-weight:900;font-size:16px;color:#fff;font-variant-numeric:tabular-nums}
@@ -731,7 +731,7 @@ nav.tabs button:hover{color:var(--ink)}
 .lf-champ{display:inline-flex;align-items:center;gap:3px;margin-left:6px;vertical-align:middle;
   background:#13261c;border:1px solid rgba(212,175,55,.35);border-radius:999px;padding:1px 5px 1px 2px;
   font-size:9.5px;font-weight:900;color:var(--gold2);line-height:1}
-.lf-champ img{width:13px;height:10px;object-fit:cover;border-radius:2px}
+.lf-champ img{width:13px;height:10px;object-fit:contain;border-radius:2px}
 .lf-champ.dead{border-color:var(--line2);color:var(--muted);opacity:.6;filter:grayscale(1)}
 .sb-opt{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--panel);
   border:1px solid var(--line2);border-radius:11px;padding:10px;cursor:pointer;color:var(--ink);font-weight:800;font-size:14px}
@@ -1313,31 +1313,41 @@ const isHiddenUser = u => HIDDEN_USERS.includes((u||"").trim().toLowerCase());
 /* ====================================================================
    2) Takım isimleri (TR) + bayrak kodları (flagcdn)
    ==================================================================== */
+// 2026-27 ŞL Lig Aşaması - 36 takım (resmi kura torbalarına göre)
 const TR = {
- "Fenerbahçe":"Fenerbahçe","Galatasaray":"Galatasaray","Sabah":"Sabah FK",
- "Real Madrid":"Real Madrid","Barcelona":"Barcelona","Atlético Madrid":"Atlético Madrid","Athletic Club":"Athletic Bilbao","Villarreal":"Villarreal",
- "Bayern München":"Bayern Münih","Bayer Leverkusen":"Leverkusen","Borussia Dortmund":"Dortmund","Eintracht Frankfurt":"Frankfurt",
- "Liverpool":"Liverpool","Arsenal":"Arsenal","Manchester City":"Man City","Chelsea":"Chelsea","Newcastle":"Newcastle","Tottenham":"Tottenham",
- "Paris Saint-Germain":"PSG","Monaco":"Monaco","Marseille":"Marsilya",
- "Inter":"Inter","Juventus":"Juventus","Atalanta":"Atalanta","Napoli":"Napoli",
- "Sporting CP":"Sporting","Benfica":"Benfica","PSV":"PSV","Ajax":"Ajax",
- "Club Brugge":"Club Brugge","Union SG":"Union SG","Slavia Prague":"Slavia Prag",
- "Bodø/Glimt":"Bodø/Glimt","Olympiacos":"Olympiakos","Copenhagen":"Kopenhag","Pafos":"Pafos"
- ,"Roma":"Roma","Aston Villa":"Aston Villa","Lille":"Lille","Stuttgart":"Stuttgart",
- "AEK":"AEK Atina","Feyenoord":"Feyenoord","Shakhtar Donetsk":"Shakhtar Donetsk","LASK":"LASK Linz"
+ // Torba 1
+ "Paris Saint-Germain":"PSG","Bayern München":"Bayern Münih","Real Madrid":"Real Madrid","Liverpool":"Liverpool",
+ "Inter":"Inter","Manchester City":"Man City","Arsenal":"Arsenal","Barcelona":"Barcelona","Atlético Madrid":"Atlético Madrid",
+ // Torba 2
+ "Borussia Dortmund":"Dortmund","Roma":"Roma","Sporting CP":"Sporting","Aston Villa":"Aston Villa","Porto":"Porto",
+ "Manchester United":"Man United","Club Brugge":"Club Brugge","Real Betis":"Real Betis","PSV":"PSV",
+ // Torba 3
+ "Feyenoord":"Feyenoord","Lille":"Lille","Bodø/Glimt":"Bodø/Glimt","Napoli":"Napoli","RB Leipzig":"RB Leipzig",
+ "Villarreal":"Villarreal","Fenerbahçe":"Fenerbahçe","Shakhtar Donetsk":"Shakhtar Donetsk","Galatasaray":"Galatasaray",
+ // Torba 4
+ "Slavia Prague":"Slavia Prag","Slovan Bratislava":"Slovan Bratislava","Stuttgart":"Stuttgart","AEK":"AEK Atina",
+ "LASK":"LASK Linz","Como":"Como","Lens":"Lens","Viking":"Viking","Sabah":"Sabah FK"
 };
 const FLAG = {
- "Fenerbahçe":"tr","Galatasaray":"tr","Sabah":"az",
- "Real Madrid":"es","Barcelona":"es","Atlético Madrid":"es","Athletic Club":"es","Villarreal":"es",
- "Bayern München":"de","Bayer Leverkusen":"de","Borussia Dortmund":"de","Eintracht Frankfurt":"de",
- "Liverpool":"gb-eng","Arsenal":"gb-eng","Manchester City":"gb-eng","Chelsea":"gb-eng","Newcastle":"gb-eng","Tottenham":"gb-eng",
- "Paris Saint-Germain":"fr","Monaco":"fr","Marseille":"fr",
- "Inter":"it","Juventus":"it","Atalanta":"it","Napoli":"it",
- "Sporting CP":"pt","Benfica":"pt","PSV":"nl","Ajax":"nl",
- "Club Brugge":"be","Union SG":"be","Slavia Prague":"cz",
- "Bodø/Glimt":"no","Olympiacos":"gr","Copenhagen":"dk","Pafos":"cy"
- ,"Roma":"it","Aston Villa":"gb-eng","Lille":"fr","Stuttgart":"de",
- "AEK":"gr","Feyenoord":"nl","Shakhtar Donetsk":"ua","LASK":"at"
+ "Paris Saint-Germain":"fr","Bayern München":"de","Real Madrid":"es","Liverpool":"gb-eng",
+ "Inter":"it","Manchester City":"gb-eng","Arsenal":"gb-eng","Barcelona":"es","Atlético Madrid":"es",
+ "Borussia Dortmund":"de","Roma":"it","Sporting CP":"pt","Aston Villa":"gb-eng","Porto":"pt",
+ "Manchester United":"gb-eng","Club Brugge":"be","Real Betis":"es","PSV":"nl",
+ "Feyenoord":"nl","Lille":"fr","Bodø/Glimt":"no","Napoli":"it","RB Leipzig":"de",
+ "Villarreal":"es","Fenerbahçe":"tr","Shakhtar Donetsk":"ua","Galatasaray":"tr",
+ "Slavia Prague":"cz","Slovan Bratislava":"sk","Stuttgart":"de","AEK":"gr",
+ "LASK":"at","Como":"it","Lens":"fr","Viking":"no","Sabah":"az"
+};
+// Kulüp logoları için Wikipedia sayfa başlıkları (bayrak yerine amblem göstermek için kullanılır)
+const WIKI_TITLE = {
+ "Paris Saint-Germain":"Paris Saint-Germain F.C.","Bayern München":"FC Bayern Munich","Real Madrid":"Real Madrid CF","Liverpool":"Liverpool F.C.",
+ "Inter":"Inter Milan","Manchester City":"Manchester City F.C.","Arsenal":"Arsenal F.C.","Barcelona":"FC Barcelona","Atlético Madrid":"Atlético Madrid",
+ "Borussia Dortmund":"Borussia Dortmund","Roma":"A.S. Roma","Sporting CP":"Sporting CP","Aston Villa":"Aston Villa F.C.","Porto":"FC Porto",
+ "Manchester United":"Manchester United F.C.","Club Brugge":"Club Brugge KV","Real Betis":"Real Betis","PSV":"PSV Eindhoven",
+ "Feyenoord":"Feyenoord","Lille":"LOSC Lille","Bodø/Glimt":"FK Bodø/Glimt","Napoli":"SSC Napoli","RB Leipzig":"RB Leipzig",
+ "Villarreal":"Villarreal CF","Fenerbahçe":"Fenerbahçe S.K. (football)","Shakhtar Donetsk":"FC Shakhtar Donetsk","Galatasaray":"Galatasaray S.K. (football)",
+ "Slavia Prague":"SK Slavia Prague","Slovan Bratislava":"ŠK Slovan Bratislava","Stuttgart":"VfB Stuttgart","AEK":"AEK Athens F.C.",
+ "LASK":"LASK","Como":"Como 1907","Lens":"RC Lens","Viking":"Viking FK","Sabah":"Sabah FK (Azerbaijan)"
 };
 const STAGES = [
   {k:"group",label:"Lig Aşaması"},{k:"po",label:"Play-off"},{k:"r16",label:"Son 16"},
@@ -1358,14 +1368,15 @@ const scoringFor = stage => STAGE_SCORING[stage] || STAGE_SCORING.group;
 
 // ===== ŞAMPİYON TAHMİNİ (tek seferlik, kilitli) =====
 // Oranlara göre lineer hizalanmış, 1500'de tavanlanmış getiriler.
+// Getiriler UEFA kulüp katsayı sıralamasına göre orantılı verilmiştir (1500'de tavanlı)
 const CHAMPION_POINTS = {
-  "Real Madrid":250, "Manchester City":260, "Bayern München":280, "Liverpool":300, "Arsenal":320,
-  "Paris Saint-Germain":330, "Barcelona":360, "Inter":420, "Atlético Madrid":480, "Bayer Leverkusen":520,
-  "Chelsea":560, "Borussia Dortmund":620, "Napoli":680, "Juventus":720, "Atalanta":780,
-  "Tottenham":820, "Benfica":900, "Sporting CP":950, "Newcastle":1000, "Villarreal":1100,
-  "PSV":1150, "Ajax":1200, "Monaco":1250, "Marseille":1250, "Eintracht Frankfurt":1300,
-  "Athletic Club":1350, "Club Brugge":1400, "Galatasaray":1400, "Fenerbahçe":1450, "Union SG":1500,
-  "Slavia Prague":1500, "Olympiacos":1500, "Bodø/Glimt":1500, "Copenhagen":1500, "Pafos":1500, "Sabah":1500
+  "Bayern München":250, "Real Madrid":260, "Paris Saint-Germain":280, "Liverpool":300, "Inter":320,
+  "Manchester City":340, "Arsenal":370, "Barcelona":400, "Atlético Madrid":440, "Borussia Dortmund":480,
+  "Roma":530, "Sporting CP":580, "Aston Villa":630, "Porto":680, "Manchester United":730,
+  "Club Brugge":780, "Real Betis":830, "PSV":880, "Feyenoord":930, "Lille":980,
+  "Bodø/Glimt":1030, "Napoli":1080, "RB Leipzig":1130, "Villarreal":1180, "Fenerbahçe":1230,
+  "Shakhtar Donetsk":1280, "Galatasaray":1330, "Slavia Prague":1380, "Slovan Bratislava":1430, "Stuttgart":1480,
+  "AEK":1500, "LASK":1500, "Como":1500, "Lens":1500, "Viking":1500, "Sabah":1500
 };
 const CHAMPION_TEAMS = Object.keys(CHAMPION_POINTS)
   .sort((a,b)=> (CHAMPION_POINTS[a]-CHAMPION_POINTS[b]) || (TR[a]||a).localeCompare(TR[b]||b,"tr"));
@@ -1453,8 +1464,28 @@ const STAGE_NOUN = {
 };
 
 const trName = e => TR[e] || e;
-const flagUrl = e => FLAG[e] ? `https://flagcdn.com/48x36/${FLAG[e]}.png` : null;
-const favFlagUrl = e => FLAG[e] ? `https://flagcdn.com/80x60/${FLAG[e]}.png` : null;
+// ===== Kulüp logoları (Wikipedia'nın açık pageimages API'sinden çekilir, önbelleklenir) =====
+const TEAM_LOGO = {};
+let _logoPreload = null;
+async function fetchClubLogo(team){
+  const title = WIKI_TITLE[team] || team;
+  try{
+    const r = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&format=json&pithumbsize=100&redirects=1&origin=*`);
+    const j = await r.json();
+    const page = j && j.query && Object.values(j.query.pages)[0];
+    const url = page && page.thumbnail && page.thumbnail.source;
+    if(url) TEAM_LOGO[team] = url;
+  }catch(e){ /* sessizce yut, flag fallback devrede */ }
+}
+function preloadClubLogos(){
+  if(_logoPreload) return _logoPreload;
+  const teams = Object.keys(TR);
+  _logoPreload = Promise.all(teams.map(fetchClubLogo)).catch(()=>{});
+  return _logoPreload;
+}
+// Bayrak yerine kulüp logosu: önbellekte varsa logo, yoksa geçici olarak bayrak
+const flagUrl = e => TEAM_LOGO[e] || (FLAG[e] ? `https://flagcdn.com/48x36/${FLAG[e]}.png` : null);
+const favFlagUrl = e => TEAM_LOGO[e] || (FLAG[e] ? `https://flagcdn.com/80x60/${FLAG[e]}.png` : null);
 const esc = s => (s==null?"":String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const initials = u => (u||"?").trim().slice(0,2).toUpperCase();
 // Avatar: takım seçilmişse yuvarlak bayrak, yoksa baş harfler
@@ -4227,13 +4258,14 @@ async function boot(){
   }
   sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
   bindStaticUI();
+  preloadClubLogos(); // arka planda erkenden başlasın
   const {data:{session:s}}=await sb.auth.getSession();
   session=s;
-  if(session){ await loadProfile(); await enterApp(); }
+  if(session){ await loadProfile(); await preloadClubLogos(); await enterApp(); }
   else show($("#authScreen"),true);
   sb.auth.onAuthStateChange(async(_e,s2)=>{
     if(s2 && (!session || s2.user.id!==session.user.id)){
-      session=s2; await loadProfile(); await enterApp();
+      session=s2; await loadProfile(); await preloadClubLogos(); await enterApp();
     }else if(!s2){ session=null; }
   });
 }
@@ -4310,7 +4342,7 @@ boot();
   transition:opacity .4s ease,transform .5s cubic-bezier(.34,1.56,.64,1);flex:0 0 auto}
 .pod-flag.on{opacity:1;transform:translateY(0) scale(1);animation:podFloat 3.2s ease-in-out infinite}
 .pod-flag *{width:100%;height:100%;display:block}
-.pod-flag img{object-fit:cover}
+.pod-flag img{object-fit:contain}
 @keyframes podFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .pod-nm{font-weight:900;font-size:clamp(12px,3.2vw,17px);color:#fff;text-align:center;max-width:100%;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transform:translateY(8px);
