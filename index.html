@@ -1663,11 +1663,13 @@ function oddsOf(m){
        return (o && Object.keys(o).length)?o:null; }catch(e){ return null; }
 }
 // ===== Takım gücüne göre otomatik skor olasılığı (admin oran girmediğinde kullanılır) =====
-// CHAMPION_POINTS düşük olan takım daha güçlü kabul edilir; buradan basit bir Poisson
-// gol-beklentisi modeliyle her skor için "adil oran" (1/olasılık) üretilir.
+// CHAMPION_POINTS düşük olan takım daha güçlü kabul edilir. Gücü ORANTILI (1/puan) alıyoruz —
+// yani PSG (250) ile Sabah (1500) arasındaki gerçek 6x'lik güç farkı (senin verdiğin şampiyonluk
+// oranlarıyla aynı oran) maça da yansıyor; önceki "1600-puan" doğrusal modeli favori/az-favori
+// farkını neredeyse sıfırlıyordu (örn. GS 1-0 PSG ile GS 0-1 PSG puanları neredeyse eşit çıkıyordu).
 function teamStrength(team){
   const pts = CHAMPION_POINTS[team];
-  return pts ? Math.max(50, 1600-pts) : 400; // bilinmeyen takım için nötr bir değer
+  return pts ? (10000/pts) : 10; // bilinmeyen takım için nötr bir değer
 }
 function _poisP(lambda,k){
   let f=1; for(let i=2;i<=k;i++) f*=i;
@@ -1687,9 +1689,9 @@ const _ODDS_CAP=130; // gerçek sitelerde de çok düşük ihtimalli skorlar bu 
 function autoOddsFor(m){
   if(!m || !m.team_home || !m.team_away) return null;
   const hs=teamStrength(m.team_home), as=teamStrength(m.team_away);
-  const ratio=Math.sqrt((hs*1.12)/as); // ev sahibi avantajı ~%12
-  const lamH=Math.min(3.2,Math.max(0.5, 1.35*ratio));
-  const lamA=Math.min(3.2,Math.max(0.5, 1.35/ratio));
+  const ratio=Math.pow((hs*1.12)/as, 0.6); // ev sahibi avantajı ~%12; 0.6 üs = gerçekçi favori/güçsüz ayrımı
+  const lamH=Math.min(4.0,Math.max(0.3, 1.35*ratio));
+  const lamA=Math.min(4.0,Math.max(0.3, 1.35/ratio));
   const odds={};
   _SCORE_GRID.forEach(([h,a])=>{
     const p=_poisP(lamH,h)*_poisP(lamA,a);
