@@ -310,6 +310,8 @@ nav.tabs button:hover{color:var(--ink)}
 .tpick.sel{border-color:var(--gold);background:#1a2a1a;box-shadow:0 0 0 1px var(--gold)}
 .tpick img{width:26px;height:20px;object-fit:cover;border-radius:4px;flex:0 0 auto;box-shadow:0 1px 3px rgba(0,0,0,.4)}
 .tpick span{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
+.tpgrid.champ{grid-template-columns:repeat(2,1fr)}
+.tpgrid.champ .tpick span{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.25}
 
 /* ŞAMPİYON TAHMİNİ */
 .champ-deadline{display:inline-block;background:#2a1008;border:1px solid rgba(255,90,60,.5);color:var(--energy);
@@ -1137,7 +1139,7 @@ nav.tabs button:hover{color:var(--ink)}
 
   <nav class="tabs">
     <button data-tab="matches" class="on">Maçlar</button>
-    <button data-tab="bracket">Şema</button>
+    <button data-tab="bracket" style="display:none">Şema</button>
     <button data-tab="how">Nasıl Oynanır</button>
     <button data-tab="leaderboard">Lider Tablosu</button>
     <button data-tab="winchance" style="display:none">Kazanma %</button>
@@ -1321,6 +1323,8 @@ const TR = {
  "Sporting CP":"Sporting","Benfica":"Benfica","PSV":"PSV","Ajax":"Ajax",
  "Club Brugge":"Club Brugge","Union SG":"Union SG","Slavia Prague":"Slavia Prag",
  "Bodø/Glimt":"Bodø/Glimt","Olympiacos":"Olympiakos","Copenhagen":"Kopenhag","Pafos":"Pafos"
+ ,"Roma":"Roma","Aston Villa":"Aston Villa","Lille":"Lille","Stuttgart":"Stuttgart",
+ "AEK":"AEK Atina","Feyenoord":"Feyenoord","Shakhtar Donetsk":"Shakhtar Donetsk","LASK":"LASK Linz"
 };
 const FLAG = {
  "Fenerbahçe":"tr","Galatasaray":"tr","Sabah":"az",
@@ -1332,6 +1336,8 @@ const FLAG = {
  "Sporting CP":"pt","Benfica":"pt","PSV":"nl","Ajax":"nl",
  "Club Brugge":"be","Union SG":"be","Slavia Prague":"cz",
  "Bodø/Glimt":"no","Olympiacos":"gr","Copenhagen":"dk","Pafos":"cy"
+ ,"Roma":"it","Aston Villa":"gb-eng","Lille":"fr","Stuttgart":"de",
+ "AEK":"gr","Feyenoord":"nl","Shakhtar Donetsk":"ua","LASK":"at"
 };
 const STAGES = [
   {k:"group",label:"Lig Aşaması"},{k:"po",label:"Play-off"},{k:"r16",label:"Son 16"},
@@ -1363,7 +1369,7 @@ const CHAMPION_POINTS = {
 };
 const CHAMPION_TEAMS = Object.keys(CHAMPION_POINTS)
   .sort((a,b)=> (CHAMPION_POINTS[a]-CHAMPION_POINTS[b]) || (TR[a]||a).localeCompare(TR[b]||b,"tr"));
-const CHAMPION_DEADLINE = new Date(berlinInputToUTCISO("2027-02-01T20:00")); // ŞL şampiyon tahmini son tarihi (geçici)
+const CHAMPION_DEADLINE = new Date(berlinInputToUTCISO("2026-11-01T20:00")); // ŞL şampiyon tahmini son tarihi
 const championOpen = () => Date.now() < CHAMPION_DEADLINE.getTime();
 
 // Şampiyon seçimini DB'de okunamaz tutmak için basit geri-çevrilebilir kodlama
@@ -2981,8 +2987,6 @@ function paidSet(){
   try{ return new Set(JSON.parse(appConfig.paid_users||"[]")); }catch(e){ return new Set(); }
 }
 function maybeShowOpeningPopup(){
-  // 0) EN ÖNCE: Monte Carlo pop-up'ı (her açılışta, final-6saate kadar)
-  if(me && mcPopWindowOpen()){ showMcPopup(); return; }
   // 0-A) Şampiyon ilan edildi → tam ekran tören (bir kez zorunlu)
   if(me && appConfig.champion_winner && typeof ceremonySeen==="function" && !ceremonySeen()){
     markCeremonySeen(); showChampionCeremony({first:true}); return;
