@@ -307,7 +307,10 @@ nav.tabs button:hover{color:var(--ink)}
 .tpick{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);
   border-radius:11px;padding:8px 10px;cursor:pointer;transition:all .12s;min-width:0}
 .tpick:hover{border-color:var(--line2);transform:translateY(-1px)}
-.tpick.sel{border-color:var(--gold);background:#1a2a1a;box-shadow:0 0 0 1px var(--gold)}
+.tpick.sel{border-color:var(--gold);background:var(--panel2);box-shadow:0 0 0 1px var(--gold)}
+.tpick.taken{opacity:.45;cursor:not-allowed;position:relative}
+.tpick.taken:hover{border-color:var(--line);transform:none}
+.tpick-taken{position:absolute;right:6px;bottom:4px;font-size:9px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
 .tpick img{width:26px;height:20px;object-fit:contain;border-radius:4px;background:rgba(255,255,255,.06);flex:0 0 auto;box-shadow:0 1px 3px rgba(0,0,0,.4)}
 .tpick span{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
 .tpgrid.champ{grid-template-columns:repeat(2,1fr)}
@@ -3552,22 +3555,32 @@ async function saveSideBet(key, val){
 }
 function showTeamPicker(firstTime){
   const cur=me&&me.fav_team;
-  const grid=ALL_TEAMS.map(t=>`
-    <button class="tpick${t===cur?' sel':''}" data-team="${esc(t)}">
-      <img src="${favFlagUrl(t)}" alt=""><span>${esc(trName(t))}</span>
-    </button>`).join("");
+  // Bu profil resmini (takımı) başka kimin aldığını çıkar — aynı takımı iki kişi seçemesin.
+  const takenBy={};
+  profiles.forEach(p=>{ if(p.fav_team && p.id!==session.user.id) takenBy[p.fav_team]=p.username||"Birisi"; });
+  const grid=ALL_TEAMS.map(t=>{
+    const taken=takenBy[t];
+    const cls=`tpick${t===cur?' sel':''}${taken?' taken':''}`;
+    return `<button class="${cls}" data-team="${esc(t)}" ${taken?'disabled title="'+esc(taken)+' bu resmi kullanıyor"':''}>
+      <img src="${favFlagUrl(t)}" alt=""><span>${esc(trName(t))}</span>${taken?`<small class="tpick-taken">${esc(taken)}</small>`:''}
+    </button>`;
+  }).join("");
   showPopup(`
     <button class="x" id="popupClose">✕</button>
     <div class="pop-ic">🖼️</div>
     <h3 class="pop-h">Profil resmini seç</h3>
-    <p class="pop-p">Bir takım seç; lider tablosundaki avatarın o takımın <b>logosu</b> olsun.<br><span style="font-size:12px;color:var(--muted)">Sadece profil resmini belirlemek içindir, puan sistemini etkilemez. İstediğin zaman profilinden değiştirebilirsin.</span></p>
+    <p class="pop-p">Bir takım seç; lider tablosundaki avatarın o takımın <b>logosu</b> olsun.<br><span style="font-size:12px;color:var(--muted)">Her takımı sadece bir kişi kullanabilir — alınmış takımlar kilitli görünür. Sadece profil resmini belirlemek içindir, puan sistemini etkilemez. İstediğin zaman profilinden değiştirebilirsin (değiştirince eski seçimin başkasına açılır).</span></p>
     <div class="tpgrid">${grid}</div>
     ${firstTime?'':'<button class="pop-btn" id="popupClose2">Kapat</button>'}`);
-  document.querySelectorAll(".tpick").forEach(b=>b.onclick=()=>setFavTeam(b.dataset.team));
+  document.querySelectorAll(".tpick:not(.taken)").forEach(b=>b.onclick=()=>setFavTeam(b.dataset.team));
 }
 async function setFavTeam(team){
+  // Son anda başkası almış mı diye tekrar kontrol (aynı anda iki kişi tıklarsa çakışmayı önler)
+  const takenByOther = profiles.some(p=>p.id!==session.user.id && p.fav_team===team);
+  if(takenByOther){ band("Bu resmi az önce başka biri seçti, farklı bir takım dene","Profil",true); showTeamPicker(false); return; }
   try{
-    await sb.from("profiles").update({cl_fav_team:team}).eq("id",session.user.id);
+    const {error}=await sb.from("profiles").update({cl_fav_team:team}).eq("id",session.user.id);
+    if(error) throw error;
     me.fav_team=team;
     const mine=profiles.find(p=>p.id===session.user.id); if(mine) mine.fav_team=team;
     $("#meAv").innerHTML=avatarInner(me.username, me.fav_team);
