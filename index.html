@@ -962,9 +962,13 @@ nav.tabs button:hover{color:var(--ink)}
 .leg-item b{color:var(--gold2);font-weight:800;margin-left:2px}
 
 /* ===== ADMIN ===== */
-.admin .arow{display:grid;grid-template-columns:1fr 70px 18px 70px 90px;gap:8px;align-items:center;
-  background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
-.admin .arow .nm{font-weight:700;font-size:13.5px}
+.admin .arow{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.admin .arow-teams{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.admin .arow-teams .nm{font-weight:700;font-size:13.5px;color:#fff;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.admin .arow-teams .nm.away{text-align:right}
+.admin .arow-scores{display:grid;grid-template-columns:70px 18px 70px 1fr;gap:8px;align-items:center}
+.admin .arow-scores .dash{text-align:center;color:var(--muted)}
+.admin .arow-scores button{justify-self:end}
 .admin .arow input{width:100%;height:38px;text-align:center;background:#06100c;border:1px solid var(--line2);
   color:var(--ink);border-radius:8px;font-family:'Anton';font-size:18px}
 .admin .arow .tin{font-family:inherit;font-size:13px;text-align:left;padding:0 8px;height:34px}
@@ -3056,8 +3060,7 @@ function maybeShowOpeningPopup(){
   if(me && isMobileView() && appConfig.prize_on==="1" && !gifPopSeen(session.user.id)){
     showGifPrizePopup(); markGifPopSeen(session.user.id); return;
   }
-  // 1) Şampiyon tahmini (seçmemişse ve süre dolmadıysa)
-  if(me && !me.champion && championOpen()){ showChampionPicker(); return; }
+  // 1) Şampiyon tahmini artık pop-up olarak zorlanmıyor; sağ sütundaki "Şampiyonu seç" kartı (renderChampMini) yeterli çağrı.
   // 2) İkinci öncelik: Ödül havuzu mesajı AÇIK ise, şampiyon seçmiş ama henüz ödememişe göster (admin hariç)
   if(me && !me.is_admin && me.champion && appConfig.prize_on==="1" && !paidSet().has(session.user.id)){ showPrizePopup(); return; }
   // Ödeyenlere tek seferlik teşekkür (mesaj açıkken, daha önce görmediyse; admin hariç)
@@ -3610,13 +3613,14 @@ function renderAdmin(){
         <input type="datetime-local" data-id="${m.id}" data-f="kickoff" value="${toBerlinInputValue(m.kickoff)}">
       </div>
       <div class="arow">
-        <div class="nm">${esc(hn)}</div>
-        <input data-id="${m.id}" data-f="home_score" type="number" min="0" value="${m.home_score??""}">
-        <div style="text-align:center;color:var(--muted)">–</div>
-        <input data-id="${m.id}" data-f="away_score" type="number" min="0" value="${m.away_score??""}">
-        <button class="btn gold sm" data-save="${m.id}">Kaydet</button>
+        <div class="arow-teams"><div class="nm">${esc(hn)}</div><div class="nm away">${esc(an)}</div></div>
+        <div class="arow-scores">
+          <input data-id="${m.id}" data-f="home_score" type="number" min="0" value="${m.home_score??""}">
+          <div class="dash">–</div>
+          <input data-id="${m.id}" data-f="away_score" type="number" min="0" value="${m.away_score??""}">
+          <button class="btn gold sm" data-save="${m.id}">Kaydet</button>
+        </div>
       </div>
-      <div style="text-align:right;font-size:11px;color:var(--muted);margin:2px 4px 0">${esc(an)}</div>
       ${oddsBtn}
     </div>`;
   }).join("");
