@@ -1499,7 +1499,12 @@ const TEAM_LOGO = {};
 let _logoPreload = null;
 // Bazı takımlarda isimle arama yanlış/alakasız bir kulüp döndürebiliyor (örn. "Paris SG" araması PSG yerine
 // küçük bir Fransız kulübünü getirebiliyor) — bunlar için TheSportsDB takım ID'sini doğrudan kullanıyoruz.
-const SPORTSDB_ID = { "Paris Saint-Germain": 133714 };
+const SPORTSDB_ID = {
+  "Paris Saint-Germain": 133714,
+  "Sporting CP": 135708,
+  "Lille": 133711,
+  "Sabah": 138341
+};
 async function fetchClubLogo(team){
   try{
     if(SPORTSDB_ID[team]){
