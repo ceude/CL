@@ -1497,13 +1497,28 @@ const trName = e => TR[e] || e;
 // ===== Kulüp logoları (Wikipedia'nın açık pageimages API'sinden çekilir, önbelleklenir) =====
 const TEAM_LOGO = {};
 let _logoPreload = null;
+// Bazı takımlarda isimle arama yanlış/alakasız bir kulüp döndürebiliyor (örn. "Paris SG" araması PSG yerine
+// küçük bir Fransız kulübünü getirebiliyor) — bunlar için TheSportsDB takım ID'sini doğrudan kullanıyoruz.
+const SPORTSDB_ID = { "Paris Saint-Germain": 133714 };
 async function fetchClubLogo(team){
-  const q = SPORTSDB_NAME[team] || team;
   try{
+    if(SPORTSDB_ID[team]){
+      const r=await fetch(`https://www.thesportsdb.com/api/v1/json/123/lookupteam.php?id=${SPORTSDB_ID[team]}`);
+      const j=await r.json();
+      const t=j && j.teams && j.teams[0];
+      const url=t && (t.strBadge || t.strLogo);
+      if(url) TEAM_LOGO[team]=url+"/preview";
+      return;
+    }
+    const q = SPORTSDB_NAME[team] || team;
     const r = await fetch(`https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=${encodeURIComponent(q)}`);
     const j = await r.json();
     const list = (j && j.teams) || [];
-    const t = list.find(x=>x.strSport==="Soccer") || list[0];
+    // Önce isim TAM eşleşen futbol takımını tercih et (yanlış/alakasız sonuçları elemek için)
+    const qLow=q.trim().toLowerCase();
+    const t = list.find(x=>x.strSport==="Soccer" && (x.strTeam||"").trim().toLowerCase()===qLow)
+           || list.find(x=>x.strSport==="Soccer")
+           || list[0];
     const url = t && (t.strBadge || t.strLogo);
     if(url) TEAM_LOGO[team] = url + "/preview"; // küçük, hızlı önizleme boyutu
   }catch(e){ /* sessizce yut, bayrak fallback devrede */ }
