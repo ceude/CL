@@ -1190,47 +1190,63 @@ nav.tabs button:hover{color:var(--ink)}
       <!-- HOW TO -->
       <section id="tab-how" class="howto hidden">
         <h2>Nasıl Oynanır</h2>
-        <p class="lead">Her maç için bir skor tahmini yaz (örn. <b style="color:var(--ink)">İspanya 3 – 0 Gana</b>).
+        <p class="lead">Her maç için bir skor tahmini yaz (örn. <b style="color:var(--ink)">Real Madrid 3 – 0 Galatasaray</b>).
           Maç başlamadan önce dilediğin kadar değiştirebilirsin. Maç saati gelince tahmin kilitlenir.</p>
 
         <div class="bigscore">
           <div class="b a"><div class="n">30</div><div class="t">Sonucu bildin</div>
-            <div class="x">Kazananı ya da beraberliği doğru tahmin edersen puan alırsın (grup aşamasında 30). Skoru tutturmana gerek yok.</div></div>
+            <div class="x">Kazananı ya da beraberliği doğru tahmin edersen puan alırsın (lig aşamasında 30). Skoru tutturmana gerek yok.</div></div>
           <div class="b b"><div class="n">30+70</div><div class="t">Skoru tam bildin</div>
-            <div class="x">Hem sonucu hem net skoru bilirsen sonuç puanının üstüne bonus eklenir (grupta 30+70 = <b style="color:var(--ink)">100</b>).</div></div>
+            <div class="x">Hem sonucu hem net skoru bilirsen sonuç puanının üstüne bonus eklenir (lig aşamasında 30+70 = <b style="color:var(--ink)">100</b>).</div></div>
         </div>
+
+        <h2>Turnuva Formatı</h2>
+        <p class="lead" style="font-size:14px">2026-27 UEFA Şampiyonlar Ligi, tek büyük lig tablosuyla başlayıp klasik eleme usulüyle devam ediyor:</p>
+        <ul>
+          <li><b style="color:var(--ink)">Lig Aşaması</b> — 36 takım tek bir tabloda, her takım 8 farklı rakiple oynuyor (8 hafta). 27 Ağustos 2026 – 27 Ocak 2027 arası.</li>
+          <li><b style="color:var(--ink)">Play-off</b> — Lig aşamasını 9-16. sırada bitiren takımlar, 17-24. sırada bitirenlerle çift maçlı eleme oynar (ilk 8 lig aşamasını doğrudan Son 16'ya gider). Şubat 2027.</li>
+          <li><b style="color:var(--ink)">Son 16</b> — Lig aşamasının ilk 8'i ile play-off'u geçen 8 takım, çift maçlı eleme. Mart 2027.</li>
+          <li><b style="color:var(--ink)">Çeyrek Final</b> ve <b style="color:var(--ink)">Yarı Final</b> — çift maçlı eleme. Nisan-Mayıs 2027.</li>
+          <li><b style="color:var(--ink)">Final</b> — tek maç, nötr sahada. 5 Haziran 2027 — Metropol Stadyumu, Madrid.</li>
+        </ul>
 
         <h2>Turlara Göre Puanlama</h2>
         <p class="lead" style="font-size:14px">Turlar ilerledikçe puanlar artar. <b style="color:var(--ink)">Sonuç</b> = galip/beraberlik doğru; <b style="color:var(--ink)">Skor</b> = net skoru tam bilmek (sonuç puanı + bonus).</p>
         <table class="scoretable">
           <thead><tr><th>Tur</th><th>Sonuç</th><th>Skor (tam)</th></tr></thead>
           <tbody>
-            <tr><td>Grup aşaması</td><td>30</td><td>30+70 = 100</td></tr>
-            <tr><td>Son 32</td><td>40</td><td>40+80 = 120</td></tr>
+            <tr><td>Lig aşaması</td><td>30</td><td>30 + 70…300 <b style="color:#ffe27a">⚡</b></td></tr>
+            <tr><td>Play-off</td><td>40</td><td>40 + 80…300 <b style="color:#ffe27a">⚡</b></td></tr>
             <tr><td>Son 16</td><td>50</td><td>50 + 90…300 <b style="color:#ffe27a">⚡</b></td></tr>
             <tr><td>Çeyrek final</td><td>60</td><td>60 + 100…300 <b style="color:#ffe27a">⚡</b></td></tr>
             <tr><td>Yarı final</td><td>80</td><td>80 + 120…300 <b style="color:#ffe27a">⚡</b></td></tr>
-            <tr><td>Üçüncülük</td><td>80</td><td>80 + 120…300 <b style="color:#ffe27a">⚡</b></td></tr>
             <tr><td>Final</td><td>100</td><td>100 + 120…300 <b style="color:#ffe27a">⚡</b></td></tr>
           </tbody>
         </table>
-        <p class="lead" style="font-size:13px;color:var(--muted)">⚡ Son 16'dan itibaren tam skor bonusu <b style="color:var(--ink)">sabit değil, dinamiktir</b> — aşağıya bak.</p>
+        <p class="lead" style="font-size:13px;color:var(--muted)">⚡ Artık <b style="color:var(--ink)">tüm turlarda</b> (lig aşaması dahil) tam skor bonusu <b style="color:var(--ink)">sabit değil, dinamiktir</b> — aşağıya bak.</p>
 
-        <h2><span class="dyn-dot" style="display:inline-block;vertical-align:middle;margin-right:8px"></span>Dinamik Skor Puanlaması <span style="color:#ffe27a">⚡ (Son 16 ve sonrası)</span></h2>
-        <p class="lead">Son 16, çeyrek final, yarı final, üçüncülük ve finalde <b style="color:var(--ink)">tam skoru</b> bilmenin bonusu artık sabit değil — tıpkı iddiada olduğu gibi <b style="color:var(--ink)">o skorun oranına</b> göre değişir.</p>
+        <h2><span class="dyn-dot" style="display:inline-block;vertical-align:middle;margin-right:8px"></span>Dinamik Skor Puanlaması <span style="color:#ffe27a">⚡ (tüm turlarda)</span></h2>
+        <p class="lead">Hangi turda olursa olsun, <b style="color:var(--ink)">tam skoru</b> bilmenin bonusu sabit değil — o maçtaki iki takımın gücüne ve skorun ne kadar sürpriz olduğuna göre değişir.</p>
         <ul>
-          <li><b style="color:var(--ink)">Sonuç puanı sabit</b> (galibiyet/beraberlik doğru): Son 16'da 50, ÇF 60, YF/üçüncülük 80, final 100. Bu değişmedi.</li>
-          <li><b style="color:var(--ink)">Tam skor bonusu dinamik:</b> Beklenen (favori) skorlar o turun tabanını verir (Son 16'da 90). Skor ne kadar <b style="color:var(--ink)">sürpriz/düşük ihtimalli</b> ise bonus o kadar yükselir, <b style="color:var(--ink)">en fazla 300</b>.</li>
-          <li><b style="color:var(--ink)">Listede olmayan skor</b> (iddia listesinde hiç geçmeyen çok sıra dışı skor) tutarsa: <b style="color:var(--ink)">350</b> bonus (<b style="color:var(--ink)">finalde 450</b>) — en yüksek ödül.</li>
-          <li>Yani en garantisi sonucu bilmek; ama cesur ve doğru bir sürpriz skor, tek maçta büyük fark yaratabilir.</li>
+          <li><b style="color:var(--ink)">Sonuç puanı sabit</b> (galibiyet/beraberlik doğru): tabloya bak. Bu değişmez.</li>
+          <li><b style="color:var(--ink)">Tam skor bonusu dinamik:</b> Beklenen (favori) skorlar o turun tabanını verir (lig aşamasında 70, play-off'ta 80, Son 16'da 90...). Skor ne kadar <b style="color:var(--ink)">sürpriz/düşük ihtimalli</b> ise bonus o kadar yükselir, <b style="color:var(--ink)">en fazla 300</b>.</li>
+          <li><b style="color:var(--ink)">Listede olmayan skor</b> (hiç beklenmeyen çok sıra dışı bir skor) tutarsa: <b style="color:var(--ink)">350</b> bonus (<b style="color:var(--ink)">finalde 450</b>) — en yüksek ödül.</li>
+          <li>Yani en garantisi sonucu bilmek; ama cesur ve doğru bir sürpriz skor, tek maçta büyük fark yaratabilir. Güçlü bir favori zayıf bir rakibe karşı sürpriz bir skorla yenilirse (ya da tam tersi), o skorun bonusu daha yüksek olur.</li>
         </ul>
-        <div class="note">💡 Her eleme maçının kartında <b>"⚡ Skor puanları"</b> butonu var — o maçtaki her skorun kaç puan getireceğini tabloda görürsün. Ayrıca skoru yazdığın an, kutuların altında <b>"Bu skor için: 50 + 110 = 160 puan"</b> gibi anında hesap çıkar.</div>
+        <div class="note">💡 Her maç kartında <b>"⚡ Skor puanları"</b> butonu var — o maçtaki her skorun kaç puan getireceğini tabloda görürsün. Ayrıca skoru yazdığın an, kutuların altında <b>"Bu skor için: 30 + 110 = 140 puan"</b> gibi anında hesap çıkar.</div>
+
+        <h2>Şampiyon Tahmini</h2>
+        <ul>
+          <li>Turnuvanın şampiyonunu <b style="color:var(--ink)">tek seferlik</b> tahmin edersin — seçtikten sonra değiştirilemez.</li>
+          <li>Her takımın getirisi farklıdır: favoriler düşük, sürpriz adaylar yüksek puan getirir. Tuttuğun takım şampiyon olursa o puanı kazanırsın.</li>
+          <li>Kimin hangi takımı seçtiği, turnuva bitene kadar kimseye gösterilmez.</li>
+        </ul>
 
         <h2>Kurallar</h2>
         <ul>
           <li>Tüm tahminler <b style="color:var(--ink)">90 dakikalık normal süre</b> sonucuna göre yapılır; uzatma ve penaltıların tahminlere etkisi yoktur.</li>
           <li>Tahminler <b style="color:var(--ink)">Almanya saati</b> (Europe/Berlin) ile çalışır. Maç saati başlayınca skor değiştirilemez.</li>
-          <li>İki takımı da belli olmayan maçlara (örn. henüz oynanmamış Son 16) tahmin yapılamaz — takımlar belli olunca açılır.</li>
+          <li>İki takımı da belli olmayan maçlara (örn. henüz eşleşmesi netleşmemiş play-off/Son 16 maçı) tahmin yapılamaz — takımlar belli olunca açılır.</li>
           <li>Başkalarının tahminlerini ancak maç başladıktan sonra görebilirsin.</li>
           <li>Lider tablosunda bir isme tıkla → o kişinin tüm tahminlerini, neyde sonucu neyde skoru bildiğini gör.</li>
         </ul>
@@ -1463,12 +1479,12 @@ function sideBetsOpen(){
 }
 // Açıklama cümlesi için doğal tur ifadesi
 const STAGE_PHRASE = {
-  group:"Grup aşamasında", r32:"Son 32 turunda", r16:"Son 16 turunda",
-  qf:"Çeyrek finalde", sf:"Yarı finalde", third:"Üçüncülük maçında", final:"Finalde"
+  group:"Lig aşamasında", po:"Play-off turunda", r16:"Son 16 turunda",
+  qf:"Çeyrek finalde", sf:"Yarı finalde", final:"Finalde"
 };
 const STAGE_NOUN = {
-  group:"Grup aşaması", r32:"Son 32 turu", r16:"Son 16 turu",
-  qf:"Çeyrek final", sf:"Yarı final", third:"Üçüncülük maçı", final:"Final"
+  group:"Lig aşaması", po:"Play-off", r16:"Son 16 turu",
+  qf:"Çeyrek final", sf:"Yarı final", final:"Final"
 };
 
 const trName = e => TR[e] || e;
@@ -1598,9 +1614,12 @@ function berlinInputToUTCISO(dtLocalStr){
 /* ====================================================================
    5) PUANLAMA
    ==================================================================== */
-// Dinamik (iddia-bazlı) skor puanlaması — sadece eleme turları
-const DYNAMIC_STAGES = new Set(["r16","qf","sf","final"]);
-const STAGE_BASE_BONUS = { r16:90, qf:100, sf:120, final:120 };
+// Dinamik (iddia-bazlı) skor puanlaması — artık TÜM turlarda geçerli.
+// Admin bir maç için oran girmezse, takımların şampiyonluk katsayısına (CHAMPION_POINTS)
+// dayalı bir Poisson modeliyle otomatik "skor olasılığı" tablosu üretilir (autoOddsFor).
+const DYNAMIC_STAGES = new Set(["group","po","r16","qf","sf","final"]);
+// Baz bonus = STAGE_SCORING'teki (exact-outc) ile birebir aynı; tur ilerledikçe kademeli artıyor.
+const STAGE_BASE_BONUS = { group:70, po:80, r16:90, qf:100, sf:120, final:120 };
 const DYN_CAP = 300;      // en yüksek oranlı skorun bonus tavanı
 const DYN_OTHER = 350;    // listede olmayan skor (en sürpriz) — genel
 function dynOther(stage){ return stage==="final" ? 450 : DYN_OTHER; }   // finalde daha yüksek
@@ -1623,10 +1642,35 @@ function oddsOf(m){
   try{ const o=(typeof m.score_odds==="string")?JSON.parse(m.score_odds):m.score_odds;
        return (o && Object.keys(o).length)?o:null; }catch(e){ return null; }
 }
+// ===== Takım gücüne göre otomatik skor olasılığı (admin oran girmediğinde kullanılır) =====
+// CHAMPION_POINTS düşük olan takım daha güçlü kabul edilir; buradan basit bir Poisson
+// gol-beklentisi modeliyle her skor için "adil oran" (1/olasılık) üretilir.
+function teamStrength(team){
+  const pts = CHAMPION_POINTS[team];
+  return pts ? Math.max(50, 1600-pts) : 400; // bilinmeyen takım için nötr bir değer
+}
+function _poisP(lambda,k){
+  let f=1; for(let i=2;i<=k;i++) f*=i;
+  return Math.exp(-lambda)*Math.pow(lambda,k)/f;
+}
+const _SCORE_GRID=(()=>{ const g=[]; for(let h=0;h<=4;h++) for(let a=0;a<=4;a++) if(h+a<=6) g.push([h,a]); return g; })();
+function autoOddsFor(m){
+  if(!m || !m.team_home || !m.team_away) return null;
+  const hs=teamStrength(m.team_home), as=teamStrength(m.team_away);
+  const ratio=Math.sqrt((hs*1.12)/as); // ev sahibi avantajı ~%12
+  const lamH=Math.min(3.2,Math.max(0.5, 1.35*ratio));
+  const lamA=Math.min(3.2,Math.max(0.5, 1.35/ratio));
+  const probs=_SCORE_GRID.map(([h,a])=>[`${h}-${a}`, _poisP(lamH,h)*_poisP(lamA,a)]);
+  const top=probs.sort((x,y)=>y[1]-x[1]).slice(0,14);
+  const odds={}; top.forEach(([k,p])=>{ odds[k]=Math.round((1/Math.max(p,1e-6))*100)/100; });
+  return odds;
+}
+// Fiilen kullanılacak oran tablosu: admin elle girdiyse o, girmediyse otomatik üretilen.
+function effectiveOdds(m){ return oddsOf(m) || autoOddsFor(m); }
 // Bir skor için dinamik bonus (eleme turu + oran girilmişse). Yoksa null.
 function dynamicBonus(m, scoreKey){
   if(!DYNAMIC_STAGES.has(m.stage)) return null;
-  const odds=oddsOf(m); if(!odds) return null;
+  const odds=effectiveOdds(m); if(!odds) return null;
   const B=STAGE_BASE_BONUS[m.stage]||90;
   const vals=Object.values(odds); const lo=Math.min(...vals), hi=Math.max(...vals);
   if(!(scoreKey in odds)) return dynOther(m.stage);   // listede yok → en yüksek (finalde 450)
@@ -1787,7 +1831,7 @@ function matchCard(m){
     const hv=pred?pred.home:"", av=pred?pred.away:"";
     const dis=locked?"disabled":"";
     const act=pred?"act":"";
-    const dp = (DYNAMIC_STAGES.has(m.stage)&&oddsOf(m)) ? dynPtsLine(m, hv, av) : "";
+    const dp = (DYNAMIC_STAGES.has(m.stage)&&effectiveOdds(m)) ? dynPtsLine(m, hv, av) : "";
     center=`<div class="scorebox-wrap">
       <div class="scorebox">
         <input class="si ${act}" data-m="${m.id}" data-side="h" type="number" min="0" max="99" inputmode="numeric" value="${hv}" ${dis}>
@@ -1826,7 +1870,7 @@ function matchCard(m){
   }
 
   const seeAll = (fin||inplay) ? `<button class="seeall" data-allpreds="${m.id}">👁 Bu maç için herkesin tahminini gör</button>` : "";
-  const oddsInfo = (DYNAMIC_STAGES.has(m.stage)&&oddsOf(m)) ? `<button class="odds-info" data-odds="${m.id}" title="Bu maç için skor puanları">⚡ Skor puanları</button>` : "";
+  const oddsInfo = (DYNAMIC_STAGES.has(m.stage)&&effectiveOdds(m)) ? `<button class="odds-info" data-odds="${m.id}" title="Bu maç için skor puanları">⚡ Skor puanları</button>` : "";
   return `<div class="match ${cls}">
     <div class="mtop"><span class="meta">${meta}</span>
       <span class="meta">🕑 ${fmtKick(m.kickoff)} <span style="opacity:.6">(DE)</span></span>
@@ -2243,7 +2287,7 @@ function bindScoreInputs(root){
 // Eleme turunda yazılan skora göre "Bu skor: 50 + B = T" satırını canlı güncelle
 function dynPtsLine(m, hv, av){
   if(hv===""||av===""||hv==null||av==null) return "";
-  if(!DYNAMIC_STAGES.has(m.stage) || !oddsOf(m)) return "";
+  if(!DYNAMIC_STAGES.has(m.stage) || !effectiveOdds(m)) return "";
   const dyn=dynamicBonus(m, `${parseInt(hv,10)}-${parseInt(av,10)}`);
   if(dyn==null) return "";
   const sc=scoringFor(m.stage);
@@ -2429,7 +2473,7 @@ function pSurprise(E){
 // Bir oyuncunun o maçtaki tam skor değeri (dinamik puanlama dahil)
 function exactPtsFor(m, pred){
   const sc=scoringFor(m.stage);
-  if(pred && DYNAMIC_STAGES.has(m.stage) && oddsOf(m)){
+  if(pred && DYNAMIC_STAGES.has(m.stage) && effectiveOdds(m)){
     const b=dynamicBonus(m, `${pred.home}-${pred.away}`);
     if(b!=null) return sc.outc + b;
   }
@@ -3286,7 +3330,7 @@ function showGifPrizePopup(){
 // Eleme maçı için skor → puan tablosu pop-up'ı (info butonu)
 function showOddsTable(mid){
   const m=matches.find(x=>x.id===mid); if(!m) return;
-  const odds=oddsOf(m); if(!odds) return;
+  const odds=effectiveOdds(m); if(!odds) return;
   const sc=scoringFor(m.stage);
   const rows=Object.keys(odds)
     .map(k=>({k, b:dynamicBonus(m,k)}))
@@ -3604,7 +3648,7 @@ function renderAdmin(){
     const an=m.team_away?trName(m.team_away):(m.slot_away||"?");
     const oddsBtn = DYNAMIC_STAGES.has(m.stage) ? `
       <div style="margin:4px 2px 0">
-        <button class="btn ghost sm" data-oddsedit="${m.id}">⚡ Skor oranları ${oddsOf(m)?'✓':'(girilmedi)'}</button>
+        <button class="btn ghost sm" data-oddsedit="${m.id}">⚡ Skor oranları ${oddsOf(m)?'✓ girildi':(m.team_home&&m.team_away?'(otomatik)':'(takımlar belli değil)')}</button>
       </div>`:"";
     return `<div style="margin-bottom:8px">
       <div style="font-size:11px;color:var(--muted);font-weight:700;margin:0 2px 4px">${esc(label)} · ${fmtKick(m.kickoff)} (DE)${m.finished?' · ✅ Bitti':''}</div>
@@ -3632,13 +3676,17 @@ function renderAdmin(){
 function showOddsEditor(mid){
   const m=matches.find(x=>x.id===mid); if(!m) return;
   const cur=oddsOf(m);
-  const pre=cur?Object.keys(cur).map(k=>`${k} ${cur[k]}`).join("\n"):"";
+  const auto=!cur && autoOddsFor(m);
+  const src=cur||auto;
+  const pre=src?Object.entries(src).sort((a,b)=>a[1]-b[1]).map(([k,v])=>`${k} ${v}`).join("\n"):"";
+  const autoNote = auto ? `<p class="pop-p" style="margin:0 0 8px;font-size:12px;color:var(--muted)">Elle oran girmediğin için takım gücüne göre <b>otomatik</b> oranlar önceden dolduruldu. İstersen üzerine gerçek oranları yapıştırıp kaydedebilirsin.</p>` : "";
   showPopup(`
     <button class="x" id="popupClose">✕</button>
     <div class="pop-ic">⚡</div>
     <h3 class="pop-h">Skor Oranları</h3>
     <div class="pop-res" style="font-size:15px">${esc(trName(m.team_home)||m.slot_home||"?")} – ${esc(trName(m.team_away)||m.slot_away||"?")}</div>
     <p class="pop-p" style="margin:0 0 8px">İddia sitesindeki "Doğru Skor" listesini buraya yapıştır (her satır: <b>skor oran</b>, örn. <code>1-0 9.70</code>). "Diğer/Any other" satırını koymana gerek yok. Kaydedince puanlar otomatik hesaplanır.</p>
+    ${autoNote}
     <textarea id="oddsText" class="odds-textarea" placeholder="0-0 7.28&#10;0-1 5.09&#10;1-0 9.70&#10;...">${esc(pre)}</textarea>
     <div style="display:flex;gap:8px;margin-top:8px">
       <button class="pop-btn ghost" id="oddsClear">Temizle</button>
@@ -3654,7 +3702,7 @@ function showOddsEditor(mid){
       if(error) throw error;
       m.score_odds=val;
       closePopup();
-      band(n?`${n} skor oranı kaydedildi`:"Oranlar temizlendi","Yönetim");
+      band(n?`${n} skor oranı kaydedildi`:"Oranlar temizlendi (otomatik değerlere dönüldü)","Yönetim");
       renderAdmin(); renderMatches();
     }catch(e){ band("Kaydedilemedi: "+((e&&e.message)||e),"Yönetim",true); }
   };
