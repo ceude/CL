@@ -356,7 +356,7 @@ nav.tabs button:hover{color:var(--ink)}
 .prof-champ .pc-pts{font-size:13px;color:var(--gold);margin-left:4px}
 .prof-champ .pc-won{font-weight:800;color:var(--gold);font-size:13px}
 .prof-champ .pc-lock,.prof-champ .pc-lost{color:var(--muted)}
-.prof-champ.empty{background:#13231a}
+.prof-champ.empty{background:var(--panel2)}
 /* Profil içi desteklenen takım */
 .prof-fav{display:flex;align-items:center;gap:12px;margin:14px 18px 0;padding:11px 14px;
   background:var(--panel);border:1px solid var(--line);border-radius:13px}
@@ -1243,7 +1243,7 @@ nav.tabs button:hover{color:var(--ink)}
 
         <h2>Şampiyon Tahmini</h2>
         <ul>
-          <li>Turnuvanın şampiyonunu <b style="color:var(--ink)">tek seferlik</b> tahmin edersin — seçtikten sonra değiştirilemez.</li>
+          <li>Turnuvanın şampiyonunu tahmin edersin — <b style="color:var(--ink)">1 Kasım 2026 20:00'a kadar</b> istediğin kadar değiştirebilirsin, o saatte tahminin kilitlenir.</li>
           <li>Her takımın getirisi farklıdır: favoriler düşük, sürpriz adaylar yüksek puan getirir. Tuttuğun takım şampiyon olursa o puanı kazanırsın.</li>
           <li>Kimin hangi takımı seçtiği, turnuva bitene kadar kimseye gösterilmez.</li>
         </ul>
@@ -1397,7 +1397,7 @@ const STAGE_SCORING = {
 };
 const scoringFor = stage => STAGE_SCORING[stage] || STAGE_SCORING.group;
 
-// ===== ŞAMPİYON TAHMİNİ (tek seferlik, kilitli) =====
+// ===== ŞAMPİYON TAHMİNİ (1 Kasım 2026 20:00'a kadar değiştirilebilir, sonra kilitlenir) =====
 // Gerçek şampiyonluk oranlarından (bahis sitesi "turnuvayı kazanır" oranları) log-ölçekle
 // 250-1500 puan aralığına haritalanmıştır: PSG (6.00) = 250, Sabah (1000.00) = 1500 (tavan).
 const CHAMPION_POINTS = {
@@ -2804,6 +2804,7 @@ function openProfile(uid, opts){
   const isSelf = uid===session.user.id;
   const champWinner = appConfig.champion_winner;
   let champBlock="";
+  const champEditable = isSelf && showPrivate && championOpen();
   if(prof.champion){
     const won = champWinner && prof.champion===champWinner;
     const cprob=championProbs();
@@ -2816,8 +2817,9 @@ function openProfile(uid, opts){
         <div class="pc-name">${esc(trName(prof.champion))} <span class="pc-pts${alive?'':' zero'}">+${pts}</span></div>
       </div>
       ${won?'<span class="pc-won">TUTTU 🎉</span>':(alive?'':'<span class="pc-lost">ELENDİ</span>')}
+      ${champEditable?'<button class="btn ghost sm" id="profChampBtn">Değiştir</button>':''}
     </div>`;
-  } else if(isSelf && showPrivate && !prof.champion && championOpen()){
+  } else if(champEditable){
     champBlock=`<div class="prof-champ empty"><div class="pc-info">
       <div class="pc-lab">🏆 Şampiyon tahmini</div>
       <div class="pc-name" style="font-size:13px;color:var(--muted)">Henüz seçmedin · son ${esc(championDeadlineStr())}</div>
@@ -3481,7 +3483,7 @@ function championDeadlineStr(){
   return CHAMPION_DEADLINE.toLocaleString("tr-TR",{timeZone:TZ,day:"2-digit",month:"long",hour:"2-digit",minute:"2-digit"});
 }
 function showChampionPicker(){
-  if(me && me.champion){ // zaten seçmiş: sadece göster (kilitli)
+  if(me && me.champion && !championOpen()){ // süre doldu: sadece göster (kilitli)
     showPopup(`
       <button class="x" id="popupClose">✕</button>
       <div class="pop-ic">🏆</div>
@@ -3489,22 +3491,23 @@ function showChampionPicker(){
       <div class="champ-locked"><img src="${favFlagUrl(me.champion)}" alt=""><div>
         <div class="cl-name">${esc(trName(me.champion))}</div>
         <div class="cl-pts">Getiri: +${CHAMPION_POINTS[me.champion]||0} puan</div></div></div>
-      <p class="pop-p" style="margin-top:12px">Seçimin kilitli, değiştirilemez. 🔒<br>
+      <p class="pop-p" style="margin-top:12px">Seçim süresi doldu, tahminin kilitli. 🔒<br>
       <span style="font-size:12px;color:var(--muted)">Kimin hangi takımı seçtiği diğerlerine turnuva bitene kadar gösterilmeyecek. Turnuva tamamlandığında kupayı kazanan takıma göre puanlar eklenecektir.</span></p>
       <button class="pop-btn" id="popupClose2">Tamam</button>`);
     return;
   }
-  if(!championOpen()){ closePopup(); return; }
+  if(!championOpen()){ closePopup(); return; } // seçim yapmadan süre dolmuş
+  const cur=me&&me.champion;
   const grid=CHAMPION_TEAMS.map(t=>`
-    <button class="tpick champ" data-team="${esc(t)}">
+    <button class="tpick champ${t===cur?' sel':''}" data-team="${esc(t)}">
       <img src="${favFlagUrl(t)}" alt=""><span>${esc(trName(t))}</span><b class="cpts">+${CHAMPION_POINTS[t]}</b>
     </button>`).join("");
   showPopup(`
     <button class="x" id="popupClose">✕</button>
     <div class="pop-ic">🏆</div>
     <h3 class="pop-h">Şampiyon tahmini</h3>
-    <div class="champ-deadline">⏳ Son seçim: ${esc(championDeadlineStr())}</div>
-    <p class="pop-p">Turnuvanın şampiyonunu tahmin et. <b>Tek seferlik</b> ve seçince <b>bir daha değiştirilemez</b>. Tuttuğun takım kupayı kazanırsa karşısındaki puanı kazanırsın.<br>
+    <div class="champ-deadline">⏳ Son değişiklik: ${esc(championDeadlineStr())}</div>
+    <p class="pop-p">Turnuvanın şampiyonunu tahmin et. <b>${esc(championDeadlineStr())}'e kadar</b> istediğin kadar değiştirebilirsin, sonra kilitlenir. Tuttuğun takım kupayı kazanırsa karşısındaki puanı kazanırsın.<br>
     <span style="font-size:12px;color:var(--muted)">Kimin hangi takımı seçtiği diğerlerine turnuva bitene kadar gösterilmeyecek. Turnuva tamamlandığında kupayı kazanan takıma göre puanlar eklenecektir.</span></p>
     <div class="tpgrid champ">${grid}</div>
     <button class="pop-btn ghost" id="champLater">Daha sonra karar ver</button>`);
@@ -3513,6 +3516,7 @@ function showChampionPicker(){
 }
 function confirmChampion(team){
   const pts=CHAMPION_POINTS[team]||0;
+  const changing = !!(me&&me.champion) && me.champion!==team;
   showPopup(`
     <button class="x" id="popupClose">✕</button>
     <div class="pop-ic">🏆</div>
@@ -3521,10 +3525,10 @@ function confirmChampion(team){
       <img src="${favFlagUrl(team)}" alt=""><div>
       <div class="cl-name">${esc(trName(team))}</div>
       <div class="cl-pts">Getiri: +${pts} puan</div></div></div>
-    <p class="pop-p"><b>${esc(trName(team))}</b>'yı seçtin. Bir daha <b>değiştiremeyeceksin</b>. Seçtiğin takımın getirisi <b>+${pts} puan</b> olacak. Emin misin?</p>
+    <p class="pop-p"><b>${esc(trName(team))}</b>'yı seç${changing?'meye geçiyorsun':'tin'}. <b>${esc(championDeadlineStr())}'e kadar</b> tekrar değiştirebilirsin. Emin misin?</p>
     <div class="champ-confirm">
       <button class="pop-btn ghost" id="champNo">Hayır, geri dön</button>
-      <button class="pop-btn" id="champYes">Evet, kilitle</button>
+      <button class="pop-btn" id="champYes">Evet, seç</button>
     </div>`);
   $("#champNo").onclick=()=>showChampionPicker();
   $("#champYes").onclick=()=>saveChampion(team);
@@ -3537,7 +3541,7 @@ async function saveChampion(team){
     const mine=profiles.find(p=>p.id===session.user.id); if(mine) mine.champion=team;
     closePopup();
     renderAll();
-    setTimeout(()=>showChampionPicker(), 250); // kilitli onay ekranı
+    band(`Şampiyon tahminin: ${trName(team)} (${esc(championDeadlineStr())}'e kadar değiştirebilirsin)`,"Şampiyon");
   }catch(e){ alert("Şampiyon kaydedilemedi: "+(e.message||e.error_description||e)); }
 }
 // Final yan bahisleri: bir seçimi güncelle (kilit açıkken)
