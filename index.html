@@ -1812,11 +1812,10 @@ async function loadProfile(){
   if(me){ me.champion = decChampion(me.champion); me.final_side_bets = decSide(me.final_side_bets); } // DB kodlu → bellekte düz
 }
 async function loadAll(){
-  const [mq,pq,allq,cntq]=await Promise.all([
+  const [mq,pq,allq]=await Promise.all([
     sb.from("cl_matches").select("*").order("ord"),
     sb.from("cl_predictions").select("*").eq("user_id",session.user.id),
-    sb.from("cl_predictions").select("user_id,match_id,home,away"),
-    sb.rpc("prediction_counts")
+    sb.from("cl_predictions").select("user_id,match_id,home,away")
   ]);
   // profiles: champion kolonu henüz yoksa app çökmesin diye yedekli
   let profq = await sb.from("profiles").select("id,username,is_admin,fav_team:cl_fav_team,champion:cl_champion,final_side_bets:cl_final_side_bets");
@@ -1829,7 +1828,9 @@ async function loadAll(){
   predsAll = allq.data||[];
   profiles = profq.data||[];
   profiles.forEach(p=>{ p.champion = decChampion(p.champion); p.final_side_bets = decSide(p.final_side_bets); }); // kodlu → düz
-  predCounts={}; if(!cntq.error) (cntq.data||[]).forEach(r=>predCounts[r.user_id]=Number(r.cnt));
+  // Kişi başı tahmin sayısı: RPC yerine doğrudan çekilen predsAll'dan sayılıyor (RPC herkese aynı
+  // toplam sayıyı döndürüyordu — kullanıcı bazında doğru gruplamıyordu).
+  predCounts={}; predsAll.forEach(p=>{ predCounts[p.user_id]=(predCounts[p.user_id]||0)+1; });
   appConfig={}; if(!cfgq.error) (cfgq.data||[]).forEach(r=>appConfig[r.key]=r.value);
 }
 
