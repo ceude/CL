@@ -31,7 +31,7 @@ body{
   -webkit-font-smoothing:antialiased;
   min-height:100vh;
 }
-.cl-logo{width:38px;height:38px;display:block;filter:drop-shadow(0 2px 8px rgba(79,143,247,.5))}
+.cl-logo{width:38px;height:38px;display:block;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(79,143,247,.5))}
 .lg .t .cl-logo{width:44px;height:44px}
 h1,h2,h3,.disp{font-family:'Anton',sans-serif;font-weight:400;letter-spacing:.5px;text-transform:uppercase}
 button{font-family:inherit;cursor:pointer}
@@ -1065,7 +1065,7 @@ nav.tabs button:hover{color:var(--ink)}
 <!-- ================= AUTH ================= -->
 <div id="authScreen" class="authwrap hidden">
   <div class="authcard">
-    <div class="lg"><div class="t"><svg viewBox="0 0 64 64" class="cl-logo" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <div class="lg"><div class="t"><img class="cl-logo" id="clLogoLogin" alt="Şampiyonlar Ligi" style="display:none"><svg viewBox="0 0 64 64" class="cl-logo" id="clSvgLogin" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <defs><radialGradient id="clg" cx="50%" cy="38%" r="65%">
     <stop offset="0" stop-color="#eaf1ff"/><stop offset=".55" stop-color="#8fb6ff"/><stop offset="1" stop-color="#2b56c9"/>
   </radialGradient></defs>
@@ -1113,7 +1113,7 @@ nav.tabs button:hover{color:var(--ink)}
 
   <header class="app">
     <div class="brand">
-      <div class="trophy"><svg viewBox="0 0 64 64" class="cl-logo" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <div class="trophy"><img class="cl-logo" id="clLogoHeader" alt="Şampiyonlar Ligi" style="display:none"><svg viewBox="0 0 64 64" class="cl-logo" id="clSvgHeader" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <defs><radialGradient id="clg" cx="50%" cy="38%" r="65%">
     <stop offset="0" stop-color="#eaf1ff"/><stop offset=".55" stop-color="#8fb6ff"/><stop offset="1" stop-color="#2b56c9"/>
   </radialGradient></defs>
@@ -1477,6 +1477,23 @@ async function fetchClubLogo(team){
     if(url) TEAM_LOGO[team] = url;
   }catch(e){ /* sessizce yut, flag fallback devrede */ }
 }
+// ===== ŞL "yıldız topu" logosu (garip SVG rozet yerine gerçek logo; Wikipedia pageimages'ten) =====
+async function loadCompetitionLogo(){
+  try{
+    const r = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent("UEFA Champions League")}&prop=pageimages&format=json&pithumbsize=200&redirects=1&origin=*`);
+    const j = await r.json();
+    const page = j && j.query && Object.values(j.query.pages)[0];
+    const url = page && page.thumbnail && page.thumbnail.source;
+    if(!url) return;
+    [["clLogoLogin","clSvgLogin"],["clLogoHeader","clSvgHeader"]].forEach(([imgId,svgId])=>{
+      const img=document.getElementById(imgId), svg=document.getElementById(svgId);
+      if(img){ img.src=url; img.style.display="block"; }
+      if(svg){ svg.style.display="none"; }
+    });
+  }catch(e){ /* sessizce yut, SVG rozet görünmeye devam eder */ }
+}
+loadCompetitionLogo();
+
 function preloadClubLogos(){
   if(_logoPreload) return _logoPreload;
   const teams = Object.keys(TR);
