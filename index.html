@@ -204,8 +204,8 @@ nav.tabs button:hover{color:var(--ink)}
 .seeall{display:block;width:100%;margin-top:10px;background:#0e1f16;border:1px solid var(--line2);border-radius:10px;
   color:var(--gold2);font-weight:700;font-size:12.5px;padding:9px;cursor:pointer;transition:all .15s}
 .seeall:hover{background:#13291c;border-color:var(--gold)}
-.matchpred-head{position:sticky;top:0;background:#0f2419;padding:18px 18px 12px;border-bottom:1px solid var(--line);z-index:2}
-.matchpred-head .x{position:absolute;top:12px;right:12px;background:#13261c;border:1px solid var(--line2);color:var(--ink);
+.matchpred-head{position:sticky;top:0;background:var(--panel);padding:18px 18px 12px;border-bottom:1px solid var(--line);z-index:2}
+.matchpred-head .x{position:absolute;top:12px;right:12px;background:var(--bg2);border:1px solid var(--line2);color:var(--ink);
   width:32px;height:32px;border-radius:9px;font-size:16px}
 .bigres{display:flex;align-items:center;justify-content:center;gap:14px;text-align:center;padding:0 30px}
 .bigres .t{flex:1;font-weight:800;font-size:14.5px;color:#cbe0d2;min-width:0}
@@ -290,7 +290,7 @@ nav.tabs button:hover{color:var(--ink)}
 .panel .ph h3{margin:0;font-size:16px}
 .panel .ph .ico{font-size:18px}
 .lbrow{display:flex;align-items:center;gap:11px;padding:11px 16px;border-bottom:1px solid var(--line);cursor:pointer}
-.lbrow:hover{background:#12281d}
+.lbrow:hover{background:rgba(255,255,255,.05)}
 .lbrow:last-child{border-bottom:none}
 .rank{font-family:'Anton';font-size:18px;width:26px;text-align:center;color:var(--muted)}
 .rank.g1{color:var(--gold)}.rank.g2{color:#cfd6dd}.rank.g3{color:#d99a5b}
@@ -674,7 +674,7 @@ nav.tabs button:hover{color:var(--ink)}
 .team.clickable:hover{background:rgba(255,255,255,.05)}
 .team.clickable:hover .nm{color:var(--gold2)}
 .tc-head{position:relative;text-align:center;padding:20px 18px 14px;border-bottom:1px solid var(--line)}
-.tc-head .x{position:absolute;top:12px;right:12px;background:#13261c;border:1px solid var(--line2);color:var(--ink);
+.tc-head .x{position:absolute;top:12px;right:12px;background:var(--bg2);border:1px solid var(--line2);color:var(--ink);
   width:34px;height:34px;border-radius:9px;font-size:18px;cursor:pointer}
 .tc-flag{width:64px;height:48px;object-fit:contain;border-radius:7px;background:rgba(255,255,255,.06);box-shadow:0 4px 14px rgba(0,0,0,.5);margin-bottom:8px}
 .tc-head h3{margin:0;font-size:22px;color:#fff;font-weight:900}
@@ -946,7 +946,7 @@ nav.tabs button:hover{color:var(--ink)}
 .pseries.dim .pdot{opacity:.12}
 .pseries.dim .endlbl{opacity:.12}
 .hoverline{stroke:var(--gold);stroke-width:1;stroke-dasharray:4 4;opacity:0;pointer-events:none}
-.chart-tip{position:absolute;pointer-events:none;z-index:5;background:#0a1812;border:1px solid var(--line2);
+.chart-tip{position:absolute;pointer-events:none;z-index:5;background:var(--panel2);border:1px solid var(--line2);
   border-radius:10px;padding:9px 11px;font-size:12px;min-width:140px;box-shadow:0 14px 34px rgba(0,0,0,.55);
   opacity:0;transition:opacity .12s;transform:translate(-50%,0)}
 .chart-tip .d{font-weight:800;color:var(--gold2);font-size:11px;letter-spacing:.5px;margin-bottom:6px}
@@ -1017,20 +1017,20 @@ nav.tabs button:hover{color:var(--ink)}
   padding:calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom))}
 #modal.show{display:grid}
 .mcard{width:100%;max-width:560px;max-height:86vh;max-height:86dvh;overflow:auto;-webkit-overflow-scrolling:touch;
-  background:linear-gradient(180deg,#0f2419,#0a1812);
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
   border:1px solid var(--line2);border-radius:20px;
   scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
 .mcard::-webkit-scrollbar{width:9px}
 .mcard::-webkit-scrollbar-track{background:transparent}
 .mcard::-webkit-scrollbar-thumb{background:var(--line2);border-radius:8px;border:2px solid transparent;background-clip:content-box}
 .mcard::-webkit-scrollbar-thumb:hover{background:var(--muted);background-clip:content-box}
-.mcard .mh{position:sticky;top:0;background:#0f2419;padding:18px 20px;border-bottom:1px solid var(--line);
+.mcard .mh{position:sticky;top:0;background:var(--panel);padding:18px 20px;border-bottom:1px solid var(--line);
   display:flex;align-items:center;gap:13px;z-index:2}
 .mcard .mh .av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:800;
   background:linear-gradient(160deg,var(--gold),#b8860b);color:#241400;font-size:17px}
 .mcard .mh h3{margin:0;font-size:19px}
 .mcard .mh .s{font-size:12px;color:var(--muted);font-weight:700;margin-top:2px}
-.mcard .mh .x{margin-left:auto;background:#13261c;border:1px solid var(--line2);color:var(--ink);
+.mcard .mh .x{margin-left:auto;background:var(--bg2);border:1px solid var(--line2);color:var(--ink);
   width:34px;height:34px;border-radius:9px;font-size:18px}
 .pgrid{padding:14px 18px 22px}
 .pg{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;padding:10px 12px;
@@ -1338,16 +1338,19 @@ const FLAG = {
  "Slavia Prague":"cz","Slovan Bratislava":"sk","Stuttgart":"de","AEK":"gr",
  "LASK":"at","Como":"it","Lens":"fr","Viking":"no","Sabah":"az"
 };
-// Kulüp logoları için Wikipedia sayfa başlıkları (bayrak yerine amblem göstermek için kullanılır)
-const WIKI_TITLE = {
- "Paris Saint-Germain":"Paris Saint-Germain F.C.","Bayern München":"FC Bayern Munich","Real Madrid":"Real Madrid CF","Liverpool":"Liverpool F.C.",
- "Inter":"Inter Milan","Manchester City":"Manchester City F.C.","Arsenal":"Arsenal F.C.","Barcelona":"FC Barcelona","Atlético Madrid":"Atlético Madrid",
- "Borussia Dortmund":"Borussia Dortmund","Roma":"A.S. Roma","Sporting CP":"Sporting CP","Aston Villa":"Aston Villa F.C.","Porto":"FC Porto",
- "Manchester United":"Manchester United F.C.","Club Brugge":"Club Brugge KV","Real Betis":"Real Betis","PSV":"PSV Eindhoven",
- "Feyenoord":"Feyenoord","Lille":"LOSC Lille","Bodø/Glimt":"FK Bodø/Glimt","Napoli":"SSC Napoli","RB Leipzig":"RB Leipzig",
- "Villarreal":"Villarreal CF","Fenerbahçe":"Fenerbahçe S.K. (football)","Shakhtar Donetsk":"FC Shakhtar Donetsk","Galatasaray":"Galatasaray S.K. (football)",
- "Slavia Prague":"SK Slavia Prague","Slovan Bratislava":"ŠK Slovan Bratislava","Stuttgart":"VfB Stuttgart","AEK":"AEK Athens F.C.",
- "LASK":"LASK","Como":"Como 1907","Lens":"RC Lens","Viking":"Viking FK","Sabah":"Sabah FK (Azerbaijan)"
+// Kulüp logoları için TheSportsDB arama isimleri (bayrak yerine amblem göstermek için kullanılır).
+// Not: Wikipedia'nın pageimages API'si, çoğu ünlü kulübün amblemini "telifli/fair-use" sayıp
+// otomatik seçimden hariç tutuyor (bu yüzden Real Madrid, Fenerbahçe, Roma gibi takımlarda
+// önceden bayrağa düşüyorduk) — TheSportsDB tam olarak kulüp amblemleri için var, ücretsiz ve CORS destekli.
+const SPORTSDB_NAME = {
+ "Paris Saint-Germain":"Paris SG","Bayern München":"Bayern Munich","Real Madrid":"Real Madrid","Liverpool":"Liverpool",
+ "Inter":"Inter Milan","Manchester City":"Manchester City","Arsenal":"Arsenal","Barcelona":"Barcelona","Atlético Madrid":"Atletico Madrid",
+ "Borussia Dortmund":"Borussia Dortmund","Roma":"AS Roma","Sporting CP":"Sporting Lisbon","Aston Villa":"Aston Villa","Porto":"FC Porto",
+ "Manchester United":"Manchester United","Club Brugge":"Club Brugge","Real Betis":"Real Betis","PSV":"PSV Eindhoven",
+ "Feyenoord":"Feyenoord","Lille":"Lille","Bodø/Glimt":"Bodo Glimt","Napoli":"Napoli","RB Leipzig":"RB Leipzig",
+ "Villarreal":"Villarreal","Fenerbahçe":"Fenerbahce","Shakhtar Donetsk":"Shakhtar Donetsk","Galatasaray":"Galatasaray",
+ "Slavia Prague":"Slavia Prague","Slovan Bratislava":"Slovan Bratislava","Stuttgart":"VfB Stuttgart","AEK":"AEK Athens",
+ "LASK":"LASK Linz","Como":"Como 1907","Lens":"RC Lens","Viking":"Viking FK","Sabah":"Sabah FK"
 };
 const STAGES = [
   {k:"group",label:"Lig Aşaması"},{k:"po",label:"Play-off"},{k:"r16",label:"Son 16"},
@@ -1468,26 +1471,27 @@ const trName = e => TR[e] || e;
 const TEAM_LOGO = {};
 let _logoPreload = null;
 async function fetchClubLogo(team){
-  const title = WIKI_TITLE[team] || team;
+  const q = SPORTSDB_NAME[team] || team;
   try{
-    const r = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&format=json&pithumbsize=100&redirects=1&origin=*`);
+    const r = await fetch(`https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=${encodeURIComponent(q)}`);
     const j = await r.json();
-    const page = j && j.query && Object.values(j.query.pages)[0];
-    const url = page && page.thumbnail && page.thumbnail.source;
-    if(url) TEAM_LOGO[team] = url;
-  }catch(e){ /* sessizce yut, flag fallback devrede */ }
+    const list = (j && j.teams) || [];
+    const t = list.find(x=>x.strSport==="Soccer") || list[0];
+    const url = t && (t.strBadge || t.strLogo);
+    if(url) TEAM_LOGO[team] = url + "/preview"; // küçük, hızlı önizleme boyutu
+  }catch(e){ /* sessizce yut, bayrak fallback devrede */ }
 }
 // ===== ŞL "yıldız topu" logosu (garip SVG rozet yerine gerçek logo; Wikipedia pageimages'ten) =====
 async function loadCompetitionLogo(){
   try{
-    const r = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent("UEFA Champions League")}&prop=pageimages&format=json&pithumbsize=200&redirects=1&origin=*`);
+    const r = await fetch(`https://www.thesportsdb.com/api/v1/json/123/lookupleague.php?id=4480`); // UEFA Champions League
     const j = await r.json();
-    const page = j && j.query && Object.values(j.query.pages)[0];
-    const url = page && page.thumbnail && page.thumbnail.source;
+    const lg = j && j.leagues && j.leagues[0];
+    const url = lg && lg.strBadge;
     if(!url) return;
     [["clLogoLogin","clSvgLogin"],["clLogoHeader","clSvgHeader"]].forEach(([imgId,svgId])=>{
       const img=document.getElementById(imgId), svg=document.getElementById(svgId);
-      if(img){ img.src=url; img.style.display="block"; }
+      if(img){ img.src=url+"/preview"; img.style.display="block"; }
       if(svg){ svg.style.display="none"; }
     });
   }catch(e){ /* sessizce yut, SVG rozet görünmeye devam eder */ }
@@ -1517,7 +1521,7 @@ function avatarInner(username, favTeam){
    ==================================================================== */
 let sb=null, session=null, me=null;
 let matches=[], predsMine={}, predsAll=[], profiles=[], predCounts={}, appConfig={};
-let curStage="final", curGroup="ALL", adminStage="group";
+let curStage="group", curGroup="ALL", adminStage="group";
 let sortMode="date"; // "date" = tarihe göre (varsayılan), "group" = gruba göre
 let showPast=false; // false = sadece lig aşaması ve sonrası; true = öncesi de görünür
 let showOpenOnly=false; // Son 32 / Son 16: sadece kilitli olmayan (tahmine açık) maçlar
@@ -2159,8 +2163,7 @@ function renderMyPicks(){
 }
 
 function renderStageFilters(){
-  const present=new Set(matches.map(m=>m.stage));
-  $("#stageFilters").innerHTML = STAGES.filter(s=>present.has(s.k)).map(s=>
+  $("#stageFilters").innerHTML = STAGES.map(s=>
     `<button class="pill ${s.k===curStage?"on":""} ${s.k==="final"?"pill-final":""}" data-stage="${s.k}">${s.label}</button>`).join("");
   $("#stageFilters").querySelectorAll(".pill").forEach(b=>b.onclick=()=>{
     curStage=b.dataset.stage; curGroup="ALL"; renderStageFilters(); renderGroupFilters(); renderSortFilters(); renderMatches();
@@ -3039,7 +3042,7 @@ function maybeShowOpeningPopup(){
   if(me && appConfig.champion_winner && typeof ceremonySeen==="function" && !ceremonySeen()){
     markCeremonySeen(); showChampionCeremony({first:true}); return;
   }
-  // 0a) Turnuva bitti: şampiyon ilan edilince herkese, her açılışta özet kartı (admin: önizleme olarak her zaman)
+  // 0a) Turnuva bitti: şampiyon ilan edilince herkese (admin dahil), her açılışta özet kartı
   if(me && wrapAvailable()){ showWrapPopup(session.user.id); return; }
   // 0b) Mobilde herkese bir kez GIF ödül pop-up'ı (masaüstünde sağ alt kart var)
   if(me && isMobileView() && appConfig.prize_on==="1" && !gifPopSeen(session.user.id)){
@@ -3070,7 +3073,7 @@ function maybeShowOpeningPopup(){
    TURNUVA ÖZETİ (Wrapped) — şampiyon ilan edilince herkese; admin her zaman
    ==================================================================== */
 function wrapAvailable(){
-  return !!appConfig.champion_winner || !!(me && me.is_admin);
+  return !!appConfig.champion_winner;
 }
 function buildWrap(uid){
   const prof = profiles.find(p=>p.id===uid); if(!prof) return null;
