@@ -44,44 +44,44 @@ a{color:var(--gold)}
 /* ===== AD BANNER ===== */
 .adbanner{
   display:flex;align-items:center;gap:12px;
-  background:linear-gradient(90deg,#0c2218,#0f2d1e,#0c2218);
-  border-bottom:1px solid rgba(43,213,117,.18);
+  background:linear-gradient(90deg,var(--bg2),var(--panel),var(--bg2));
+  border-bottom:1px solid rgba(79,143,247,.18);
   padding:9px 20px;text-decoration:none;color:var(--ink);
   position:relative;overflow:hidden;
   transition:background .2s;
 }
-.adbanner:hover{background:linear-gradient(90deg,#112a1f,#163825,#112a1f)}
+.adbanner:hover{background:linear-gradient(90deg,#0d1338,#122058,#0d1338)}
 .adbanner::before{
   content:"";position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent,rgba(43,213,117,.04),transparent);
+  background:linear-gradient(90deg,transparent,rgba(79,143,247,.05),transparent);
   pointer-events:none;
 }
 .adbanner img{
   width:36px;height:36px;border-radius:9px;
-  border:1px solid rgba(43,213,117,.25);
+  border:1px solid rgba(79,143,247,.25);
   flex:0 0 auto;object-fit:cover;
 }
 .adbanner .adt{display:flex;flex-direction:column;flex:1;min-width:0;gap:1px}
 .adbanner .adspon{
   font-size:9px;letter-spacing:1.5px;font-weight:800;
-  color:var(--ok);text-transform:uppercase;opacity:.75;
+  color:var(--gold);text-transform:uppercase;opacity:.75;
 }
 .adbanner .adt b{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
 .adbanner .addesc{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .adbanner .adcta{
   flex:0 0 auto;
-  background:linear-gradient(135deg,#1c4a2e,#0f2d1e);
-  border:1px solid rgba(43,213,117,.35);
-  color:var(--ok);
+  background:linear-gradient(135deg,#1a2a63,#101a44);
+  border:1px solid rgba(79,143,247,.35);
+  color:var(--gold2);
   font-size:11.5px;font-weight:800;
   padding:6px 12px;border-radius:8px;
   white-space:nowrap;
   letter-spacing:.3px;
 }
-.adbanner:hover .adcta{background:linear-gradient(135deg,#22572f,#14381f);border-color:rgba(43,213,117,.6)}
+.adbanner:hover .adcta{background:linear-gradient(135deg,#22337a,#182456);border-color:rgba(79,143,247,.6)}
 
 /* ===== TOP RIBBON TICKER ===== */
-#ribbon{position:sticky;top:0;z-index:40;background:linear-gradient(90deg,#0a1611,#0e2218,#0a1611);
+#ribbon{position:sticky;top:0;z-index:40;background:linear-gradient(90deg,var(--bg2),var(--panel),var(--bg2));
   border-bottom:1px solid var(--line);overflow:hidden;height:34px;display:flex;align-items:center}
 #ribbon .tag{flex:0 0 auto;background:var(--energy);color:#1a0a06;font-weight:800;font-size:11px;
   letter-spacing:1px;padding:5px 10px;height:34px;display:flex;align-items:center;text-transform:uppercase;
@@ -92,7 +92,7 @@ a{color:var(--gold)}
   height:34px;align-items:center;padding-left:30px;
   will-change:transform;
 }
-#ribbon .it{font-size:12.5px;color:#cfe3d6;font-weight:600;display:inline-flex;gap:8px;align-items:center}
+#ribbon .it{font-size:12.5px;color:#cfd7f0;font-weight:600;display:inline-flex;gap:8px;align-items:center}
 #ribbon .it b{font-family:'Anton';font-weight:400;color:var(--gold);font-size:14px;letter-spacing:1px}
 #ribbon .it.daytag{color:var(--energy);font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase}
 #ribbon .it .rtime{color:var(--muted);font-weight:700;font-size:11.5px}
@@ -977,6 +977,9 @@ nav.tabs button:hover{color:var(--ink)}
   border-radius:8px;font-family:inherit;font-size:13.5px;padding:0 8px;width:100%}
 .admin .tsel option{background:#0c1d15;color:var(--ink)}
 .admin .kickoffset{margin-bottom:6px}
+.admin-add{background:var(--panel);border:1px solid var(--line2);border-radius:12px;padding:10px 12px;margin-bottom:12px}
+.admin-add-row{display:flex;gap:8px;align-items:center}
+.admin-add-row input{flex:1;height:38px;background:#06100c;border:1px solid var(--line2);color:var(--ink);border-radius:8px;padding:0 8px}
 .admin .kickoffset input{width:100%;height:34px;background:#06100c;border:1px solid var(--line2);
   color:var(--ink);border-radius:8px;font-family:inherit;font-size:13px;padding:0 8px}
 .admin .kickoffset input::-webkit-calendar-picker-indicator{filter:invert(1);cursor:pointer}
@@ -1276,9 +1279,10 @@ nav.tabs button:hover{color:var(--ink)}
         <h2>Yönetim — Skor &amp; Takım Gir</h2>
         <p style="color:var(--muted);font-size:13.5px;max-width:640px">
           Biten maçların skorunu gir (otomatik "bitti" işaretlenir). Eleme maçlarında takımlar belli oldukça
-          isimleri yaz (İngilizce isimler — örn. <code style="font-size:12px">Spain</code>, <code style="font-size:12px">Brazil</code>).
-          Bayraklar ve Türkçe isimler otomatik gelir. Maç saatini de buradan düzeltebilirsin.</p>
+          isimleri seç. Bayraklar/logolar ve Türkçe isimler otomatik gelir. Maç saatini de buradan düzeltebilirsin.
+          Play-off ve sonrası için henüz maç yoksa aşağıdan <b style="color:var(--gold2)">yeni maç ekle</b>.</p>
         <div class="filters" id="adminStageFilters"></div>
+        <div id="adminAddMatch"></div>
         <div id="adminList"></div>
         <div class="champ-admin" id="champAdmin"></div>
         <div class="prize-admin" id="prizeAdmin"></div>
@@ -1545,7 +1549,6 @@ let matches=[], predsMine={}, predsAll=[], profiles=[], predCounts={}, appConfig
 let curStage="group", curGroup="ALL", adminStage="group";
 let sortMode="date"; // "date" = tarihe göre (varsayılan), "group" = gruba göre
 let showPast=false; // false = sadece lig aşaması ve sonrası; true = öncesi de görünür
-let showOpenOnly=false; // Son 32 / Son 16: sadece kilitli olmayan (tahmine açık) maçlar
 // lig aşaması 2026, Almanya saatiyle gün başı — bu tarihten öncesi varsayılan gizli
 const CUTOFF = new Date(berlinInputToUTCISO("2026-06-24T00:00"));
 let registerMode=false;
@@ -1900,24 +1903,16 @@ function renderScoringCard(){
 function renderStageInfo(){
   const box=$("#stageInfo"); if(!box) return;
   renderScoringCard();
-  if(curStage==="final"){ box.innerHTML=""; return; }   // finalde dinamik skor kartı gösterilmez
-  const sc=scoringFor(curStage), bonus=sc.exact-sc.outc;
+  const sc=scoringFor(curStage);
   const phrase=STAGE_PHRASE[curStage]||"Bu turda";
-  if(DYNAMIC_STAGES.has(curStage)){
-    const base=STAGE_BASE_BONUS[curStage]||90;
-    box.innerHTML=`<div class="stageinfo dyn">
-      <div class="dyn-head"><span class="dyn-dot"></span>YENİ: DİNAMİK SKOR PUANLAMASI ⚡</div>
-      <div>🎯 ${phrase} <b>sonucu</b> (galibiyet/beraberlik) bilmek <b>${sc.outc} puan</b>.
-      <b>Tam skoru</b> bilmek ise artık sabit değil: skorun <b>iddia oranına</b> göre değişir.
-      Beklenen skorlar <b>${sc.outc}+${base}</b> puan; ne kadar <b>sürpriz</b> skor, o kadar yüksek (tam skor bonusu <b>en fazla ${DYN_CAP}</b>, listede olmayan skor <b>${dynOther(curStage)}</b>).</div>
-      <div class="sub">⚡ Her maç kartındaki <b>"Skor puanları"</b> butonundan o maçın tüm skor puanlarını görebilir; skoru yazınca kazanacağın puanı anında görürsün.</div>
-      <div class="sub">⏱️ Tüm tahminler 90 dakikalık normal süre sonucuna göredir; uzatma/penaltı sayılmaz.</div>
-    </div>`;
-    return;
-  }
-  box.innerHTML=`<div class="stageinfo">
-    <div>🎯 ${phrase} sonucu (galibiyet veya beraberlik) bilmek <b>${sc.outc} puan</b>, skoru bilmek <b>${sc.outc}+${bonus} = ${sc.exact} puan</b> kazandırır.</div>
-    <div class="sub">⏱️ Tüm tahminler 90 dakikalık normal süre sonucuna göre yapılır; uzatma ve penaltıların tahminlere etkisi yoktur.</div>
+  const base=STAGE_BASE_BONUS[curStage]||90;
+  box.innerHTML=`<div class="stageinfo dyn">
+    <div class="dyn-head"><span class="dyn-dot"></span>YENİ: DİNAMİK SKOR PUANLAMASI ⚡</div>
+    <div>🎯 ${phrase} <b>sonucu</b> (galibiyet/beraberlik) bilmek <b>${sc.outc} puan</b>.
+    <b>Tam skoru</b> bilmek ise artık sabit değil: skorun <b>iddia oranına</b> göre değişir.
+    Beklenen skorlar <b>${sc.outc}+${base}</b> puan; ne kadar <b>sürpriz</b> skor, o kadar yüksek (tam skor bonusu <b>en fazla ${DYN_CAP}</b>, listede olmayan skor <b>${dynOther(curStage)}</b>).</div>
+    <div class="sub">⚡ Her maç kartındaki <b>"Skor puanları"</b> butonundan o maçın tüm skor puanlarını görebilir; skoru yazınca kazanacağın puanı anında görürsün.</div>
+    <div class="sub">⏱️ Tüm tahminler 90 dakikalık normal süre sonucuna göredir; uzatma/penaltı sayılmaz.</div>
   </div>`;
 }
 function renderMatches(){
@@ -1929,10 +1924,6 @@ function renderMatches(){
   // Varsayılan: sadece lig aşaması ve sonrası. Filtre açıksa öncesi de gelir.
   if(!showPast) ms=ms.filter(m=> new Date(m.kickoff) >= CUTOFF);
 
-  // Son 32 / Son 16: sadece kilitli olmayan (tahmine açık) maçlar
-  const openMode = (curStage==="r32"||curStage==="r16") && showOpenOnly;
-  if(openMode) ms=ms.filter(m=>!isLocked(m));
-
   ms=[...ms];
   const groupMode = curStage==="group" && sortMode==="group" && curGroup==="ALL";
   if(groupMode){
@@ -1943,9 +1934,7 @@ function renderMatches(){
   if(!ms.length){
     const allInStage=matches.filter(m=>m.stage===curStage);
     let msg=`<div class="empty">Bu sekmede maç yok.</div>`;
-    if(openMode){
-      msg=`<div class="empty">Şu an tahmine açık (kilitli olmayan) maç yok.<br><small style="opacity:.6">Takımlar belli olup maç saati gelmemiş maçlar burada görünür.</small></div>`;
-    }else if(!showPast && allInStage.length && allInStage.every(m=>new Date(m.kickoff) < CUTOFF)){
+    if(!showPast && allInStage.length && allInStage.every(m=>new Date(m.kickoff) < CUTOFF)){
       msg=`<div class="empty">Bu sekmedeki maçların hepsi lig aşaması'dan önce.<br><small style="opacity:.6">Görmek için "lig aşaması öncesini göster" geçişini aç.</small></div>`;
     }
     list.innerHTML=msg; return;
@@ -2236,16 +2225,6 @@ function showQFLockPopup(){
 }
 function renderSortFilters(){
   const box=$("#sortFilters");
-  // Son 32 / Son 16: sadece kilitli olmayanları göster düğmesi
-  if(curStage==="r32" || curStage==="r16"){
-    box.innerHTML = `<button class="fin-toggle ${showOpenOnly?"on":""}" id="openToggleBtn">
-        <span class="tog-track"><span class="tog-thumb"></span></span>
-        Sadece kilitli olmayanları göster
-      </button>`;
-    const ob=$("#openToggleBtn");
-    if(ob) ob.onclick=()=>{ showOpenOnly=!showOpenOnly; renderSortFilters(); renderMatches(); };
-    return;
-  }
   if(curStage!=="group"){ box.innerHTML=""; return; }
   const pastCount=matches.filter(m=>m.stage===curStage && new Date(m.kickoff) < CUTOFF).length;
   const toggleHTML = pastCount ? `
@@ -3565,6 +3544,9 @@ function berlinCalKey(d){
   const g=t=>p.find(x=>x.type===t).value;
   return `${g("year")}-${g("month")}-${g("day")}`;
 }
+function ribDate(iso){
+  return new Date(iso).toLocaleDateString("tr-TR",{timeZone:TZ,day:"2-digit",month:"short"});
+}
 function renderRibbon(){
   const todayK = berlinCalKey(Date.now());
   const yestK  = berlinCalKey(Date.now()-86400000);
@@ -3585,10 +3567,18 @@ function renderRibbon(){
   if(today.length){ parts.push(tag("🔴 BUGÜN")); today.forEach(m=> parts.push(cell(m))); }
   if(tom.length){ parts.push(tag("➡️ YARIN")); tom.forEach(m=> parts.push(fix(m))); }
 
-  // Hiç dün/bugün/yarın maçı yoksa: yaklaşan maçları göster
+  // Hiç dün/bugün/yarın maçı yoksa: yaklaşan maçları tarihe göre gruplayıp göster
   if(!parts.length){
-    const up=withTeams.filter(m=>new Date(m.kickoff)>=new Date()).sort((a,b)=>new Date(a.kickoff)-new Date(b.kickoff)).slice(0,8);
-    if(up.length){ parts.push(tag("YAKLAŞAN")); up.forEach(m=>parts.push(fix(m))); }
+    const up=withTeams.filter(m=>new Date(m.kickoff)>=new Date()).sort((a,b)=>new Date(a.kickoff)-new Date(b.kickoff)).slice(0,10);
+    if(up.length){
+      parts.push(tag("YAKLAŞAN"));
+      let lastDate="";
+      up.forEach(m=>{
+        const dk=ribDate(m.kickoff);
+        if(dk!==lastDate){ parts.push(tag(dk)); lastDate=dk; }
+        parts.push(fix(m));
+      });
+    }
   }
 
   const seq=parts.join("");
@@ -3620,12 +3610,38 @@ function startRibbonScroll(){
    12) YÖNETİM PANELİ — tarihe göre sıralama + saat düzenleme
    ==================================================================== */
 function renderAdminFilters(){
-  const present=new Set(matches.map(m=>m.stage));
-  $("#adminStageFilters").innerHTML = STAGES.filter(s=>present.has(s.k)).map(s=>
+  $("#adminStageFilters").innerHTML = STAGES.map(s=>
     `<button class="pill ${s.k===adminStage?"on":""}" data-stage="${s.k}">${s.label}</button>`).join("");
   $("#adminStageFilters").querySelectorAll(".pill").forEach(b=>b.onclick=()=>{
-    adminStage=b.dataset.stage; renderAdminFilters(); renderAdmin();
+    adminStage=b.dataset.stage; renderAdminFilters(); renderAdminAddForm(); renderAdmin();
   });
+}
+function renderAdminAddForm(){
+  const box=$("#adminAddMatch"); if(!box) return;
+  if(adminStage==="group"){ box.innerHTML=""; return; } // lig aşaması fikstürü zaten hazır
+  box.innerHTML=`<div class="admin-add">
+    <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:6px">+ ${esc(STAGE_LABEL[adminStage])} için yeni maç ekle</div>
+    <div class="admin-add-row">
+      <input type="datetime-local" id="newMatchKickoff">
+      <button class="btn gold sm" id="newMatchBtn">Maç ekle</button>
+    </div>
+  </div>`;
+  $("#newMatchBtn").onclick=()=>addAdminMatch(adminStage);
+}
+async function addAdminMatch(stage){
+  const ko=$("#newMatchKickoff").value;
+  if(!ko){ band("Önce maç saatini seç","Yönetim",true); return; }
+  let kickoff; try{ kickoff=berlinInputToUTCISO(ko); }catch(e){ band("Geçersiz tarih","Yönetim",true); return; }
+  const nextOrd = matches.reduce((mx,m)=>Math.max(mx,m.ord||0),0) + 1;
+  const row = {ord:nextOrd, stage, kickoff, slot_home:"Ev sahibi", slot_away:"Deplasman", team_home:null, team_away:null};
+  try{
+    const {data,error}=await sb.from("cl_matches").insert(row).select();
+    if(error) throw error;
+    if(data && data[0]) matches.push(data[0]);
+    band(`${STAGE_LABEL[stage]} için yeni maç eklendi`,"Yönetim");
+    renderAdmin(); renderMatches(); renderStageFilters();
+    const kk=$("#newMatchKickoff"); if(kk) kk.value="";
+  }catch(e){ band("Eklenemedi: "+((e&&e.message)||e),"Yönetim",true); }
 }
 const ALL_TEAMS = Object.keys(TR).sort((a,b)=>trName(a).localeCompare(trName(b),"tr"));
 function teamOptions(selected, slot){
@@ -3637,6 +3653,11 @@ function renderAdmin(){
   const box=$("#adminList");
   // Tarihe göre sırala
   const ms=[...matches.filter(m=>m.stage===adminStage)].sort((a,b)=>new Date(a.kickoff)-new Date(b.kickoff));
+  if(!ms.length){
+    box.innerHTML=`<div class="empty">${esc(STAGE_LABEL[adminStage])} için henüz maç yok. Yukarıdan "Maç ekle" ile ekleyebilirsin.</div>`;
+    renderChampAdmin();
+    return;
+  }
   box.innerHTML=ms.map(m=>{
     const label=m.grp?`Grup ${m.grp}`:(m.label||STAGE_LABEL[m.stage]);
     const teamset = (m.stage!=="group") ? `
@@ -4206,7 +4227,7 @@ function switchTab(t){
   // mobilde Lider Tablosu sekmesindeyken sağdaki kopya tabloyu gizle
   $("#appScreen").classList.toggle("lb-tab", t==="leaderboard");
   $("#appScreen").classList.toggle("brk-tab", t==="bracket");
-  if(t==="admin"){ renderAdminFilters(); renderAdmin(); }
+  if(t==="admin"){ renderAdminFilters(); renderAdminAddForm(); renderAdmin(); }
   if(t==="leaderboard"){ renderLeaderboardTab(); }
   if(t==="bracket"){ renderBracket(); }
   if(t==="winchance"){ renderWinChance(); }
