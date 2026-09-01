@@ -1395,16 +1395,18 @@ const STAGE_SCORING = {
 const scoringFor = stage => STAGE_SCORING[stage] || STAGE_SCORING.group;
 
 // ===== ŞAMPİYON TAHMİNİ (tek seferlik, kilitli) =====
-// Oranlara göre lineer hizalanmış, 1500'de tavanlanmış getiriler.
-// Getiriler UEFA kulüp katsayı sıralamasına göre orantılı verilmiştir (1500'de tavanlı)
+// Gerçek şampiyonluk oranlarından (bahis sitesi "turnuvayı kazanır" oranları) log-ölçekle
+// 250-1500 puan aralığına haritalanmıştır: PSG (6.00) = 250, Sabah (1000.00) = 1500 (tavan).
 const CHAMPION_POINTS = {
-  "Bayern München":250, "Real Madrid":260, "Paris Saint-Germain":280, "Liverpool":300, "Inter":320,
-  "Manchester City":340, "Arsenal":370, "Barcelona":400, "Atlético Madrid":440, "Borussia Dortmund":480,
-  "Roma":530, "Sporting CP":580, "Aston Villa":630, "Porto":680, "Manchester United":730,
-  "Club Brugge":780, "Real Betis":830, "PSV":880, "Feyenoord":930, "Lille":980,
-  "Bodø/Glimt":1030, "Napoli":1080, "RB Leipzig":1130, "Villarreal":1180, "Fenerbahçe":1230,
-  "Shakhtar Donetsk":1280, "Galatasaray":1330, "Slavia Prague":1380, "Slovan Bratislava":1430, "Stuttgart":1480,
-  "AEK":1500, "LASK":1500, "Como":1500, "Lens":1500, "Viking":1500, "Sabah":1500
+  "Paris Saint-Germain":250, "Arsenal":290, "Barcelona":290, "Bayern München":290, "Real Madrid":300,
+  "Manchester City":370, "Liverpool":440, "Manchester United":560, "Inter":630, "Atlético Madrid":680,
+  "Borussia Dortmund":710, "Roma":710, "Napoli":710, "Aston Villa":710,
+  "Villarreal":770, "Real Betis":770, "RB Leipzig":770, "Stuttgart":850,
+  "Porto":880, "Como":880, "Sporting CP":940,
+  "PSV":980, "Lens":980, "Bodø/Glimt":980,
+  "Fenerbahçe":1040, "Lille":1040, "Feyenoord":1040, "Galatasaray":1040,
+  "Club Brugge":1110, "Slavia Prague":1210, "AEK":1210, "Viking":1210, "Shakhtar Donetsk":1210,
+  "Slovan Bratislava":1330, "LASK":1410, "Sabah":1500
 };
 const CHAMPION_TEAMS = Object.keys(CHAMPION_POINTS)
   .sort((a,b)=> (CHAMPION_POINTS[a]-CHAMPION_POINTS[b]) || (TR[a]||a).localeCompare(TR[b]||b,"tr"));
@@ -1656,16 +1658,28 @@ function _poisP(lambda,k){
   let f=1; for(let i=2;i<=k;i++) f*=i;
   return Math.exp(-lambda)*Math.pow(lambda,k)/f;
 }
-const _SCORE_GRID=(()=>{ const g=[]; for(let h=0;h<=4;h++) for(let a=0;a<=4;a++) if(h+a<=6) g.push([h,a]); return g; })();
+// Gerçek bahis sitelerinin "Doğru Skor" pazarında listelediği standart 28 skor.
+const _SCORE_GRID=[
+  [0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],
+  [1,0],[1,1],[1,2],[1,3],[1,4],[1,5],
+  [2,0],[2,1],[2,2],[2,3],[2,4],
+  [3,0],[3,1],[3,2],[3,3],
+  [4,0],[4,1],[4,2],
+  [5,0],[5,1],
+  [6,0]
+];
+const _ODDS_CAP=130; // gerçek sitelerde de çok düşük ihtimalli skorlar bu civarda tavanlanır
 function autoOddsFor(m){
   if(!m || !m.team_home || !m.team_away) return null;
   const hs=teamStrength(m.team_home), as=teamStrength(m.team_away);
   const ratio=Math.sqrt((hs*1.12)/as); // ev sahibi avantajı ~%12
   const lamH=Math.min(3.2,Math.max(0.5, 1.35*ratio));
   const lamA=Math.min(3.2,Math.max(0.5, 1.35/ratio));
-  const probs=_SCORE_GRID.map(([h,a])=>[`${h}-${a}`, _poisP(lamH,h)*_poisP(lamA,a)]);
-  const top=probs.sort((x,y)=>y[1]-x[1]).slice(0,14);
-  const odds={}; top.forEach(([k,p])=>{ odds[k]=Math.round((1/Math.max(p,1e-6))*100)/100; });
+  const odds={};
+  _SCORE_GRID.forEach(([h,a])=>{
+    const p=_poisP(lamH,h)*_poisP(lamA,a);
+    odds[`${h}-${a}`]=Math.min(_ODDS_CAP, Math.round((1/Math.max(p,1e-6))*100)/100);
+  });
   return odds;
 }
 // Fiilen kullanılacak oran tablosu: admin elle girdiyse o, girmediyse otomatik üretilen.
@@ -3616,17 +3630,97 @@ function renderAdminFilters(){
     adminStage=b.dataset.stage; renderAdminFilters(); renderAdminAddForm(); renderAdmin();
   });
 }
+// Resmi 2026-27 ŞL takvimine göre bilinen tarihler + torba/sıra bilgisiyle hazır fikstür şablonu.
+// Takımlar henüz belli değil (kura/eşleşme sonucu belirlenecek) — slot_home/slot_away bunu açıklar,
+// gerçek takım isimleri admin panelinden (takım dropdown'larından) sonradan atanır.
+function FIXTURE_TEMPLATE(stage){
+  const T=(h,a,leg1,leg2,tag)=>({
+    leg1:{slot_home:h, slot_away:a, kickoff:leg1, label:`Play-off · ${tag} 1. Maç`},
+    leg2:{slot_home:a, slot_away:h, kickoff:leg2, label:`Play-off · ${tag} Rövanş`}
+  });
+  if(stage==="po"){
+    const L1="2027-02-16T21:00", L2="2027-02-23T21:00";
+    const bands=[["9. sırası","10. sırası","23/24. sırası"],["11. sırası","12. sırası","21/22. sırası"],
+                 ["13. sırası","14. sırası","19/20. sırası"],["15. sırası","16. sırası","17/18. sırası"]];
+    const rows=[];
+    bands.forEach(([seedA,seedB,unseeded])=>{
+      [seedA,seedB].forEach((seed,i)=>{
+        const tag=`Lig ${seed} – Lig ${unseeded}`;
+        const {leg1,leg2}=T(`Lig ${unseeded}`, `Lig ${seed}`, L1, L2, tag);
+        rows.push(leg1, leg2);
+      });
+    });
+    return rows;
+  }
+  if(stage==="r16"){
+    const L1="2027-03-09T21:00", L2="2027-03-16T21:00";
+    const groups=[["1","2","15/16/17/18"],["3","4","13/14/19/20"],["5","6","11/12/21/22"],["7","8","9/10/23/24"]];
+    const rows=[];
+    groups.forEach(([seedA,seedB,poGroup])=>{
+      [seedA,seedB].forEach(seed=>{
+        rows.push(
+          {slot_home:`PO galibi (${poGroup} grubu)`, slot_away:`Lig ${seed}. sırası`, kickoff:L1, label:"Son 16 · 1. Maç"},
+          {slot_home:`Lig ${seed}. sırası`, slot_away:`PO galibi (${poGroup} grubu)`, kickoff:L2, label:"Son 16 · Rövanş"}
+        );
+      });
+    });
+    return rows;
+  }
+  if(stage==="qf"){
+    const L1="2027-04-06T21:00", L2="2027-04-13T21:00";
+    const rows=[];
+    for(let i=1;i<=4;i++) rows.push(
+      {slot_home:`Çeyrek Final ${i} - Ev sahibi`, slot_away:`Çeyrek Final ${i} - Deplasman`, kickoff:L1, label:`Çeyrek Final ${i} · 1. Maç`},
+      {slot_home:`Çeyrek Final ${i} - Deplasman`, slot_away:`Çeyrek Final ${i} - Ev sahibi`, kickoff:L2, label:`Çeyrek Final ${i} · Rövanş`}
+    );
+    return rows;
+  }
+  if(stage==="sf"){
+    const L1="2027-04-27T21:00", L2="2027-05-04T21:00";
+    const rows=[];
+    for(let i=1;i<=2;i++) rows.push(
+      {slot_home:`Yarı Final ${i} - Ev sahibi`, slot_away:`Yarı Final ${i} - Deplasman`, kickoff:L1, label:`Yarı Final ${i} · 1. Maç`},
+      {slot_home:`Yarı Final ${i} - Deplasman`, slot_away:`Yarı Final ${i} - Ev sahibi`, kickoff:L2, label:`Yarı Final ${i} · Rövanş`}
+    );
+    return rows;
+  }
+  if(stage==="final"){
+    return [{slot_home:"Final - 1. Takım (nötr saha)", slot_away:"Final - 2. Takım (nötr saha)", kickoff:"2027-06-05T21:00", label:"Final"}];
+  }
+  return [];
+}
 function renderAdminAddForm(){
   const box=$("#adminAddMatch"); if(!box) return;
   if(adminStage==="group"){ box.innerHTML=""; return; } // lig aşaması fikstürü zaten hazır
+  const already = matches.some(m=>m.stage===adminStage);
+  const bootstrapBtn = !already ? `<button class="btn ghost sm" id="bootstrapBtn">📅 ${esc(STAGE_LABEL[adminStage])} fikstürünü resmi tarihlerle otomatik oluştur</button>` : "";
   box.innerHTML=`<div class="admin-add">
-    <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:6px">+ ${esc(STAGE_LABEL[adminStage])} için yeni maç ekle</div>
+    ${bootstrapBtn?`<div style="margin-bottom:10px">${bootstrapBtn}<div style="font-size:11px;color:var(--muted);margin-top:5px">Takımlar henüz belli değil — kura/eşleşme sonucu bu satırlardaki dropdown'lardan atarsın.</div></div>`:""}
+    <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:6px">+ ${esc(STAGE_LABEL[adminStage])} için tek maç ekle</div>
     <div class="admin-add-row">
       <input type="datetime-local" id="newMatchKickoff">
       <button class="btn gold sm" id="newMatchBtn">Maç ekle</button>
     </div>
   </div>`;
   $("#newMatchBtn").onclick=()=>addAdminMatch(adminStage);
+  const bb=$("#bootstrapBtn"); if(bb) bb.onclick=()=>bootstrapStageFixtures(adminStage);
+}
+async function bootstrapStageFixtures(stage){
+  if(matches.some(m=>m.stage===stage)){ band("Bu turda zaten maç var","Yönetim",true); return; }
+  const tpl=FIXTURE_TEMPLATE(stage);
+  if(!tpl.length) return;
+  let nextOrd = matches.reduce((mx,m)=>Math.max(mx,m.ord||0),0) + 1;
+  const rows = tpl.map(t=>({
+    ord: nextOrd++, stage, kickoff: berlinInputToUTCISO(t.kickoff),
+    slot_home:t.slot_home, slot_away:t.slot_away, label:t.label, team_home:null, team_away:null
+  }));
+  try{
+    const {data,error}=await sb.from("cl_matches").insert(rows).select();
+    if(error) throw error;
+    (data||[]).forEach(r=>matches.push(r));
+    band(`${rows.length} maç eklendi (${STAGE_LABEL[stage]})`,"Yönetim");
+    renderAdminAddForm(); renderAdmin(); renderMatches(); renderStageFilters();
+  }catch(e){ band("Eklenemedi: "+((e&&e.message)||e),"Yönetim",true); }
 }
 async function addAdminMatch(stage){
   const ko=$("#newMatchKickoff").value;
