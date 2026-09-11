@@ -27,7 +27,7 @@
   --glass-blur:blur(20px) saturate(150%);
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0}
+html,body{margin:0;padding:0;overflow-x:hidden;max-width:100vw}
 body{
   background:
     radial-gradient(1200px 600px at 80% -10%, rgba(79,143,247,.14), transparent 60%),
@@ -1183,10 +1183,10 @@ nav.tabs button:hover{color:var(--ink)}
 
   <nav class="tabs">
     <button data-tab="matches" class="on">Maçlar</button>
-    <button data-tab="standings">Puan Durumu</button>
     <button data-tab="bracket" style="display:none">Şema</button>
     <button data-tab="how">Nasıl Oynanır</button>
     <button data-tab="leaderboard">Lider Tablosu</button>
+    <button data-tab="standings">CL Puan Durumu</button>
     <button data-tab="winchance" style="display:none">Kazanma %</button>
     <button data-tab="chart">Grafik</button>
     <button data-tab="stats">İstatistikler</button>
@@ -1225,11 +1225,11 @@ nav.tabs button:hover{color:var(--ink)}
 
       <!-- STANDINGS -->
       <section id="tab-standings" class="hidden">
-        <h2 style="margin:0 0 4px">Puan Durumu</h2>
-        <p class="lead" style="font-size:13px;margin:0 0 16px">Lig aşaması güncel sıralaması.</p>
-        <div id="standingsBox"><div class="loading"><div class="spin"></div>Puan durumu yükleniyor…</div></div>
+        <h2 style="margin:0 0 4px">CL Puan Durumu</h2>
+        <p class="lead" style="font-size:13px;margin:0 0 16px">Lig aşaması güncel sıralaması — bu ligdeki girilen maç sonuçlarından hesaplanır.</p>
+        <div id="standingsBox"></div>
         <a class="standings-ext" href="https://www.skysports.com/champions-league-table" target="_blank" rel="noopener">
-          Sky Sports'ta tam ve güncel tabloyu gör ↗
+          Sky Sports'ta resmi tabloyu da gör ↗
         </a>
       </section>
 
@@ -1576,41 +1576,49 @@ async function fetchClubLogo(team){
     if(url) TEAM_LOGO[team] = url + "/preview"; // küçük, hızlı önizleme boyutu
   }catch(e){ /* sessizce yut, bayrak fallback devrede */ }
 }
-// ===== Puan Durumu (best-effort canlı tablo; her koşulda Sky Sports linki de gösterilir) =====
-let _standingsLoaded=false;
-async function renderStandings(){
-  const box=$("#standingsBox"); if(!box) return;
-  if(_standingsLoaded) return; // bir kez çekilsin, sekmeler arası tekrar tekrar denemesin
-  try{
-    const r=await fetch(`https://www.thesportsdb.com/api/v1/json/123/lookuptable.php?l=4480&s=2026-2027`);
-    const j=await r.json();
-    const table=(j&&j.table)||[];
-    if(!table.length){ box.innerHTML=standingsFallbackHTML(); return; }
-    const rows=table.map((t,i)=>{
-      const rank=parseInt(t.intRank,10)||(i+1);
-      const cls = rank<=8 ? "qual" : (rank<=24 ? "po" : "");
-      const name=t.strTeam||"?";
-      const badge=t.strBadge ? `${t.strBadge}/preview` : (TEAM_LOGO[name]||favFlagUrl(name)||"");
-      return `<tr class="${cls}">
-        <td class="num">${rank}</td>
-        <td><div class="st-team">${badge?`<img src="${esc(badge)}" alt="">`:""}<span>${esc(trName(name)||name)}</span></div></td>
-        <td class="num">${t.intPlayed??"-"}</td>
-        <td class="num">${t.intWin??"-"}</td>
-        <td class="num">${t.intDraw??"-"}</td>
-        <td class="num">${t.intLoss??"-"}</td>
-        <td class="num">${t.intGoalDifference??"-"}</td>
-        <td class="num st-pts">${t.intPoints??"-"}</td>
-      </tr>`;
-    }).join("");
-    box.innerHTML=`<div style="overflow-x:auto"><table class="standings-table">
-      <thead><tr><th class="num">#</th><th>Takım</th><th class="num">O</th><th class="num">G</th><th class="num">B</th><th class="num">M</th><th class="num">AV</th><th class="num">P</th></tr></thead>
-      <tbody>${rows}</tbody></table></div>
-      <div class="standings-legend"><span><i class="qual"></i>İlk 8 — doğrudan Son 16</span><span><i class="po"></i>9-24 — Play-off</span></div>`;
-    _standingsLoaded=true;
-  }catch(e){ box.innerHTML=standingsFallbackHTML(); }
+// ===== CL Puan Durumu — uygulamanın kendi lig aşaması verisinden hesaplanır (dış kaynağa bağımlı değil) =====
+function computeStandings(){
+  const table={};
+  Object.keys(CHAMPION_POINTS).forEach(t=>{
+    table[t]={team:t,pld:0,w:0,d:0,l:0,gf:0,ga:0,gd:0,pts:0};
+  });
+  matches.filter(m=>m.stage==="group" && m.finished && m.team_home && m.team_away && m.home_score!=null && m.away_score!=null)
+    .forEach(m=>{
+      const h=table[m.team_home], a=table[m.team_away];
+      if(!h||!a) return;
+      const hs=m.home_score, as=m.away_score;
+      h.pld++; a.pld++; h.gf+=hs; h.ga+=as; a.gf+=as; a.ga+=hs;
+      if(hs>as){ h.w++; h.pts+=3; a.l++; }
+      else if(hs<as){ a.w++; a.pts+=3; h.l++; }
+      else { h.d++; a.d++; h.pts++; a.pts++; }
+    });
+  const rows=Object.values(table);
+  rows.forEach(r=>r.gd=r.gf-r.ga);
+  rows.sort((x,y)=> y.pts-x.pts || y.gd-x.gd || y.gf-x.gf || trName(x.team).localeCompare(trName(y.team),"tr"));
+  return rows;
 }
-function standingsFallbackHTML(){
-  return `<div class="empty">Canlı puan durumu şu an alınamadı.<br><small style="opacity:.7">Aşağıdaki bağlantıdan güncel tabloya bakabilirsin.</small></div>`;
+function renderStandings(){
+  const box=$("#standingsBox"); if(!box) return;
+  const rows=computeStandings();
+  const trs=rows.map((r,i)=>{
+    const rank=i+1;
+    const cls = rank<=8 ? "qual" : (rank<=24 ? "po" : "");
+    const badge=TEAM_LOGO[r.team]||favFlagUrl(r.team)||"";
+    return `<tr class="${cls}">
+      <td class="num">${rank}</td>
+      <td><div class="st-team">${badge?`<img src="${esc(badge)}" alt="">`:""}<span>${esc(trName(r.team))}</span></div></td>
+      <td class="num">${r.pld}</td>
+      <td class="num">${r.w}</td>
+      <td class="num">${r.d}</td>
+      <td class="num">${r.l}</td>
+      <td class="num">${r.gd>0?'+':''}${r.gd}</td>
+      <td class="num st-pts">${r.pts}</td>
+    </tr>`;
+  }).join("");
+  box.innerHTML=`<div style="overflow-x:auto"><table class="standings-table">
+    <thead><tr><th class="num">#</th><th>Takım</th><th class="num">O</th><th class="num">G</th><th class="num">B</th><th class="num">M</th><th class="num">AV</th><th class="num">P</th></tr></thead>
+    <tbody>${trs}</tbody></table></div>
+    <div class="standings-legend"><span><i class="qual"></i>İlk 8 — doğrudan Son 16</span><span><i class="po"></i>9-24 — Play-off</span></div>`;
 }
 async function loadCompetitionLogo(){
   try{
