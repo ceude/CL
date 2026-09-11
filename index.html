@@ -208,6 +208,25 @@ img,svg,table,video,canvas{max-width:100%}
 .yp.outc{background:var(--outcdim);color:var(--outc)}
 .yp.bad{background:var(--baddim);color:var(--bad)}
 .yp.wait{background:#1b2620;color:var(--muted)}
+/* Mobil: flex/grid'in "otomatik küçülsün" hesabına güvenmek yerine SABİT üst sınırlar —
+   tarayıcı hesaplamasından bağımsız, garanti taşmaz. */
+@media(max-width:480px){
+  .match{padding:12px 10px}
+  .mrow{gap:6px}
+  .team{gap:5px}
+  .team .fl{width:26px;height:26px}
+  .team .nm{max-width:76px;font-size:13px}
+  .scorebox{gap:4px}
+  .si{width:36px;height:42px;font-size:19px}
+  .dash{font-size:16px}
+  .actual{min-width:50px}
+  .actual .sc{font-size:22px;letter-spacing:1px}
+  .actual .lab{font-size:9px}
+}
+@media(max-width:360px){
+  .team .nm{max-width:60px;font-size:12px}
+  .si{width:32px;height:40px;font-size:17px}
+}
 .yourpred{font-weight:700;color:#bcd3c4}
 .placeholder-slot{color:#6c8a7c;font-style:italic;font-weight:600}
 .seeall{display:block;width:100%;margin-top:10px;background:#0e1f16;border:1px solid var(--line2);border-radius:10px;
