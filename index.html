@@ -135,6 +135,8 @@ nav.tabs button:hover{color:var(--ink)}
 
 /* ===== LAYOUT ===== */
 .wrap{max-width:1180px;margin:18px auto 90px;padding:0 20px;display:grid;grid-template-columns:1fr 348px;gap:22px;align-items:start}
+.wrap>*{min-width:0}
+img,svg,table,video,canvas{max-width:100%}
 @media(max-width:900px){.wrap{grid-template-columns:1fr}}
 .col-right{position:sticky;top:46px}
 @media(max-width:900px){.col-right{position:static}}
@@ -875,7 +877,7 @@ nav.tabs button:hover{color:var(--ink)}
 .standings-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
 .standings-table th{text-align:left;color:var(--gold2);font-weight:700;font-size:11px;text-transform:uppercase;
   letter-spacing:.3px;padding:8px 8px;border-bottom:1px solid var(--line2);
-  position:sticky;top:46px;z-index:2;background:var(--panel)}
+  background:var(--panel)}
 .standings-table th.num,.standings-table td.num{text-align:center}
 .standings-table td{padding:9px 8px;border-bottom:1px solid var(--line);color:var(--ink)}
 .standings-table tr:last-child td{border-bottom:none}
@@ -4502,6 +4504,7 @@ function renderBracket(){
 }
 
 function switchTab(t){
+  window.scrollTo(0,0);
   document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
   show($("#tab-matches"),t==="matches");
   show($("#tab-standings"),t==="standings");
