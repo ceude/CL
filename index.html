@@ -1245,7 +1245,7 @@ nav.tabs button:hover{color:var(--ink)}
         <ul>
           <li>Turnuvanın şampiyonunu tahmin edersin — <b style="color:var(--ink)">1 Kasım 2026 20:00'a kadar</b> istediğin kadar değiştirebilirsin, o saatte tahminin kilitlenir.</li>
           <li>Her takımın getirisi farklıdır: favoriler düşük, sürpriz adaylar yüksek puan getirir. Tuttuğun takım şampiyon olursa o puanı kazanırsın.</li>
-          <li>Kimin hangi takımı seçtiği, liderlik tablosunda gösterilir.</li>
+          <li>Kimin hangi takımı seçtiği, turnuva bitene kadar kimseye gösterilmez.</li>
         </ul>
 
         <h2>Kurallar</h2>
@@ -2781,7 +2781,8 @@ function renderLeaderboard(){
   box.querySelectorAll(".lbrow").forEach(el=>el.onclick=()=>openProfile(el.dataset.uid));
 }
 function openProfile(uid, opts){
-  const showPrivate = !!(opts && opts.private); // sadece sağ üstteki profil butonundan true
+  const isSelf = uid===session.user.id;
+  const showPrivate = isSelf; // kendi profilin — nereden açılırsa açılsın aynı (Değiştir vb. hep görünür)
   const prof=profiles.find(p=>p.id===uid); if(!prof) return;
   const t=userTotals(uid);
   const byMatch={}; predsAll.forEach(p=>{ if(p.user_id===uid) byMatch[p.match_id]=p; });
@@ -2802,10 +2803,8 @@ function openProfile(uid, opts){
     </div>`;
   }).join("");
 
-  // Şampiyon tahmini: kendi profilinde SADECE sağ üstteki profil butonundan açınca (showPrivate);
-  // lider tablosundan tıklayınca gösterilmez (arkadaşlara sonuç gösterirken sızmasın).
-  // Başkasınınki SADECE turnuva bitince (kazanan ilan edilince).
-  const isSelf = uid===session.user.id;
+  // Şampiyon tahmini: kendi profilinde her zaman görünür (Değiştir dahil) — nereden açıldığına bakılmaz.
+  // Başkasınınki SADECE turnuva bitince (kazanan ilan edilince) görünür.
   const champWinner = appConfig.champion_winner;
   let champBlock="";
   const champEditable = isSelf && showPrivate && championOpen();
