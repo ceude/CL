@@ -871,6 +871,27 @@ nav.tabs button:hover{color:var(--ink)}
 
 /* ===== HOW TO PLAY ===== */
 .howto{max-width:760px}
+/* ===== PUAN DURUMU ===== */
+.standings-table{width:100%;border-collapse:collapse;font-size:13px}
+.standings-table th{text-align:left;color:var(--muted);font-weight:700;font-size:11px;text-transform:uppercase;
+  letter-spacing:.3px;padding:8px 8px;border-bottom:1px solid var(--line2)}
+.standings-table th.num,.standings-table td.num{text-align:center}
+.standings-table td{padding:9px 8px;border-bottom:1px solid var(--line);color:var(--ink)}
+.standings-table tr:last-child td{border-bottom:none}
+.standings-table tr.qual td:first-child{box-shadow:inset 3px 0 0 var(--ok)}
+.standings-table tr.po td:first-child{box-shadow:inset 3px 0 0 var(--gold)}
+.standings-table .st-team{display:flex;align-items:center;gap:9px;font-weight:700}
+.standings-table .st-team img{width:22px;height:22px;object-fit:contain;border-radius:50%;background:rgba(255,255,255,.06);flex:0 0 auto}
+.standings-table .st-pts{font-weight:800;color:var(--gold2)}
+.standings-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--muted)}
+.standings-legend span{display:inline-flex;align-items:center;gap:5px}
+.standings-legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.standings-legend i.qual{background:var(--ok)}
+.standings-legend i.po{background:var(--gold)}
+.standings-ext{display:block;text-align:center;margin-top:16px;padding:13px;border-radius:var(--r-md);
+  background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border);color:var(--gold2);font-weight:700;font-size:13px;text-decoration:none}
+.standings-ext:hover{border-color:var(--gold)}
 .howto .lead{font-size:15px;line-height:1.6;color:#cbe0d2}
 .howto h2{font-size:22px;margin:26px 0 12px}
 .bigscore{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
@@ -914,7 +935,7 @@ nav.tabs button:hover{color:var(--ink)}
 .odds-table tr.other td{background:#231a0e;color:#ffd84d;border-top:2px solid rgba(255,216,77,.4)}
 .odds-table tr.other td b{color:#ffe27a}
 .odds-textarea{width:100%;min-height:200px;resize:vertical;background:#0c1611;border:1px solid var(--line2);
-  border-radius:10px;color:#eaf3ee;font:13px/1.5 monospace;padding:10px;box-sizing:border-box}
+  border-radius:10px;color:#eaf3ee;font:16px/1.5 monospace;padding:10px;box-sizing:border-box}
 .pop-btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--ink)}
 /* Şema (bracket) */
 .brk-hint{font-size:13px;color:var(--muted);margin:0 0 10px;font-weight:600}
@@ -987,17 +1008,17 @@ nav.tabs button:hover{color:var(--ink)}
 .admin .arow-scores button{justify-self:end}
 .admin .arow input{width:100%;height:38px;text-align:center;background:#06100c;border:1px solid var(--line2);
   color:var(--ink);border-radius:10px;font-family:'Anton';font-size:18px}
-.admin .arow .tin{font-family:inherit;font-size:13px;text-align:left;padding:0 8px;height:34px}
+.admin .arow .tin{font-family:inherit;font-size:16px;text-align:left;padding:0 8px;height:34px}
 .admin .teamset{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}
 .admin .tsel{height:38px;background:#06100c;border:1px solid var(--line2);color:var(--ink);
-  border-radius:10px;font-family:inherit;font-size:13px;padding:0 8px;width:100%}
+  border-radius:10px;font-family:inherit;font-size:16px;padding:0 8px;width:100%}
 .admin .tsel option{background:#0c1d15;color:var(--ink)}
 .admin .kickoffset{margin-bottom:6px}
 .admin-add{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:10px 12px;margin-bottom:12px}
 .admin-add-row{display:flex;gap:8px;align-items:center}
 .admin-add-row input{flex:1;height:38px;background:#06100c;border:1px solid var(--line2);color:var(--ink);border-radius:10px;padding:0 8px}
 .admin .kickoffset input{width:100%;height:34px;background:#06100c;border:1px solid var(--line2);
-  color:var(--ink);border-radius:10px;font-family:inherit;font-size:13px;padding:0 8px}
+  color:var(--ink);border-radius:10px;font-family:inherit;font-size:16px;padding:0 8px}
 .admin .kickoffset input::-webkit-calendar-picker-indicator{filter:invert(1);cursor:pointer}
 
 /* ===== LOGIN ===== */
@@ -1013,7 +1034,7 @@ nav.tabs button:hover{color:var(--ink)}
 .field{margin-bottom:13px}
 .field label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.4px}
 .field input{width:100%;height:46px;background:#06100c;border:1px solid var(--line2);color:var(--ink);
-  border-radius:14px;padding:0 14px;font-size:15px;outline:none}
+  border-radius:14px;padding:0 14px;font-size:16px;outline:none}
 .field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,197,66,.16)}
 .authbtn{width:100%;height:48px;border:none;border-radius:14px;font-weight:800;font-size:15px;
   background:linear-gradient(160deg,var(--gold),#d9a91f);color:#241400;margin-top:6px}
@@ -1162,6 +1183,7 @@ nav.tabs button:hover{color:var(--ink)}
 
   <nav class="tabs">
     <button data-tab="matches" class="on">Maçlar</button>
+    <button data-tab="standings">Puan Durumu</button>
     <button data-tab="bracket" style="display:none">Şema</button>
     <button data-tab="how">Nasıl Oynanır</button>
     <button data-tab="leaderboard">Lider Tablosu</button>
@@ -1199,6 +1221,16 @@ nav.tabs button:hover{color:var(--ink)}
           </div>
         </div>
         <div id="matchList"><div class="loading"><div class="spin"></div>Maçlar yükleniyor…</div></div>
+      </section>
+
+      <!-- STANDINGS -->
+      <section id="tab-standings" class="hidden">
+        <h2 style="margin:0 0 4px">Puan Durumu</h2>
+        <p class="lead" style="font-size:13px;margin:0 0 16px">Lig aşaması güncel sıralaması.</p>
+        <div id="standingsBox"><div class="loading"><div class="spin"></div>Puan durumu yükleniyor…</div></div>
+        <a class="standings-ext" href="https://www.skysports.com/champions-league-table" target="_blank" rel="noopener">
+          Sky Sports'ta tam ve güncel tabloyu gör ↗
+        </a>
       </section>
 
       <!-- BRACKET -->
@@ -1544,7 +1576,42 @@ async function fetchClubLogo(team){
     if(url) TEAM_LOGO[team] = url + "/preview"; // küçük, hızlı önizleme boyutu
   }catch(e){ /* sessizce yut, bayrak fallback devrede */ }
 }
-// ===== ŞL "yıldız topu" logosu (garip SVG rozet yerine gerçek logo; Wikipedia pageimages'ten) =====
+// ===== Puan Durumu (best-effort canlı tablo; her koşulda Sky Sports linki de gösterilir) =====
+let _standingsLoaded=false;
+async function renderStandings(){
+  const box=$("#standingsBox"); if(!box) return;
+  if(_standingsLoaded) return; // bir kez çekilsin, sekmeler arası tekrar tekrar denemesin
+  try{
+    const r=await fetch(`https://www.thesportsdb.com/api/v1/json/123/lookuptable.php?l=4480&s=2026-2027`);
+    const j=await r.json();
+    const table=(j&&j.table)||[];
+    if(!table.length){ box.innerHTML=standingsFallbackHTML(); return; }
+    const rows=table.map((t,i)=>{
+      const rank=parseInt(t.intRank,10)||(i+1);
+      const cls = rank<=8 ? "qual" : (rank<=24 ? "po" : "");
+      const name=t.strTeam||"?";
+      const badge=t.strBadge ? `${t.strBadge}/preview` : (TEAM_LOGO[name]||favFlagUrl(name)||"");
+      return `<tr class="${cls}">
+        <td class="num">${rank}</td>
+        <td><div class="st-team">${badge?`<img src="${esc(badge)}" alt="">`:""}<span>${esc(trName(name)||name)}</span></div></td>
+        <td class="num">${t.intPlayed??"-"}</td>
+        <td class="num">${t.intWin??"-"}</td>
+        <td class="num">${t.intDraw??"-"}</td>
+        <td class="num">${t.intLoss??"-"}</td>
+        <td class="num">${t.intGoalDifference??"-"}</td>
+        <td class="num st-pts">${t.intPoints??"-"}</td>
+      </tr>`;
+    }).join("");
+    box.innerHTML=`<div style="overflow-x:auto"><table class="standings-table">
+      <thead><tr><th class="num">#</th><th>Takım</th><th class="num">O</th><th class="num">G</th><th class="num">B</th><th class="num">M</th><th class="num">AV</th><th class="num">P</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>
+      <div class="standings-legend"><span><i class="qual"></i>İlk 8 — doğrudan Son 16</span><span><i class="po"></i>9-24 — Play-off</span></div>`;
+    _standingsLoaded=true;
+  }catch(e){ box.innerHTML=standingsFallbackHTML(); }
+}
+function standingsFallbackHTML(){
+  return `<div class="empty">Canlı puan durumu şu an alınamadı.<br><small style="opacity:.7">Aşağıdaki bağlantıdan güncel tabloya bakabilirsin.</small></div>`;
+}
 async function loadCompetitionLogo(){
   try{
     const r = await fetch(`https://www.thesportsdb.com/api/v1/json/123/lookupleague.php?id=4480`); // UEFA Champions League
@@ -4387,6 +4454,7 @@ function renderBracket(){
 function switchTab(t){
   document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
   show($("#tab-matches"),t==="matches");
+  show($("#tab-standings"),t==="standings");
   show($("#tab-bracket"),t==="bracket");
   show($("#tab-how"),t==="how");
   show($("#tab-leaderboard"),t==="leaderboard");
@@ -4397,6 +4465,7 @@ function switchTab(t){
   // mobilde Lider Tablosu sekmesindeyken sağdaki kopya tabloyu gizle
   $("#appScreen").classList.toggle("lb-tab", t==="leaderboard");
   $("#appScreen").classList.toggle("brk-tab", t==="bracket");
+  if(t==="standings"){ renderStandings(); }
   if(t==="admin"){ renderAdminFilters(); renderAdminAddForm(); renderAdmin(); }
   if(t==="leaderboard"){ renderLeaderboardTab(); }
   if(t==="bracket"){ renderBracket(); }
