@@ -517,6 +517,23 @@ img,svg,table,video,canvas{max-width:100%}
   .bp-card.pop,.bp-ic,.bp-multi span,.bp-spark i{animation:none!important}
   .bp-spark{display:none}
 }
+/* ===== Toplu sonuç yükleme (yönetim) ===== */
+.res-admin{background:var(--panel);border:1px solid var(--line2);border-radius:var(--r-md);padding:14px;margin-bottom:14px}
+.ra-h{font-size:15px;margin:0 0 6px;color:var(--gold2)}
+.ra-p{font-size:11px;color:var(--muted);line-height:1.5;margin:0 0 9px}
+.ra-p b{color:var(--ink)}
+.ra-stat{font-size:13px;font-weight:700;color:var(--ink);background:var(--bg2);border:1px solid var(--line2);
+  border-radius:10px;padding:8px 11px;margin-bottom:9px}
+.ra-ta{width:100%;box-sizing:border-box;resize:vertical;background:#06100c;border:1px solid var(--line2);
+  border-radius:10px;color:var(--ink);font:16px/1.5 monospace;padding:10px}
+.ra-prev:empty{display:none}
+.ra-prev{margin-top:9px;font-size:13px}
+.ra-ok{color:var(--ok);font-weight:800;margin-bottom:5px}
+.ra-err{color:var(--bad);font-size:11px;line-height:1.5;margin-bottom:5px}
+.ra-list{color:var(--muted);font-size:11px;line-height:1.7}
+.ra-list b{color:var(--gold2)}
+.ra-btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.tc-row.tc-ref{opacity:.82}
 .stats-h{font-size:22px;margin:4px 2px 4px}
 .stats-sub{font-size:13px;color:var(--muted);font-weight:600;margin:0 2px 16px}
 .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
@@ -1401,7 +1418,7 @@ img,svg,table,video,canvas{max-width:100%}
           <li><b style="color:var(--ink)">Listede olmayan skor</b> (hiç beklenmeyen çok sıra dışı bir skor) tutarsa: <b style="color:var(--ink)">350</b> bonus (<b style="color:var(--ink)">finalde 450</b>) — en yüksek ödül.</li>
           <li>Yani en garantisi sonucu bilmek; ama cesur ve doğru bir sürpriz skor, tek maçta büyük fark yaratabilir. Güçlü bir favori zayıf bir rakibe karşı sürpriz bir skorla yenilirse (ya da tam tersi), o skorun bonusu daha yüksek olur.</li>
         </ul>
-        <div class="note">💡 Her maç kartında <b>"⚡ Skor Puanları"</b> butonu var — o maçtaki her skorun kaç puan getireceğini tabloda görürsün. Ayrıca skoru yazdığın an, kutuların altında <b>"Bu skor için: 30 + 110 = 140 puan"</b> gibi anında hesap çıkar.</div>
+        <div class="note">💡 Her maç kartında <b>"📊 Skor puanları"</b> butonu var — o maçtaki her skorun kaç puan getireceğini tabloda görürsün. Ayrıca skoru yazdığın an, kutuların altında <b>"Bu skor için: 30 + 110 = 140 puan"</b> gibi anında hesap çıkar.</div>
 
         <h2>Şampiyon Tahmini</h2>
         <ul>
@@ -1448,6 +1465,7 @@ img,svg,table,video,canvas{max-width:100%}
           Play-off ve sonrası için henüz maç yoksa aşağıdan <b style="color:var(--gold2)">yeni maç ekle</b>.</p>
         <div class="filters" id="adminStageFilters"></div>
         <div id="adminAddMatch"></div>
+        <div class="res-admin" id="resAdmin"></div>
         <div id="adminList"></div>
         <div class="champ-admin" id="champAdmin"></div>
         <div class="prize-admin" id="prizeAdmin"></div>
@@ -1699,8 +1717,22 @@ async function fetchClubLogo(team){
 // (Uygulamaya sadece FB/GS maçları girildiği için kendi verimizden hesaplamak anlamsız —
 // Wikipedia'nın ilgili sayfası tüm 36 takım için güncel tutuluyor.)
 const WIKI_TR_NAME_FIX = {
-  "Şahtar":"Shakhtar Donetsk", "Internazionale":"Inter", "Sporting":"Sporting CP", "Slavia Praha":"Slavia Prague"
+  "Şahtar":"Shakhtar Donetsk", "Internazionale":"Inter", "Sporting":"Sporting CP", "Slavia Praha":"Slavia Prague",
+  "Bayern Münih":"Bayern München", "Man City":"Manchester City", "Man United":"Manchester United",
+  "Atletico Madrid":"Atlético Madrid", "Bodo/Glimt":"Bodø/Glimt", "AEK Atina":"AEK", "LASK Linz":"LASK",
+  "Sabah FK":"Sabah", "Dortmund":"Borussia Dortmund", "PSG":"Paris Saint-Germain"
 };
+// Yapıştırılan listedeki ülke adları (takım adının önünde ya da arkasında geliyor)
+const TR_COUNTRIES = ["Yunanistan","Avusturya","Belçika","İngiltere","Almanya","İspanya","Portekiz","Fransa",
+  "İtalya","Hollanda","Norveç","Slovakya","Türkiye","Ukrayna","Çekya","Azerbaycan","Danimarka","İsviçre","Kıbrıs"];
+function stripCountry(s){
+  let t=(s||"").trim();
+  TR_COUNTRIES.forEach(c=>{
+    if(t.startsWith(c+" ")) t=t.slice(c.length+1);
+    if(t.endsWith(" "+c)) t=t.slice(0,-(c.length+1));
+  });
+  return t.trim();
+}
 function normalizeWikiTeamName(raw){
   const s=(raw||"").trim();
   if(WIKI_TR_NAME_FIX[s]) return WIKI_TR_NAME_FIX[s];
@@ -1709,7 +1741,63 @@ function normalizeWikiTeamName(raw){
   const norm=x=>x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
   const target=norm(s);
   const hit=Object.keys(CHAMPION_POINTS).find(k=>norm(k)===target);
-  return hit||null;
+  if(hit) return hit;
+  const alias=Object.keys(WIKI_TR_NAME_FIX).find(k=>norm(k)===target);
+  return alias ? WIKI_TR_NAME_FIX[alias] : null;
+}
+/* ====================================================================
+   TÜM LİG SONUÇLARI (referans) — tahmin için değil, takım karnesi ve
+   puan durumu için. cl_results tablosundan gelir.
+   ==================================================================== */
+let results=[];
+async function loadResults(){
+  try{
+    const {data,error}=await sb.from("cl_results").select("*").order("md").order("kickoff");
+    if(error) throw error;
+    results=data||[];
+  }catch(e){ results=[]; }   // tablo yoksa sessizce boş
+}
+// Yapıştırılan Wikipedia fikstürünü ayrıştır.
+// Beklenen satır: "AEK Yunanistan <TAB> 1-0 <TAB> Avusturya LASK"
+// "1. Maçlar" başlıkları hafta numarasını belirler; skor yerine tarih varsa (henüz oynanmadı) atlanır.
+function parseResultsText(txt){
+  const out=[], errs=[]; let md=0;
+  (txt||"").split(/\r?\n/).forEach((raw,idx)=>{
+    const line=raw.trim();
+    if(!line) return;
+    const mdm=line.match(/^(\d+)\s*\.\s*Maçlar/i);
+    if(mdm){ md=parseInt(mdm[1],10); return; }
+    if(/^1\.\s*Takım/i.test(line)) return;            // tablo başlığı
+    const cols=line.split(/\t+| {2,}/).map(c=>c.trim()).filter(Boolean);
+    if(cols.length<3) return;
+    const scoreM=cols[1].match(/^(\d+)\s*[-–]\s*(\d+)$/);
+    if(!scoreM) return;                                // tarih yazıyorsa maç oynanmamış
+    const h=normalizeWikiTeamName(stripCountry(cols[0]));
+    const a=normalizeWikiTeamName(stripCountry(cols[2]));
+    if(!h||!a){ errs.push(`${idx+1}. satır: takım tanınmadı → "${cols[0]}" / "${cols[2]}"`); return; }
+    out.push({md:md||null, team_home:h, team_away:a,
+              home_score:parseInt(scoreM[1],10), away_score:parseInt(scoreM[2],10)});
+  });
+  return {rows:out, errs};
+}
+// Yüklenen tüm sonuçlardan puan durumu hesapla (Wikipedia'ya gerek kalmadan)
+function standingsFromResults(){
+  if(!results.length) return null;
+  const t={};
+  Object.keys(CHAMPION_POINTS).forEach(k=>t[k]={team:k,pld:0,w:0,d:0,l:0,gf:0,ga:0,gd:0,pts:0});
+  results.forEach(r=>{
+    const h=t[r.team_home], a=t[r.team_away];
+    if(!h||!a||r.home_score==null||r.away_score==null) return;
+    h.pld++; a.pld++; h.gf+=r.home_score; h.ga+=r.away_score; a.gf+=r.away_score; a.ga+=r.home_score;
+    if(r.home_score>r.away_score){ h.w++; h.pts+=3; a.l++; }
+    else if(r.home_score<r.away_score){ a.w++; a.pts+=3; h.l++; }
+    else { h.d++; a.d++; h.pts++; a.pts++; }
+  });
+  const rows=Object.values(t);
+  rows.forEach(r=>r.gd=r.gf-r.ga);
+  rows.sort((x,y)=> y.pts-x.pts || y.gd-x.gd || y.gf-x.gf || trName(x.team).localeCompare(trName(y.team),"tr"));
+  rows.forEach((r,i)=>{ r.rank=i+1; r.teamRaw=trName(r.team); });
+  return rows;
 }
 let _standingsCache=null;
 async function fetchWikiStandings(){
@@ -1746,6 +1834,10 @@ async function fetchWikiStandings(){
 }
 function renderStandings(){
   const box=$("#standingsBox"); if(!box) return;
+  // 1) Yönetim panelinden tüm sonuçlar yüklendiyse tabloyu buradan hesapla (en güvenilir)
+  const local=standingsFromResults();
+  if(local){ paintStandings(box, local, true); return; }
+  // 2) Değilse Wikipedia'dan çek
   if(_standingsCache){ paintStandings(box,_standingsCache); return; }
   box.innerHTML=`<div class="loading"><div class="spin"></div>Puan durumu Wikipedia'dan çekiliyor…</div>`;
   fetchWikiStandings().then(rows=>{
@@ -1754,7 +1846,7 @@ function renderStandings(){
     paintStandings(box,rows);
   }).catch(()=>{ box.innerHTML=standingsFallbackHTML(); });
 }
-function paintStandings(box, rows){
+function paintStandings(box, rows, local){
   const trs=rows.map(r=>{
     const cls = r.rank<=8 ? "qual" : (r.rank<=24 ? "po" : "");
     const badge=(CHAMPION_POINTS[r.team]!=null) ? (TEAM_LOGO[r.team]||favFlagUrl(r.team)||"") : "";
@@ -1774,7 +1866,9 @@ function paintStandings(box, rows){
     <thead><tr><th class="num">#</th><th>Takım</th><th class="num">O</th><th class="num">G</th><th class="num">B</th><th class="num">M</th><th class="num">AV</th><th class="num">P</th></tr></thead>
     <tbody>${trs}</tbody></table></div>
     <div class="standings-legend"><span><i class="qual"></i>İlk 8 — doğrudan Son 16</span><span><i class="po"></i>9-24 — Play-off</span></div>
-    <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--muted)">Kaynak: <a href="https://tr.wikipedia.org/wiki/2026-27_UEFA_%C5%9Eampiyonlar_Ligi" target="_blank" rel="noopener" style="color:var(--gold2)">Wikipedia (tr.wikipedia.org)</a></div>`;
+    <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--muted)">${local
+      ? "Yönetim panelinden yüklenen maç sonuçlarından hesaplandı"
+      : `Kaynak: <a href="https://tr.wikipedia.org/wiki/2026-27_UEFA_%C5%9Eampiyonlar_Ligi" target="_blank" rel="noopener" style="color:var(--gold2)">Wikipedia (tr.wikipedia.org)</a>`}</div>`;
 }
 function standingsFallbackHTML(){
   return `<div class="empty">Puan durumu şu an alınamadı.<br><small style="opacity:.7">Aşağıdaki bağlantıdan Sky Sports'a bakabilirsin.</small></div>`;
@@ -2095,6 +2189,7 @@ async function loadAll(){
   predCounts[session.user.id]=Object.keys(predsMine).length; // kendi sayım her zaman kesin doğru
   appConfig={}; if(!cfgq.error) (cfgq.data||[]).forEach(r=>appConfig[r.key]=r.value);
   await loadComments();
+  await loadResults();
 }
 
 /* ====================================================================
@@ -2170,7 +2265,7 @@ function matchCard(m){
   const seeAll = (fin||inplay)
     ? `<button class="mact-b seeall" data-allpreds="${m.id}">👁 Tahminler</button>`
     : `<button class="mact-b seeall" disabled title="Başkalarının tahminleri maç başladıktan sonra gösterilir">👁 Tahminler</button>`;
-  const oddsInfo = (DYNAMIC_STAGES.has(m.stage)&&effectiveOdds(m)) ? `<button class="mact-b odds-info" data-odds="${m.id}" title="Bu maç için skor puanları">⚡ Skor Puanları</button>` : "";
+  const oddsInfo = (DYNAMIC_STAGES.has(m.stage)&&effectiveOdds(m)) ? `<button class="mact-b odds-info" data-odds="${m.id}" title="Bu maç için skor puanları">📊 Skor puanları</button>` : "";
   const cCount = (comments[m.id]||[]).length;
   const cmt = `<button class="mact-b cmt-toggle" data-cmt="${m.id}">💬 Yorumlar${cCount?` (${cCount})`:""}</button>`;
   return `<div class="match ${cls}">
@@ -2874,11 +2969,24 @@ function openProfile(uid, opts){
 // Takım karnesi: turnuva boyunca sonuçlar + maç listesi
 function openTeamCard(team){
   if(!team) return;
-  const played = matches.filter(m=> (m.team_home===team||m.team_away===team)
+  // 1) Tahmin oynanan maçlar (kendi puanım gösterilir)
+  const mine = matches.filter(m=> (m.team_home===team||m.team_away===team)
       && m.home_score!=null && m.away_score!=null)
-    .sort((a,b)=> new Date(a.kickoff)-new Date(b.kickoff));
+    .map(m=>({m, ref:false}));
+  // 2) Yönetimden yüklenen tüm lig sonuçları (tahmin yok, sadece referans).
+  //    Aynı eşleşme zaten yukarıda varsa tekrar eklenmez.
+  const has=(h,a)=>mine.some(x=>x.m.team_home===h && x.m.team_away===a);
+  const ref = results.filter(r=> (r.team_home===team||r.team_away===team)
+      && r.home_score!=null && r.away_score!=null && !has(r.team_home,r.team_away))
+    .map(r=>({m:{...r, stage:"group", kickoff:r.kickoff||null,
+                 label:r.md?`Lig Aşaması · ${r.md}. Hafta`:"Lig Aşaması"}, ref:true}));
+  const played = mine.concat(ref).sort((a,b)=>{
+    const ta=a.m.kickoff?new Date(a.m.kickoff).getTime():(a.m.md||0);
+    const tb=b.m.kickoff?new Date(b.m.kickoff).getTime():(b.m.md||0);
+    return ta-tb;
+  });
   let w=0,d=0,l=0,gf=0,ga=0;
-  const rows = played.map(m=>{
+  const rows = played.map(({m,ref:isRef})=>{
     const home = m.team_home===team;
     const own = home?m.home_score:m.away_score;
     const opp = home?m.away_score:m.home_score;
@@ -2888,22 +2996,23 @@ function openTeamCard(team){
     if(own>opp){ w++; res="G"; cls="tc-w"; }
     else if(own===opp){ d++; res="B"; cls="tc-d"; }
     else { l++; res="M"; cls="tc-l"; }
-    const live = isInPlay(m) ? `<span class="tc-live"><span class="livedot"></span></span>` : "";
+    const live = (!isRef && isInPlay(m)) ? `<span class="tc-live"><span class="livedot"></span></span>` : "";
     const stageTxt = m.grp?`Grup ${m.grp}`:(m.label||STAGE_LABEL[m.stage]);
     const ofl=flagUrl(other);
-    // Kendi puanım (CUTOFF sonrası maçlar puanlanır)
-    const scored = new Date(m.kickoff)>=CUTOFF;
+    // Kendi puanım (CUTOFF sonrası, tahmin oynanan maçlarda)
+    const scored = !isRef && m.kickoff && new Date(m.kickoff)>=CUTOFF;
     const g = scored ? grade(predsMine[m.id]||null, m) : null;
     const myPts = g ? `<span class="tc-pts ${g.type}">${g.pts>0?"+":""}${g.pts}${isInPlay(m)?"*":""}</span>` : "";
-    return `<div class="tc-row ${cls}">
+    const when = m.kickoff ? fmtKick(m.kickoff) : (m.md?`${m.md}. hafta`:"");
+    return `<div class="tc-row ${cls}${isRef?" tc-ref":""}">
       <span class="tc-res">${res}</span>
       <div class="tc-mid">
         <div class="tc-opp">${ofl?`<img src="${ofl}" alt="">`:""}<span>${esc(trName(other))}</span>${live}</div>
-        <div class="tc-meta">${esc(stageTxt)} · ${esc(fmtKick(m.kickoff))}${home?"":" · deplasman"}</div>
+        <div class="tc-meta">${esc(stageTxt)}${when?` · ${esc(when)}`:""}${home?"":" · deplasman"}</div>
       </div>
       ${myPts}
       <span class="tc-score">${own}–${opp}</span>
-      <button class="tc-eye" data-tcpreds="${m.id}" title="Bu maçta kim kaç puan aldı?">👁</button>
+      ${isRef?"":`<button class="tc-eye" data-tcpreds="${m.id}" title="Bu maçta kim kaç puan aldı?">👁</button>`}
     </div>`;
   }).join("");
   const fl=favFlagUrl(team);
@@ -4343,6 +4452,68 @@ function FIXTURE_TEMPLATE(stage){
   }
   return [];
 }
+/* ===== Toplu lig sonucu yükleme (takım karnesi + puan durumu için) ===== */
+function renderResultsAdmin(){
+  const box=$("#resAdmin"); if(!box) return;
+  const n=results.length;
+  const mds=[...new Set(results.map(r=>r.md).filter(Boolean))].sort((a,b)=>a-b);
+  box.innerHTML=`
+    <h3 class="ra-h">📥 Tüm Lig Sonuçlarını Yükle</h3>
+    <p class="ra-p">Wikipedia'daki maç listesini olduğu gibi yapıştır. Bunlar <b>tahmin için değil</b> —
+      takım karnesi ve CL puan durumunda kullanılır. Skor yerine tarih yazan (oynanmamış) satırlar atlanır.
+      Aynı eşleşme tekrar yüklenirse üzerine yazılır.</p>
+    <div class="ra-stat">${n
+      ? `✅ Kayıtlı: <b>${n} maç</b>${mds.length?` · hafta ${mds[0]}–${mds[mds.length-1]}`:""}`
+      : "Henüz sonuç yüklenmedi."}</div>
+    <textarea id="resText" class="ra-ta" rows="8" placeholder="1. Maçlar&#10;AEK Yunanistan&#9;1-0&#9;Avusturya LASK&#10;Club Brugge Belçika&#9;2-3&#9;İngiltere Aston Villa&#10;..."></textarea>
+    <div id="resPreview" class="ra-prev"></div>
+    <div class="ra-btns">
+      <button class="btn ghost sm" id="resPreviewBtn">Önizle</button>
+      <button class="btn gold sm" id="resSaveBtn">Kaydet</button>
+      ${n?`<button class="btn ghost sm" id="resClearBtn">Hepsini sil</button>`:""}
+    </div>`;
+  $("#resPreviewBtn").onclick=()=>previewResults();
+  $("#resSaveBtn").onclick=()=>saveResults();
+  const cb=$("#resClearBtn"); if(cb) cb.onclick=()=>clearResults();
+}
+function previewResults(){
+  const {rows,errs}=parseResultsText($("#resText").value);
+  const pv=$("#resPreview");
+  if(!rows.length && !errs.length){ pv.innerHTML=`<div class="ra-err">Tanınan satır yok.</div>`; return; }
+  pv.innerHTML=`
+    <div class="ra-ok">${rows.length} maç tanındı${errs.length?` · ${errs.length} satır atlandı`:""}</div>
+    ${errs.length?`<div class="ra-err">${errs.slice(0,6).map(esc).join("<br>")}${errs.length>6?"<br>…":""}</div>`:""}
+    <div class="ra-list">${rows.slice(0,8).map(r=>
+      `<div>${r.md?`H${r.md} · `:""}${esc(trName(r.team_home))} <b>${r.home_score}-${r.away_score}</b> ${esc(trName(r.team_away))}</div>`
+    ).join("")}${rows.length>8?`<div style="opacity:.6">… ve ${rows.length-8} maç daha</div>`:""}</div>`;
+}
+async function saveResults(){
+  const {rows,errs}=parseResultsText($("#resText").value);
+  if(!rows.length){ band("Kaydedilecek maç bulunamadı","Yönetim",true); return; }
+  const btn=$("#resSaveBtn"); btn.disabled=true; btn.textContent="Kaydediliyor…";
+  try{
+    const {error}=await sb.from("cl_results")
+      .upsert(rows, {onConflict:"team_home,team_away"});
+    if(error) throw error;
+    await loadResults();
+    _standingsCache=null;
+    band(`${rows.length} maç sonucu kaydedildi${errs.length?` (${errs.length} satır atlandı)`:""}`,"Yönetim");
+    $("#resText").value=""; $("#resPreview").innerHTML="";
+    renderResultsAdmin(); renderAll();
+  }catch(e){ band("Kaydedilemedi: "+((e&&e.message)||e),"Yönetim",true); }
+  finally{ btn.disabled=false; btn.textContent="Kaydet"; }
+}
+async function clearResults(){
+  if(!confirm("Yüklenmiş TÜM lig sonuçları silinecek. Emin misin?")) return;
+  try{
+    const {error}=await sb.from("cl_results").delete().neq("id",-1);
+    if(error) throw error;
+    await loadResults(); _standingsCache=null;
+    band("Tüm sonuçlar silindi","Yönetim");
+    renderResultsAdmin(); renderAll();
+  }catch(e){ band("Silinemedi: "+((e&&e.message)||e),"Yönetim",true); }
+}
+
 function renderAdminAddForm(){
   const box=$("#adminAddMatch"); if(!box) return;
   if(adminStage==="group"){ box.innerHTML=""; return; } // lig aşaması fikstürü zaten hazır
@@ -4833,7 +5004,7 @@ function switchTab(t){
   $("#appScreen").classList.toggle("lb-tab", t==="leaderboard");
   if(t==="me"){ renderMe(); }
   if(t==="standings"){ renderStandings(); }
-  if(t==="admin"){ renderAdminFilters(); renderAdminAddForm(); renderAdmin(); }
+  if(t==="admin"){ renderAdminFilters(); renderAdminAddForm(); renderResultsAdmin(); renderAdmin(); }
   if(t==="leaderboard"){ renderLeaderboardTab(); }
   if(t==="chart"){ renderChart(); }
   if(t==="stats"){ renderStats(); }
