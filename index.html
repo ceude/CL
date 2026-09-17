@@ -1401,7 +1401,7 @@ img,svg,table,video,canvas{max-width:100%}
           <li><b style="color:var(--ink)">Listede olmayan skor</b> (hiç beklenmeyen çok sıra dışı bir skor) tutarsa: <b style="color:var(--ink)">350</b> bonus (<b style="color:var(--ink)">finalde 450</b>) — en yüksek ödül.</li>
           <li>Yani en garantisi sonucu bilmek; ama cesur ve doğru bir sürpriz skor, tek maçta büyük fark yaratabilir. Güçlü bir favori zayıf bir rakibe karşı sürpriz bir skorla yenilirse (ya da tam tersi), o skorun bonusu daha yüksek olur.</li>
         </ul>
-        <div class="note">💡 Her maç kartında <b>"📊 Skor puanları"</b> butonu var — o maçtaki her skorun kaç puan getireceğini tabloda görürsün. Ayrıca skoru yazdığın an, kutuların altında <b>"Bu skor için: 30 + 110 = 140 puan"</b> gibi anında hesap çıkar.</div>
+        <div class="note">💡 Her maç kartında <b>"⚡ Skor Puanları"</b> butonu var — o maçtaki her skorun kaç puan getireceğini tabloda görürsün. Ayrıca skoru yazdığın an, kutuların altında <b>"Bu skor için: 30 + 110 = 140 puan"</b> gibi anında hesap çıkar.</div>
 
         <h2>Şampiyon Tahmini</h2>
         <ul>
@@ -2170,7 +2170,7 @@ function matchCard(m){
   const seeAll = (fin||inplay)
     ? `<button class="mact-b seeall" data-allpreds="${m.id}">👁 Tahminler</button>`
     : `<button class="mact-b seeall" disabled title="Başkalarının tahminleri maç başladıktan sonra gösterilir">👁 Tahminler</button>`;
-  const oddsInfo = (DYNAMIC_STAGES.has(m.stage)&&effectiveOdds(m)) ? `<button class="mact-b odds-info" data-odds="${m.id}" title="Bu maç için skor puanları">📊 Skor puanları</button>` : "";
+  const oddsInfo = (DYNAMIC_STAGES.has(m.stage)&&effectiveOdds(m)) ? `<button class="mact-b odds-info" data-odds="${m.id}" title="Bu maç için skor puanları">⚡ Skor Puanları</button>` : "";
   const cCount = (comments[m.id]||[]).length;
   const cmt = `<button class="mact-b cmt-toggle" data-cmt="${m.id}">💬 Yorumlar${cCount?` (${cCount})`:""}</button>`;
   return `<div class="match ${cls}">
