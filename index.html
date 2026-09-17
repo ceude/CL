@@ -463,6 +463,58 @@ img,svg,table,video,canvas{max-width:100%}
   .bias-lab{width:88px;font-size:11px}
   .mc-nm{width:84px}
 }
+/* — Bana Özel: rozet geçmişi — */
+.me-hist{display:flex;flex-direction:column;gap:6px}
+.bh{display:flex;align-items:center;gap:11px;background:var(--panel);border:1px solid var(--line);
+  border-radius:10px;padding:9px 12px}
+.bh-ic{font-size:22px;flex:0 0 auto;line-height:1}
+.bh-b{flex:1;min-width:0}
+.bh-nm{font-size:13px;font-weight:800;color:#fff}
+.bh-sub{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.bh-t{font-size:11px;font-weight:700;color:var(--gold2);flex:0 0 auto}
+/* — Bana Özel: paylaşım kartı — */
+.me-share{margin:18px 0 6px;text-align:center}
+.me-share-btn{width:100%;height:52px;border:none;border-radius:var(--r-md);cursor:pointer;
+  background:linear-gradient(160deg,var(--gold),#3a6fd0);color:#fff;font-weight:800;font-size:15px}
+.me-share-btn:disabled{opacity:.6;cursor:default}
+.me-share-hint{font-size:11px;color:var(--muted);margin-top:7px;font-weight:600}
+/* ===== ROZET KUTLAMASI ===== */
+#badgePop{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:20px;
+  background:rgba(4,8,22,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#badgePop.show{display:flex;animation:bpFade .25s ease}
+@keyframes bpFade{from{opacity:0}to{opacity:1}}
+.bp-card{position:relative;width:100%;max-width:340px;text-align:center;padding:30px 24px 24px;
+  border-radius:var(--r-lg);background:linear-gradient(170deg,#16265e,#0b1234);
+  border:1px solid rgba(79,143,247,.45);box-shadow:0 0 60px -10px rgba(79,143,247,.6),var(--shadow-lg);
+  overflow:hidden}
+.bp-card.pop{animation:bpPop .5s cubic-bezier(.2,1.5,.35,1)}
+@keyframes bpPop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+.bp-lab{font-size:11px;letter-spacing:2px;font-weight:800;color:var(--gold2);opacity:.85}
+.bp-ic{font-size:76px;line-height:1;margin:12px 0 6px;animation:bpIcon .9s cubic-bezier(.2,1.4,.35,1) .1s both}
+@keyframes bpIcon{0%{transform:scale(0) rotate(-120deg)}70%{transform:scale(1.18) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
+.bp-multi{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;font-size:38px;margin:10px 0 8px}
+.bp-multi span{animation:bpIcon .7s cubic-bezier(.2,1.4,.35,1) both}
+.bp-multi span:nth-child(2){animation-delay:.07s} .bp-multi span:nth-child(3){animation-delay:.14s}
+.bp-multi span:nth-child(4){animation-delay:.21s} .bp-multi span:nth-child(5){animation-delay:.28s}
+.bp-multi span:nth-child(6){animation-delay:.35s} .bp-multi span:nth-child(7){animation-delay:.42s}
+.bp-multi span:nth-child(8){animation-delay:.49s}
+.bp-t{font-family:'Anton';font-size:26px;color:#fff;letter-spacing:.5px;margin-top:2px}
+.bp-n{font-size:13px;color:var(--muted);font-weight:600;margin-top:6px;line-height:1.45}
+.bp-c{font-size:11px;color:var(--gold2);font-weight:800;margin-top:9px;letter-spacing:1px}
+.bp-btn{width:100%;height:46px;margin-top:18px;border:none;border-radius:var(--r-md);cursor:pointer;
+  background:linear-gradient(160deg,var(--gold),#3a6fd0);color:#fff;font-weight:800;font-size:15px}
+.bp-spark{position:absolute;inset:0;pointer-events:none}
+.bp-spark i{position:absolute;left:50%;top:38%;width:5px;height:5px;border-radius:50%;background:var(--gold2);
+  transform:rotate(var(--sa)) translateY(0);opacity:0;
+  animation:bpSpark 1.1s ease-out var(--sd) both}
+@keyframes bpSpark{
+  0%{opacity:0;transform:rotate(var(--sa)) translateY(0) scale(.4)}
+  25%{opacity:1}
+  100%{opacity:0;transform:rotate(var(--sa)) translateY(-150px) scale(1)}}
+@media(prefers-reduced-motion:reduce){
+  .bp-card.pop,.bp-ic,.bp-multi span,.bp-spark i{animation:none!important}
+  .bp-spark{display:none}
+}
 .stats-h{font-size:22px;margin:4px 2px 4px}
 .stats-sub{font-size:13px;color:var(--muted);font-weight:600;margin:0 2px 16px}
 .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
@@ -1433,6 +1485,7 @@ img,svg,table,video,canvas{max-width:100%}
 <div id="band"><div class="ck">✓</div><div class="tx" id="bandTx"></div></div>
 <div id="modal"><div class="mcard" id="modalCard"></div></div>
 <div id="popup"><div class="pcard" id="popupCard"></div></div>
+<div id="badgePop"><div class="bp-card" id="badgePopCard"></div></div>
 
 <script>
 /* ====================================================================
@@ -3042,7 +3095,7 @@ function buildMyStats(uid){
   const played=list.filter(x=>x.pred).length;          // tahmin girdiğim biten maç sayısı
   const missed=list.filter(x=>!x.pred).length;         // tahmin girmediğim biten maç
   const exact=list.filter(x=>x.g.type==="exact").length;
-  const outc=list.filter(x=>x.g.type==="outc").length - exact; // sadece sonuç (tam skor hariç)
+  const outc=list.filter(x=>x.g.type==="outc").length; // grade() tipleri birbirini dışlar: exact ve outc ayrı sayılır
   const bad=list.filter(x=>x.g.type==="bad").length;
   // En iyi tahmin
   let best=null; list.forEach(x=>{ if(x.pred && (!best || x.g.pts>best.g.pts)) best=x; });
@@ -3129,75 +3182,128 @@ function buildMyStats(uid){
           rank:meRow?meRow.rank:null, total:rows.length, pts:meRow?meRow.pts:t.pts};
 }
 // Rozetler — kazanılanlar önce, kilitliler soluk ve "nasıl açılır" ipucuyla
-function buildMyBadges(s, uid){
-  const list=s.list.filter(x=>x.pred);
-  const maxPts=s.best?s.best.g.pts:0;
-  // Kontra: sonucu bilen azınlıktaydım (diğerlerinin çoğu bilemedi)
+// Rozet sayaçları — verilen (kronolojik) maç listesi + yorum sayısından türetilir.
+// Aynı fonksiyon hem güncel duruma hem de "rozet geçmişi" için geçmiş anlara uygulanır.
+function badgeCounters(entries, uid, nComments, nCmtMatches, rank, champWon){
+  const list=entries.filter(x=>x.pred);
+  const played=list.length, missed=entries.length-played;
+  const exact=list.filter(x=>x.g.type==="exact").length;
+  const outc=list.filter(x=>x.g.type==="outc").length;
+  const bad=list.filter(x=>x.g.type==="bad").length;
+  const pts=list.reduce((a,x)=>a+x.g.pts,0);
+  const maxPts=list.reduce((a,x)=>Math.max(a,x.g.pts),0);
+  let st=0,bestStreak=0;
+  entries.forEach(x=>{ if(x.pred&&(x.g.type==="exact"||x.g.type==="outc")){st++;bestStreak=Math.max(bestStreak,st);} else st=0; });
   let contra=0;
-  s.list.forEach(x=>{
-    if(!x.pred || (x.g.type!=="exact" && x.g.type!=="outc")) return;
-    const others=predsAll.filter(p=>p.match_id===x.m.id && p.user_id!==uid);
+  entries.forEach(x=>{
+    if(!x.pred||(x.g.type!=="exact"&&x.g.type!=="outc")) return;
+    const others=predsAll.filter(p=>p.match_id===x.m.id&&p.user_id!==uid);
     if(!others.length) return;
     const hits=others.filter(p=>Math.sign(p.home-p.away)===Math.sign(x.m.home_score-x.m.away_score)).length;
-    if(hits/others.length < 0.34) contra++;
+    if(hits/others.length<0.34) contra++;
   });
-  const bold=list.filter(x=>(x.pred.home+x.pred.away)>=5 || Math.abs(x.pred.home-x.pred.away)>=3).length;
-  const allIn = s.list.length>=3 && s.missed===0;
-  const perfect = s.played>=3 && s.bad===0;
-  // Ek sayımlar
-  const drawsCalled=list.filter(x=>x.pred.home===x.pred.away && x.m.home_score===x.m.away_score).length;
-  const zeroZero=list.filter(x=>x.g.type==="exact" && x.m.home_score===0 && x.m.away_score===0).length;
-  const bigWin=list.filter(x=>x.g.type==="exact" && Math.abs(x.m.home_score-x.m.away_score)>=3).length;
-  const goalFest=list.filter(x=>x.g.type==="exact" && (x.m.home_score+x.m.away_score)>=5).length;
-  const awayCalled=list.filter(x=>x.pred.home<x.pred.away && x.m.home_score<x.m.away_score).length;
+  const hit=x=>x.g.type==="exact"||x.g.type==="outc";
   const trTeams=["Fenerbahçe","Galatasaray"];
-  const trHits=list.filter(x=>(x.g.type==="exact"||x.g.type==="outc") &&
-    (trTeams.includes(x.m.team_home)||trTeams.includes(x.m.team_away))).length;
-  const koHits=list.filter(x=>x.m.stage!=="group" && (x.g.type==="exact"||x.g.type==="outc")).length;
-  const totalPts=s.pts;
-  const stageWide=new Set(list.filter(x=>x.g.type==="exact"||x.g.type==="outc").map(x=>x.m.stage)).size;
-  const doubleDay=(()=>{                       // aynı gün 2+ isabet
-    const byDay={};
-    list.forEach(x=>{ if(x.g.type==="exact"||x.g.type==="outc"){
-      const k=berlinCalKey(x.m.kickoff); byDay[k]=(byDay[k]||0)+1; } });
-    return Math.max(0,...Object.values(byDay));
-  })();
-  const defs=[
+  const byDay={};
+  list.forEach(x=>{ if(hit(x)){ const k=berlinCalKey(x.m.kickoff); byDay[k]=(byDay[k]||0)+1; } });
+  return {
+    played, missed, exact, outc, bad, pts, maxPts, bestStreak, contra,
+    allIn: entries.length>=3 && missed===0,
+    perfect: played>=3 && bad===0,
+    bold: list.filter(x=>(x.pred.home+x.pred.away)>=5||Math.abs(x.pred.home-x.pred.away)>=3).length,
+    drawsCalled: list.filter(x=>x.pred.home===x.pred.away&&x.m.home_score===x.m.away_score).length,
+    zeroZero: list.filter(x=>x.g.type==="exact"&&x.m.home_score===0&&x.m.away_score===0).length,
+    bigWin: list.filter(x=>x.g.type==="exact"&&Math.abs(x.m.home_score-x.m.away_score)>=3).length,
+    goalFest: list.filter(x=>x.g.type==="exact"&&(x.m.home_score+x.m.away_score)>=5).length,
+    awayCalled: list.filter(x=>x.pred.home<x.pred.away&&x.m.home_score<x.m.away_score).length,
+    trHits: list.filter(x=>hit(x)&&(trTeams.includes(x.m.team_home)||trTeams.includes(x.m.team_away))).length,
+    koHits: list.filter(x=>x.m.stage!=="group"&&hit(x)).length,
+    stageWide: new Set(list.filter(hit).map(x=>x.m.stage)).size,
+    doubleDay: Math.max(0,...Object.values(byDay),0),
+    nComments, nCmtMatches, rank, champWon
+  };
+}
+function badgeDefs(c){
+  return [
     // — Temel isabet —
-    {ic:"🎯", name:"İlk Kan",        got:s.exact>=1,        hint:"Bir maçın tam skorunu bil"},
-    {ic:"🏹", name:"Keskin Nişancı", got:s.exact>=3,        hint:"3 maçın tam skorunu bil", prog:[s.exact,3]},
-    {ic:"🔭", name:"Kahin",          got:s.exact>=6,        hint:"6 maçın tam skorunu bil", prog:[s.exact,6]},
-    {ic:"✅", name:"Sağlam Temel",   got:(s.exact+s.outc)>=10, hint:"10 maçta en az sonucu bil", prog:[s.exact+s.outc,10]},
+    {ic:"🎯", name:"İlk Kan",        got:c.exact>=1,      hint:"Bir maçın tam skorunu bil"},
+    {ic:"🏹", name:"Keskin Nişancı", got:c.exact>=3,      hint:"3 maçın tam skorunu bil", prog:[c.exact,3]},
+    {ic:"🔭", name:"Kahin",          got:c.exact>=6,      hint:"6 maçın tam skorunu bil", prog:[c.exact,6]},
+    {ic:"✅", name:"Sağlam Temel",   got:(c.exact+c.outc)>=10, hint:"10 maçta en az sonucu bil", prog:[c.exact+c.outc,10]},
     // — Puan —
-    {ic:"💎", name:"Sürpriz Avcısı", got:maxPts>=200,       hint:"Tek maçta 200+ puan kazan", prog:[maxPts,200]},
-    {ic:"⚡", name:"Yüksek Voltaj",  got:maxPts>=300,       hint:"Tek maçta 300+ puan kazan", prog:[maxPts,300]},
-    {ic:"💰", name:"Bin Puan",       got:totalPts>=1000,    hint:"Toplam 1.000 puana ulaş", prog:[totalPts,1000]},
-    {ic:"👑", name:"Beş Bin",        got:totalPts>=5000,    hint:"Toplam 5.000 puana ulaş", prog:[totalPts,5000]},
+    {ic:"💎", name:"Sürpriz Avcısı", got:c.maxPts>=200,   hint:"Tek maçta 200+ puan kazan", prog:[c.maxPts,200]},
+    {ic:"⚡", name:"Yüksek Voltaj",  got:c.maxPts>=300,   hint:"Tek maçta 300+ puan kazan", prog:[c.maxPts,300]},
+    {ic:"💰", name:"Bin Puan",       got:c.pts>=1000,     hint:"Toplam 1.000 puana ulaş", prog:[c.pts,1000]},
+    {ic:"👑", name:"Beş Bin",        got:c.pts>=5000,     hint:"Toplam 5.000 puana ulaş", prog:[c.pts,5000]},
     // — Seri & istikrar —
-    {ic:"🔥", name:"Seri Katil",     got:s.bestStreak>=3,   hint:"3 maç üst üste en az sonucu bil", prog:[s.bestStreak,3]},
-    {ic:"🌋", name:"Durdurulamaz",   got:s.bestStreak>=6,   hint:"6 maç üst üste en az sonucu bil", prog:[s.bestStreak,6]},
-    {ic:"📋", name:"Tam Katılım",    got:allIn,             hint:"Biten tüm maçlara tahmin gir"},
-    {ic:"💯", name:"Sıfır Hata",     got:perfect,           hint:"En az 3 maç oyna, hiçbirinde sonucu kaçırma"},
-    {ic:"📅", name:"Çifte Vuruş",    got:doubleDay>=2,      hint:"Aynı gün 2 maçta birden isabet et", prog:[doubleDay,2]},
+    {ic:"🔥", name:"Seri Katil",     got:c.bestStreak>=3, hint:"3 maç üst üste en az sonucu bil", prog:[c.bestStreak,3]},
+    {ic:"🌋", name:"Durdurulamaz",   got:c.bestStreak>=6, hint:"6 maç üst üste en az sonucu bil", prog:[c.bestStreak,6]},
+    {ic:"📋", name:"Tam Katılım",    got:c.allIn,         hint:"Biten tüm maçlara tahmin gir"},
+    {ic:"💯", name:"Sıfır Hata",     got:c.perfect,       hint:"En az 3 maç oyna, hiçbirinde sonucu kaçırma"},
+    {ic:"📅", name:"Çifte Vuruş",    got:c.doubleDay>=2,  hint:"Aynı gün 2 maçta birden isabet et", prog:[c.doubleDay,2]},
     // — Zor tahminler —
-    {ic:"🧠", name:"Kontra",         got:contra>=1,         hint:"Çoğunluğun bilemediği bir sonucu bil"},
-    {ic:"🎭", name:"Kâhin Muhalif",  got:contra>=3,         hint:"3 kez çoğunluğa karşı çık ve haklı çık", prog:[contra,3]},
-    {ic:"🤝", name:"Berabere Kalır", got:drawsCalled>=1,    hint:"Biten bir maçın beraberliğini bil"},
-    {ic:"🛡️", name:"Kale Kapalı",   got:zeroZero>=1,       hint:"0-0 biten bir maçı tam bil"},
-    {ic:"✈️", name:"Deplasman Uzmanı",got:awayCalled>=3,    hint:"3 kez deplasman galibiyetini bil", prog:[awayCalled,3]},
-    {ic:"💥", name:"Farklı Skor",    got:bigWin>=1,         hint:"3+ gol farklı biten bir maçı tam bil"},
-    {ic:"🎢", name:"Gol Düellosu",   got:goalFest>=1,       hint:"5+ gollü bir maçı tam bil"},
+    {ic:"🧠", name:"Kontra",         got:c.contra>=1,     hint:"Çoğunluğun bilemediği bir sonucu bil"},
+    {ic:"🎭", name:"Kâhin Muhalif",  got:c.contra>=3,     hint:"3 kez çoğunluğa karşı çık ve haklı çık", prog:[c.contra,3]},
+    {ic:"🤝", name:"Berabere Kalır", got:c.drawsCalled>=1,hint:"Biten bir maçın beraberliğini bil"},
+    {ic:"🛡️", name:"Kale Kapalı",   got:c.zeroZero>=1,   hint:"0-0 biten bir maçı tam bil"},
+    {ic:"✈️", name:"Deplasman Uzmanı",got:c.awayCalled>=3,hint:"3 kez deplasman galibiyetini bil", prog:[c.awayCalled,3]},
+    {ic:"💥", name:"Farklı Skor",    got:c.bigWin>=1,     hint:"3+ gol farklı biten bir maçı tam bil"},
+    {ic:"🎢", name:"Gol Düellosu",   got:c.goalFest>=1,   hint:"5+ gollü bir maçı tam bil"},
     // — Tarz & kapsam —
-    {ic:"🎪", name:"Cesur Yürek",    got:bold>=3,           hint:"3 kez iddialı skor yaz (5+ gol ya da 3+ fark)", prog:[bold,3]},
-    {ic:"🗺️", name:"Her Turda",     got:stageWide>=3,      hint:"3 farklı turda isabet et", prog:[stageWide,3]},
-    {ic:"🇹🇷", name:"Yerli Malı",    got:trHits>=3,         hint:"Türk takımlarının 3 maçında isabet et", prog:[trHits,3]},
-    {ic:"⚔️", name:"Eleme Ustası",   got:koHits>=3,         hint:"Eleme turlarında 3 kez isabet et", prog:[koHits,3]},
+    {ic:"🎪", name:"Cesur Yürek",    got:c.bold>=3,       hint:"3 kez iddialı skor yaz (5+ gol ya da 3+ fark)", prog:[c.bold,3]},
+    {ic:"🗺️", name:"Her Turda",     got:c.stageWide>=3,  hint:"3 farklı turda isabet et", prog:[c.stageWide,3]},
+    {ic:"🇹🇷", name:"Yerli Malı",    got:c.trHits>=3,     hint:"Türk takımlarının 3 maçında isabet et", prog:[c.trHits,3]},
+    {ic:"⚔️", name:"Eleme Ustası",   got:c.koHits>=3,     hint:"Eleme turlarında 3 kez isabet et", prog:[c.koHits,3]},
+    // — Yorumcu —
+    {ic:"💬", name:"Yorumcu",        got:c.nComments>=1,  hint:"Bir maça yorum yaz"},
+    {ic:"🗣️", name:"Geveze",        got:c.nComments>=10, hint:"Toplam 10 yorum yaz", prog:[c.nComments,10]},
+    {ic:"📣", name:"Mahalle Anonsu", got:c.nComments>=25, hint:"Toplam 25 yorum yaz", prog:[c.nComments,25]},
+    {ic:"🎤", name:"Her Maça Laf",   got:c.nCmtMatches>=5,hint:"5 farklı maça yorum yaz", prog:[c.nCmtMatches,5]},
     // — Zirve —
-    {ic:"🥇", name:"Zirve",          got:s.rank===1,        hint:"Lider tablosunda 1. sıraya çık"},
-    {ic:"🏆", name:"Şampiyon Kahini",got:!!(appConfig.champion_winner && me && me.champion===appConfig.champion_winner),
-                                     hint:"Şampiyonu doğru tahmin et"},
+    {ic:"🥇", name:"Zirve",          got:c.rank===1,      hint:"Lider tablosunda 1. sıraya çık"},
+    {ic:"🏆", name:"Şampiyon Kahini",got:!!c.champWon,    hint:"Şampiyonu doğru tahmin et"},
   ];
-  return defs;
+}
+function myCommentInfo(uid){
+  let n=0; const mset=new Set(); const times=[];
+  Object.entries(comments).forEach(([mid,arr])=>arr.forEach(cm=>{
+    if(cm.user_id===uid){ n++; mset.add(mid); times.push(cm.created_at); }
+  }));
+  return {n, nMatches:mset.size, times:times.sort()};
+}
+function buildMyBadges(s, uid){
+  const ci=myCommentInfo(uid);
+  const champWon=!!(appConfig.champion_winner && me && me.champion===appConfig.champion_winner);
+  return badgeDefs(badgeCounters(s.list, uid, ci.n, ci.nMatches, s.rank, champWon));
+}
+// Rozet geçmişi — maçlar ve yorumlar zaman sırasına dizilir, her adımda
+// hangi rozetin İLK kez açıldığı tespit edilir.
+function buildBadgeHistory(s, uid){
+  const ci=myCommentInfo(uid);
+  const events=[];
+  s.list.forEach(x=>events.push({t:new Date(x.m.kickoff).getTime(), kind:"match", x}));
+  ci.times.forEach(ts=>events.push({t:new Date(ts).getTime(), kind:"comment"}));
+  events.sort((a,b)=>a.t-b.t);
+  const seen=new Set(), out=[];
+  let mi=0, cn=0; const cmset=new Set();
+  const cmByTime={};
+  Object.entries(comments).forEach(([mid,arr])=>arr.forEach(cm=>{
+    if(cm.user_id===uid) cmByTime[cm.created_at]=mid; }));
+  const sortedC=ci.times.slice();
+  let ci2=0;
+  events.forEach(ev=>{
+    if(ev.kind==="match") mi++;
+    else { cn++; const mid=cmByTime[sortedC[ci2++]]; if(mid) cmset.add(mid); }
+    const prefix=s.list.slice(0,mi);
+    const c=badgeCounters(prefix, uid, cn, cmset.size, null, false);
+    badgeDefs(c).forEach(b=>{
+      if(b.got && !seen.has(b.name)){
+        seen.add(b.name);
+        out.push({badge:b, t:ev.t, m:ev.kind==="match"?ev.x.m:null, kind:ev.kind});
+      }
+    });
+  });
+  return out.reverse();   // en yeni üstte
 }
 function renderMe(){
   const box=$("#meBox"); if(!box || !me || !session) return;
@@ -3373,9 +3479,114 @@ function renderMe(){
       </div>`;
     }).join("")}</div></div>`;
 
-  box.innerHTML=head+`<div class="me-sets">${favRow}${champRow}</div>`+nums+bestBlock+timeBlock+habitBlock+biasBlock+teamBlock+badgeBlock;
+  // --- Rozet geçmişi ---
+  const hist=buildBadgeHistory(s, session.user.id);
+  const histBlock = hist.length ? `<div class="me-sec">
+    <h3 class="me-h">Rozet geçmişi <span class="me-h-c">${hist.length}</span></h3>
+    <div class="me-hist">${hist.map(h=>`
+      <div class="bh">
+        <div class="bh-ic">${h.badge.ic}</div>
+        <div class="bh-b">
+          <div class="bh-nm">${esc(h.badge.name)}</div>
+          <div class="bh-sub">${h.m
+            ? `${esc(trName(h.m.team_home))} ${h.m.home_score}–${h.m.away_score} ${esc(trName(h.m.team_away))}`
+            : "Yorum sonrası"}</div>
+        </div>
+        <div class="bh-t">${esc(new Date(h.t).toLocaleDateString("tr-TR",{timeZone:TZ,day:"2-digit",month:"short"}))}</div>
+      </div>`).join("")}</div></div>` : "";
+
+  // --- Paylaşılabilir özet kartı ---
+  const shareBlock=`<div class="me-share">
+    <button class="me-share-btn" id="meShareBtn">📸 Özet kartımı oluştur &amp; paylaş</button>
+    <div class="me-share-hint">İstatistiklerini tek görsele basar — WhatsApp'a atabilirsin.</div>
+  </div>`;
+
+  box.innerHTML=head+`<div class="me-sets">${favRow}${champRow}</div>`+nums+bestBlock+timeBlock+habitBlock+biasBlock+teamBlock+badgeBlock+histBlock+shareBlock;
+  const shb=$("#meShareBtn"); if(shb) shb.onclick=()=>shareMyCard(s, badges);
   const fb=$("#meFavBtn"); if(fb) fb.onclick=()=>showTeamPicker(false);
   const cb=$("#meChampBtn"); if(cb) cb.onclick=()=>showChampionPicker();
+}
+// ===== Paylaşılabilir özet kartı (canvas → PNG → paylaş / indir) =====
+async function shareMyCard(s, badges){
+  const btn=$("#meShareBtn"); if(btn){ btn.disabled=true; btn.textContent="Hazırlanıyor…"; }
+  try{
+    const W=1080, H=1350, cv=document.createElement("canvas");
+    cv.width=W; cv.height=H;
+    const x=cv.getContext("2d");
+    // arka plan
+    const bg=x.createLinearGradient(0,0,W,H);
+    bg.addColorStop(0,"#0a1030"); bg.addColorStop(.55,"#0e1740"); bg.addColorStop(1,"#060a1f");
+    x.fillStyle=bg; x.fillRect(0,0,W,H);
+    // dekoratif halkalar
+    x.strokeStyle="rgba(79,143,247,.13)"; x.lineWidth=2;
+    [340,470,600].forEach(r=>{ x.beginPath(); x.arc(W/2,300,r,0,Math.PI*2); x.stroke(); });
+    const C=(t,y,f,col,al="center")=>{ x.font=f; x.fillStyle=col; x.textAlign=al;
+      x.fillText(t, al==="center"?W/2:(al==="left"?90:W-90), y); };
+    // başlık
+    C("ŞAMPİYONLAR LİGİ",108,"700 40px 'Plus Jakarta Sans',sans-serif","#8b9ccb");
+    C("TAHMİN LİGİ 2026-27",158,"800 44px 'Plus Jakarta Sans',sans-serif","#4f8ff7");
+    // isim + sıra
+    C(me.username.toUpperCase(),290,"800 92px 'Plus Jakarta Sans',sans-serif","#ffffff");
+    C(s.rank?`${s.rank}. SIRA  ·  ${s.total} OYUNCU`:"—",348,"700 34px 'Plus Jakarta Sans',sans-serif","#8b9ccb");
+    // büyük puan
+    C(s.pts.toLocaleString("tr-TR"),520,"800 170px 'Plus Jakarta Sans',sans-serif","#4f8ff7");
+    C("PUAN",575,"800 34px 'Plus Jakarta Sans',sans-serif","#8b9ccb");
+    // istatistik kutuları
+    const cells=[
+      [s.exact,"TAM SKOR","#2bd575"],
+      [s.outc,"SONUÇ","#7ab4ff"],
+      ["%"+s.hitRate.toFixed(0),"İSABET","#bcd4ff"],
+      [s.bestStreak,"EN UZUN SERİ","#ff5a3c"],
+    ];
+    const bw=(W-180-3*22)/4;
+    cells.forEach(([v,l,col],i)=>{
+      const bx=90+i*(bw+22), by=650;
+      x.fillStyle="rgba(255,255,255,.05)"; x.strokeStyle="rgba(255,255,255,.12)"; x.lineWidth=2;
+      if(x.roundRect){ x.beginPath(); x.roundRect(bx,by,bw,150,20); x.fill(); x.stroke(); }
+      else { x.fillRect(bx,by,bw,150); x.strokeRect(bx,by,bw,150); }
+      x.textAlign="center";
+      x.font="800 58px 'Plus Jakarta Sans',sans-serif"; x.fillStyle=col;
+      x.fillText(String(v), bx+bw/2, by+88);
+      x.font="700 22px 'Plus Jakarta Sans',sans-serif"; x.fillStyle="#8b9ccb";
+      x.fillText(l, bx+bw/2, by+124);
+    });
+    // rozetler
+    const got=badges.filter(b=>b.got);
+    C(`ROZETLER  ${got.length}/${badges.length}`,890,"800 32px 'Plus Jakarta Sans',sans-serif","#8b9ccb");
+    x.font="64px 'Plus Jakarta Sans',sans-serif"; x.textAlign="center";
+    const show=got.slice(0,8), per=Math.min(show.length,8);
+    show.forEach((b,i)=>{
+      const cols=Math.min(per,8), gap=W/(cols+1);
+      x.fillText(b.ic, gap*(i+1), 985);
+    });
+    if(!got.length){ C("Henüz rozet yok",975,"600 30px 'Plus Jakarta Sans',sans-serif","#8b9ccb"); }
+    // en iyi tahmin
+    if(s.best && s.best.pred){
+      x.fillStyle="rgba(79,143,247,.10)"; x.strokeStyle="rgba(79,143,247,.35)"; x.lineWidth=2;
+      if(x.roundRect){ x.beginPath(); x.roundRect(90,1050,W-180,150,20); x.fill(); x.stroke(); }
+      C("EN İYİ TAHMİN",1098,"800 24px 'Plus Jakarta Sans',sans-serif","#bcd4ff");
+      C(`${trName(s.best.m.team_home)} ${s.best.m.home_score}–${s.best.m.away_score} ${trName(s.best.m.team_away)}`,
+        1150,"700 36px 'Plus Jakarta Sans',sans-serif","#ffffff");
+      C(`+${s.best.g.pts} puan`,1190,"800 30px 'Plus Jakarta Sans',sans-serif","#4f8ff7");
+    }
+    C(new Date().toLocaleDateString("tr-TR",{timeZone:TZ,day:"2-digit",month:"long",year:"numeric"}),
+      1285,"600 26px 'Plus Jakarta Sans',sans-serif","#5b6a94");
+
+    const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
+    const file=new File([blob],`${me.username}-ozet.png`,{type:"image/png"});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:"Tahmin Ligi özetim"});
+    }else{
+      const url=URL.createObjectURL(blob), a=document.createElement("a");
+      a.href=url; a.download=file.name; a.click();
+      setTimeout(()=>URL.revokeObjectURL(url),4000);
+      band("Özet kartın indirildi","Bana Özel");
+    }
+  }catch(e){
+    if(!(e && e.name==="AbortError")) band("Kart oluşturulamadı: "+((e&&e.message)||e),"Bana Özel",true);
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent="📸 Özet kartımı oluştur & paylaş"; }
+  }
 }
 function meStat(v,lab,tone){
   return `<div class="me-cell ${tone||""}"><b>${v}</b><span>${esc(lab)}</span></div>`;
@@ -4640,12 +4851,75 @@ function renderLeaderboardTab(){
   box.querySelectorAll(".lbrow").forEach(el=>el.onclick=()=>openProfile(el.dataset.uid));
 }
 
+/* ====================================================================
+   ROZET KAZANMA KUTLAMASI — yeni açılan rozetler için animasyonlu pop-up
+   ==================================================================== */
+function badgeSeenKey(){ return "badgesSeen:"+(session?session.user.id:"x"); }
+function getSeenBadges(){
+  try{ return new Set(JSON.parse(localStorage.getItem(badgeSeenKey())||"null")||[]); }
+  catch(e){ return new Set(); }
+}
+function setSeenBadges(set){
+  try{ localStorage.setItem(badgeSeenKey(), JSON.stringify([...set])); }catch(e){}
+}
+let _badgeCheckBusy=false;
+function checkNewBadges(){
+  if(_badgeCheckBusy || !me || !session) return;
+  if($("#badgePop").classList.contains("show")) return;   // zaten bir kutlama açık
+  let badges;
+  try{ badges=buildMyBadges(buildMyStats(session.user.id), session.user.id); }catch(e){ return; }
+  const got=badges.filter(b=>b.got);
+  const seenRaw=localStorage.getItem(badgeSeenKey());
+  const seen=getSeenBadges();
+  // İlk kurulum: geçmişte kazanılanlar için üst üste pop-up yağmuru olmasın —
+  // 3'ten fazlaysa tek bir özet kutlama göster, sonra hepsini görülmüş say.
+  const fresh=got.filter(b=>!seen.has(b.name));
+  if(!fresh.length){ setSeenBadges(new Set(got.map(b=>b.name))); return; }
+  got.forEach(b=>seen.add(b.name)); setSeenBadges(seen);
+  if(seenRaw===null && fresh.length>3){ showBadgePop(fresh, true); return; }
+  showBadgePop(fresh, false);
+}
+function showBadgePop(queue, summary){
+  const wrap=$("#badgePop"), card=$("#badgePopCard");
+  if(!wrap||!card||!queue.length) return;
+  _badgeCheckBusy=true;
+  let i=0;
+  const sparks=Array.from({length:14},(_,k)=>`<i style="--sa:${(k*360/14)}deg;--sd:${(k%5)*.06}s"></i>`).join("");
+  const paint=()=>{
+    if(summary){
+      card.innerHTML=`<div class="bp-spark">${sparks}</div>
+        <div class="bp-multi">${queue.slice(0,8).map(b=>`<span>${b.ic}</span>`).join("")}</div>
+        <div class="bp-t">${queue.length} rozet kazandın!</div>
+        <div class="bp-n">${queue.map(b=>esc(b.name)).join(" · ")}</div>
+        <button class="bp-btn" id="bpNext">Harika</button>`;
+    }else{
+      const b=queue[i];
+      card.innerHTML=`<div class="bp-spark">${sparks}</div>
+        <div class="bp-lab">ROZET KAZANDIN</div>
+        <div class="bp-ic">${b.ic}</div>
+        <div class="bp-t">${esc(b.name)}</div>
+        <div class="bp-n">${esc(b.hint)}</div>
+        ${queue.length>1?`<div class="bp-c">${i+1} / ${queue.length}</div>`:""}
+        <button class="bp-btn" id="bpNext">${i<queue.length-1?"Sıradaki":"Süper"}</button>`;
+    }
+    card.classList.remove("pop"); void card.offsetWidth; card.classList.add("pop");
+    $("#bpNext").onclick=()=>{
+      if(!summary && i<queue.length-1){ i++; paint(); return; }
+      wrap.classList.remove("show");
+      setTimeout(()=>{ card.innerHTML=""; _badgeCheckBusy=false; }, 260);
+    };
+  };
+  paint();
+  wrap.classList.add("show");
+}
+
 function renderAll(){
   assignColors();
   renderRibbon(); renderStageFilters(); renderGroupFilters(); renderSortFilters();
   renderMatches(); renderLeaderboard(); renderLeaderboardTab(); renderChart(); renderStats(); renderChampMini(); renderFavMini();
   if(!$("#tab-me").classList.contains("hidden")) renderMe();
   renderPledgeWidget();
+  setTimeout(checkNewBadges, 300);
 }
 // Masaüstü, sadece ödeyenlere: sağ altta sabit "katkı tamamlanma" topu + eksik isimler
 function renderPledgeWidget(){
