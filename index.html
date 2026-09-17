@@ -534,6 +534,51 @@ img,svg,table,video,canvas{max-width:100%}
 .ra-list b{color:var(--gold2)}
 .ra-btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .tc-row.tc-ref{opacity:.82}
+/* ===== Takım karnesi: yeni bölümler ===== */
+.tc-rank{display:flex;align-items:center;gap:12px;margin:12px 18px 0;padding:11px 13px;border-radius:var(--r-md);
+  background:linear-gradient(135deg,var(--panel),var(--bg2));border:1px solid rgba(79,143,247,.3)}
+.tr-pos{text-align:center;flex:0 0 auto;min-width:46px}
+.tr-pos b{display:block;font-family:'Anton';font-size:26px;color:var(--gold);line-height:1}
+.tr-pos span{font-size:9px;letter-spacing:1px;color:var(--muted);font-weight:800}
+.tr-mid{flex:1;min-width:0}
+.tr-pts{font-size:13px;color:#fff;font-weight:700}
+.tr-pts b{color:var(--gold2);font-size:15px}
+.tr-zone{font-size:11px;font-weight:800;margin-top:3px}
+.tr-zone.z-q{color:var(--ok)} .tr-zone.z-p{color:var(--gold2)} .tr-zone.z-o{color:var(--muted)}
+.tr-form{flex:0 0 auto;text-align:right}
+.tr-form.wide{flex:1;text-align:left}
+.tr-form>span{display:block;font-size:9px;letter-spacing:1px;color:var(--muted);font-weight:800;margin-bottom:4px}
+.tr-form>div{display:flex;gap:3px;justify-content:flex-end}
+.tr-form.wide>div{justify-content:flex-start}
+.fm{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;font-style:normal;
+  font-size:11px;font-weight:900;color:#06100c}
+.fm.w{background:var(--ok)} .fm.d{background:var(--muted)} .fm.l{background:var(--bad);color:#fff}
+.tc-split{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:10px 18px 0}
+.ts{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center}
+.ts-l{display:block;font-size:11px;color:var(--muted);font-weight:700;line-height:1.25}
+.ts b{display:block;font-size:15px;color:#fff;font-weight:900;margin-top:3px}
+.tc-hls{display:flex;gap:7px;padding:10px 18px 0}
+.tc-hl{flex:1;min-width:0;border-radius:10px;padding:8px 10px;font-size:11px;color:var(--ink);
+  background:var(--panel);border:1px solid var(--line)}
+.tc-hl span{display:block;font-size:11px;color:var(--muted);font-weight:800;margin-bottom:2px}
+.tc-hl b{font-size:15px;font-weight:900}
+.tc-hl.good{border-color:rgba(43,213,117,.35)} .tc-hl.good b{color:var(--ok)}
+.tc-hl.bad{border-color:rgba(255,81,96,.3)} .tc-hl.bad b{color:var(--bad)}
+.tc-my{margin:12px 18px 0;padding:11px 13px;border-radius:var(--r-md);
+  background:linear-gradient(135deg,var(--panel),var(--bg2));border:1px solid rgba(79,143,247,.3)}
+.tm-h{font-size:11px;color:var(--gold2);font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.tm-g{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;text-align:center}
+.tm-g b{display:block;font-family:'Anton';font-size:20px;color:#fff;line-height:1}
+.tm-g span{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-top:3px}
+.tc-ha{flex:0 0 auto;width:17px;height:17px;border-radius:4px;display:grid;place-items:center;
+  font-size:9px;font-weight:900;background:var(--bg2);color:var(--muted);border:1px solid var(--line2)}
+.tc-eye.ghost{opacity:.3;cursor:default;background:none;border:none;color:var(--muted)}
+@media(max-width:480px){
+  .tc-split{grid-template-columns:repeat(2,1fr)}
+  .tc-hls{flex-direction:column}
+  .tr-form{display:none}
+  .tr-form.wide{display:block}
+}
 .stats-h{font-size:22px;margin:4px 2px 4px}
 .stats-sub{font-size:13px;color:var(--muted);font-weight:600;margin:0 2px 16px}
 .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
@@ -1418,7 +1463,7 @@ img,svg,table,video,canvas{max-width:100%}
           <li><b style="color:var(--ink)">Listede olmayan skor</b> (hiç beklenmeyen çok sıra dışı bir skor) tutarsa: <b style="color:var(--ink)">350</b> bonus (<b style="color:var(--ink)">finalde 450</b>) — en yüksek ödül.</li>
           <li>Yani en garantisi sonucu bilmek; ama cesur ve doğru bir sürpriz skor, tek maçta büyük fark yaratabilir. Güçlü bir favori zayıf bir rakibe karşı sürpriz bir skorla yenilirse (ya da tam tersi), o skorun bonusu daha yüksek olur.</li>
         </ul>
-        <div class="note">💡 Her maç kartında <b>"📊 Skor puanları"</b> butonu var — o maçtaki her skorun kaç puan getireceğini tabloda görürsün. Ayrıca skoru yazdığın an, kutuların altında <b>"Bu skor için: 30 + 110 = 140 puan"</b> gibi anında hesap çıkar.</div>
+        <div class="note">💡 Her maç kartında <b>"⚡ Skor puanları"</b> butonu var — o maçtaki her skorun kaç puan getireceğini tabloda görürsün. Ayrıca skoru yazdığın an, kutuların altında <b>"Bu skor için: 30 + 110 = 140 puan"</b> gibi anında hesap çıkar.</div>
 
         <h2>Şampiyon Tahmini</h2>
         <ul>
@@ -2265,7 +2310,7 @@ function matchCard(m){
   const seeAll = (fin||inplay)
     ? `<button class="mact-b seeall" data-allpreds="${m.id}">👁 Tahminler</button>`
     : `<button class="mact-b seeall" disabled title="Başkalarının tahminleri maç başladıktan sonra gösterilir">👁 Tahminler</button>`;
-  const oddsInfo = (DYNAMIC_STAGES.has(m.stage)&&effectiveOdds(m)) ? `<button class="mact-b odds-info" data-odds="${m.id}" title="Bu maç için skor puanları">📊 Skor puanları</button>` : "";
+  const oddsInfo = (DYNAMIC_STAGES.has(m.stage)&&effectiveOdds(m)) ? `<button class="mact-b odds-info" data-odds="${m.id}" title="Bu maç için skor puanları">⚡ Skor puanları</button>` : "";
   const cCount = (comments[m.id]||[]).length;
   const cmt = `<button class="mact-b cmt-toggle" data-cmt="${m.id}">💬 Yorumlar${cCount?` (${cCount})`:""}</button>`;
   return `<div class="match ${cls}">
@@ -2311,7 +2356,7 @@ function renderStageInfo(){
       <div>🎯 ${phrase} <b>sonucu</b> (galibiyet/beraberlik) bilmek <b>${sc.outc} puan</b>.
       <b>Tam skoru</b> bilmek ise artık sabit değil: skorun <b>iddia oranına</b> göre değişir.
       Beklenen skorlar <b>${sc.outc}+${base}</b> puan; ne kadar <b>sürpriz</b> skor, o kadar yüksek (tam skor bonusu <b>en fazla ${DYN_CAP}</b>, listede olmayan skor <b>${dynOther(curStage)}</b>).</div>
-      <div class="sub">📊 Her maç kartındaki <b>"Skor puanları"</b> butonundan o maçın tüm skor puanlarını görebilir; skoru yazınca kazanacağın puanı anında görürsün.</div>
+      <div class="sub">⚡ Her maç kartındaki <b>"Skor puanları"</b> butonundan o maçın tüm skor puanlarını görebilir; skoru yazınca kazanacağın puanı anında görürsün.</div>
       <div class="sub">⏱️ Tüm tahminler 90 dakikalık normal süre sonucuna göredir; uzatma/penaltı sayılmaz.</div>
     </div>
   </div>`;
@@ -2966,64 +3011,125 @@ function openProfile(uid, opts){
   const pcb=$("#profChampBtn"); if(pcb) pcb.onclick=()=>{ closeModal(); showChampionPicker(); };
   const pfb=$("#profFavBtn"); if(pfb) pfb.onclick=()=>{ closeModal(); showTeamPicker(false); };
 }
-// Takım karnesi: turnuva boyunca sonuçlar + maç listesi
+// Takım karnesi — yüklenen tüm lig sonuçları + kendi tahmin performansın
 function openTeamCard(team){
   if(!team) return;
   // 1) Tahmin oynanan maçlar (kendi puanım gösterilir)
   const mine = matches.filter(m=> (m.team_home===team||m.team_away===team)
       && m.home_score!=null && m.away_score!=null)
     .map(m=>({m, ref:false}));
-  // 2) Yönetimden yüklenen tüm lig sonuçları (tahmin yok, sadece referans).
-  //    Aynı eşleşme zaten yukarıda varsa tekrar eklenmez.
+  // 2) Yönetimden yüklenen lig sonuçları (referans; tahmin yok)
   const has=(h,a)=>mine.some(x=>x.m.team_home===h && x.m.team_away===a);
   const ref = results.filter(r=> (r.team_home===team||r.team_away===team)
       && r.home_score!=null && r.away_score!=null && !has(r.team_home,r.team_away))
     .map(r=>({m:{...r, stage:"group", kickoff:r.kickoff||null,
-                 label:r.md?`Lig Aşaması · ${r.md}. Hafta`:"Lig Aşaması"}, ref:true}));
+                 label:r.md?`${r.md}. Hafta`:"Lig Aşaması"}, ref:true}));
   const played = mine.concat(ref).sort((a,b)=>{
-    const ta=a.m.kickoff?new Date(a.m.kickoff).getTime():(a.m.md||0);
-    const tb=b.m.kickoff?new Date(b.m.kickoff).getTime():(b.m.md||0);
+    const ta=a.m.kickoff?new Date(a.m.kickoff).getTime():(a.m.md||0)*1e10;
+    const tb=b.m.kickoff?new Date(b.m.kickoff).getTime():(b.m.md||0)*1e10;
     return ta-tb;
   });
-  let w=0,d=0,l=0,gf=0,ga=0;
-  const rows = played.map(({m,ref:isRef})=>{
+
+  // ===== Özet istatistikler =====
+  let w=0,d=0,l=0,gf=0,ga=0, hW=0,hD=0,hL=0, aW=0,aD=0,aL=0, cs=0, fts=0;
+  let biggest=null, worst=null;
+  const form=[];               // son 5 maç sonucu
+  let myN=0,myHit=0,myExact=0,myPts=0;
+  const rows = played.map(({m,isRefX,ref:isRef})=>{
     const home = m.team_home===team;
     const own = home?m.home_score:m.away_score;
     const opp = home?m.away_score:m.home_score;
     const other = home?m.team_away:m.team_home;
     gf+=own; ga+=opp;
+    if(opp===0) cs++;                       // kalesini kapattı
+    if(own>0 && opp>0) fts++;               // karşılıklı gol
     let res,cls;
-    if(own>opp){ w++; res="G"; cls="tc-w"; }
-    else if(own===opp){ d++; res="B"; cls="tc-d"; }
-    else { l++; res="M"; cls="tc-l"; }
+    if(own>opp){ w++; res="G"; cls="tc-w"; home?hW++:aW++; }
+    else if(own===opp){ d++; res="B"; cls="tc-d"; home?hD++:aD++; }
+    else { l++; res="M"; cls="tc-l"; home?hL++:aL++; }
+    form.push(res);
+    const margin=own-opp;
+    if(margin>0 && (!biggest || margin>biggest.margin || (margin===biggest.margin && own>biggest.own)))
+      biggest={margin,own,opp,other,home};
+    if(margin<0 && (!worst || margin<worst.margin))
+      worst={margin,own,opp,other,home};
+
     const live = (!isRef && isInPlay(m)) ? `<span class="tc-live"><span class="livedot"></span></span>` : "";
-    const stageTxt = m.grp?`Grup ${m.grp}`:(m.label||STAGE_LABEL[m.stage]);
     const ofl=flagUrl(other);
-    // Kendi puanım (CUTOFF sonrası, tahmin oynanan maçlarda)
     const scored = !isRef && m.kickoff && new Date(m.kickoff)>=CUTOFF;
     const g = scored ? grade(predsMine[m.id]||null, m) : null;
-    const myPts = g ? `<span class="tc-pts ${g.type}">${g.pts>0?"+":""}${g.pts}${isInPlay(m)?"*":""}</span>` : "";
+    if(g){ myN++; myPts+=g.pts; if(g.type==="exact"){myExact++;myHit++;} else if(g.type==="outc") myHit++; }
+    const myPtsTag = g ? `<span class="tc-pts ${g.type}">${g.pts>0?"+":""}${g.pts}${isInPlay(m)?"*":""}</span>` : "";
     const when = m.kickoff ? fmtKick(m.kickoff) : (m.md?`${m.md}. hafta`:"");
+    const stageTxt = m.grp?`Grup ${m.grp}`:(m.label||STAGE_LABEL[m.stage]);
     return `<div class="tc-row ${cls}${isRef?" tc-ref":""}">
       <span class="tc-res">${res}</span>
+      <span class="tc-ha" title="${home?"Ev sahibi":"Deplasman"}">${home?"E":"D"}</span>
       <div class="tc-mid">
         <div class="tc-opp">${ofl?`<img src="${ofl}" alt="">`:""}<span>${esc(trName(other))}</span>${live}</div>
-        <div class="tc-meta">${esc(stageTxt)}${when?` · ${esc(when)}`:""}${home?"":" · deplasman"}</div>
+        <div class="tc-meta">${esc(stageTxt)}${when?` · ${esc(when)}`:""}</div>
       </div>
-      ${myPts}
+      ${myPtsTag}
       <span class="tc-score">${own}–${opp}</span>
-      ${isRef?"":`<button class="tc-eye" data-tcpreds="${m.id}" title="Bu maçta kim kaç puan aldı?">👁</button>`}
+      ${isRef?`<span class="tc-eye ghost" title="Bu maça tahmin oynanmadı">–</span>`
+             :`<button class="tc-eye" data-tcpreds="${m.id}" title="Bu maçta kim kaç puan aldı?">👁</button>`}
     </div>`;
   }).join("");
+
+  // ===== Lig sıralaması (sonuçlar yüklüyse) =====
+  const table=standingsFromResults();
+  const st=table? table.find(r=>r.team===team) : null;
+  const zone = st ? (st.rank<=8?["İlk 8 · doğrudan Son 16","z-q"]
+                  : st.rank<=24?["Play-off bölgesi","z-p"] : ["Eleme dışı","z-o"]) : null;
+
+  const n=played.length;
   const fl=favFlagUrl(team);
   const diff=gf-ga, diffTxt=(diff>0?"+":"")+diff;
+  const per=x=> n? (x/n).toFixed(2) : "0.00";
+  const formHTML = form.slice(-5).map(r=>`<i class="fm ${r==="G"?"w":r==="B"?"d":"l"}">${r}</i>`).join("");
+
+  const rankBlock = st ? `<div class="tc-rank">
+      <div class="tr-pos"><b>${st.rank}.</b><span>SIRA</span></div>
+      <div class="tr-mid">
+        <div class="tr-pts"><b>${st.pts}</b> puan · ${st.pld} maç</div>
+        <div class="tr-zone ${zone[1]}">${esc(zone[0])}</div>
+      </div>
+      ${form.length?`<div class="tr-form"><span>SON ${Math.min(5,form.length)}</span><div>${formHTML}</div></div>`:""}
+    </div>` : (form.length?`<div class="tc-rank"><div class="tr-form wide"><span>SON ${Math.min(5,form.length)} MAÇ</span><div>${formHTML}</div></div></div>`:"");
+
+  const splitBlock = n ? `<div class="tc-split">
+      <div class="ts"><span class="ts-l">🏠 İç saha</span><b>${hW}-${hD}-${hL}</b></div>
+      <div class="ts"><span class="ts-l">✈️ Deplasman</span><b>${aW}-${aD}-${aL}</b></div>
+      <div class="ts"><span class="ts-l">Maç başı gol</span><b>${per(gf)}</b></div>
+      <div class="ts"><span class="ts-l">Maç başı yenen</span><b>${per(ga)}</b></div>
+      <div class="ts"><span class="ts-l">Gol yemediği</span><b>${cs}</b></div>
+      <div class="ts"><span class="ts-l">Karşılıklı gollü</span><b>${fts}</b></div>
+    </div>` : "";
+
+  const hi = biggest ? `<div class="tc-hl good"><span>En farklı galibiyet</span>
+      <b>${biggest.own}–${biggest.opp}</b> ${esc(trName(biggest.other))} ${biggest.home?"(E)":"(D)"}</div>` : "";
+  const lo = worst ? `<div class="tc-hl bad"><span>En ağır yenilgi</span>
+      <b>${worst.own}–${worst.opp}</b> ${esc(trName(worst.other))} ${worst.home?"(E)":"(D)"}</div>` : "";
+  const hlBlock = (hi||lo) ? `<div class="tc-hls">${hi}${lo}</div>` : "";
+
+  const myBlock = myN ? `<div class="tc-my">
+      <div class="tm-h">Bu takımın maçlarında sen</div>
+      <div class="tm-g">
+        <div><b>${myN}</b><span>tahmin</span></div>
+        <div><b>${myExact}</b><span>tam skor</span></div>
+        <div><b>%${Math.round(myHit/myN*100)}</b><span>isabet</span></div>
+        <div><b>${myPts.toLocaleString("tr-TR")}</b><span>puan</span></div>
+      </div>
+    </div>` : "";
+
   $("#modalCard").innerHTML=`
     <div class="tc-head">
       <button class="x" id="mCloseTC">✕</button>
       ${fl?`<img class="tc-flag" src="${fl}" alt="">`:""}
       <h3>${esc(trName(team))}</h3>
-      <div class="tc-sub">Turnuva karnesi · ${played.length} maç</div>
+      <div class="tc-sub">Turnuva karnesi · ${n} maç</div>
     </div>
+    ${rankBlock}
     <div class="tc-stats">
       <div class="tc-s w"><b>${w}</b><span>Galibiyet</span></div>
       <div class="tc-s d"><b>${d}</b><span>Beraberlik</span></div>
@@ -3032,6 +3138,9 @@ function openTeamCard(team){
       <div class="tc-s"><b>${ga}</b><span>Yediği gol</span></div>
       <div class="tc-s"><b>${diffTxt}</b><span>Averaj</span></div>
     </div>
+    ${splitBlock}
+    ${hlBlock}
+    ${myBlock}
     <div class="tc-list">${rows||'<div class="empty">Henüz oynanmış maç yok.</div>'}</div>`;
   $("#modal").classList.add("show");
   $("#mCloseTC").onclick=closeModal;
