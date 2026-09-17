@@ -579,6 +579,40 @@ img,svg,table,video,canvas{max-width:100%}
   .tr-form{display:none}
   .tr-form.wide{display:block}
 }
+/* ===== Maç kartı: takım form rozetleri ===== */
+.tnm{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 0}
+.team.away .tnm{align-items:flex-end}
+.tform{display:flex;gap:2px}
+.tf{width:14px;height:14px;border-radius:3px;display:grid;place-items:center;font-style:normal;
+  font-size:9px;font-weight:900;color:#06100c;flex:0 0 auto}
+.tf.w{background:var(--ok)} .tf.d{background:var(--muted)} .tf.l{background:var(--bad);color:#fff}
+/* ===== Puan durumu: tıklanabilir satır ===== */
+.standings-table tr.st-click{cursor:pointer}
+.standings-table tr.st-click:hover td{background:rgba(255,255,255,.05)}
+/* ===== FİKSTÜR ===== */
+.fx-hdr{font-family:'Anton';font-size:15px;color:var(--gold2);letter-spacing:.5px;margin:16px 2px 8px}
+.fx-hdr:first-child{margin-top:0}
+.fx-row{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);
+  border-radius:10px;padding:9px 12px;margin-bottom:6px}
+.fx-row.done{background:var(--panel2)}
+.fx-t{flex:1;min-width:0;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;
+  font-weight:700;color:var(--muted)}
+.fx-t span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.fx-t img{width:22px;height:22px;object-fit:contain;border-radius:50%;background:rgba(255,255,255,.06);flex:0 0 auto}
+.fx-t.h{justify-content:flex-end;text-align:right}
+.fx-t.a{justify-content:flex-start}
+.fx-t.win{color:#fff;font-weight:800}
+.fx-t:hover span{color:var(--gold2)}
+.fx-sc{flex:0 0 auto;font-family:'Anton';font-size:18px;color:#fff;letter-spacing:1px;min-width:62px;text-align:center}
+.fx-sc i{font-style:normal;color:var(--muted);margin:0 2px;font-size:15px}
+.fx-dt{flex:0 0 auto;font-size:11px;font-weight:700;color:var(--muted);min-width:62px;text-align:center}
+@media(max-width:480px){
+  .fx-t{font-size:11px;gap:6px}
+  .fx-t img{width:18px;height:18px}
+  .fx-sc,.fx-dt{min-width:52px}
+  .fx-sc{font-size:15px}
+  .tf{width:12px;height:12px;font-size:8px}
+}
 .stats-h{font-size:22px;margin:4px 2px 4px}
 .stats-sub{font-size:13px;color:var(--muted);font-weight:600;margin:0 2px 16px}
 .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
@@ -1371,6 +1405,7 @@ img,svg,table,video,canvas{max-width:100%}
     <button data-tab="how">Nasıl Oynanır</button>
     <button data-tab="leaderboard">Lider Tablosu</button>
     <button data-tab="standings">CL Puan Durumu</button>
+    <button data-tab="fixtures">Fikstür</button>
     <button data-tab="chart">Grafik</button>
     <button data-tab="stats">İstatistikler</button>
     <button data-tab="me">Bana Özel</button>
@@ -1415,6 +1450,14 @@ img,svg,table,video,canvas{max-width:100%}
         <a class="standings-ext" href="https://www.skysports.com/champions-league-table" target="_blank" rel="noopener">
           Sky Sports'ta İngilizce tabloyu gör ↗
         </a>
+      </section>
+
+      <!-- FIXTURES -->
+      <section id="tab-fixtures" class="hidden">
+        <h2 style="margin:0 0 4px">Fikstür</h2>
+        <p class="lead" style="font-size:13px;margin:0 0 14px">Lig aşamasının tüm maçları, hafta hafta.</p>
+        <div class="filters" id="fxFilters"></div>
+        <div id="fixturesBox"></div>
       </section>
 
       <!-- HOW TO -->
@@ -1815,13 +1858,18 @@ function parseResultsText(txt){
     if(/^1\.\s*Takım/i.test(line)) return;            // tablo başlığı
     const cols=line.split(/\t+| {2,}/).map(c=>c.trim()).filter(Boolean);
     if(cols.length<3) return;
-    const scoreM=cols[1].match(/^(\d+)\s*[-–]\s*(\d+)$/);
-    if(!scoreM) return;                                // tarih yazıyorsa maç oynanmamış
     const h=normalizeWikiTeamName(stripCountry(cols[0]));
     const a=normalizeWikiTeamName(stripCountry(cols[2]));
     if(!h||!a){ errs.push(`${idx+1}. satır: takım tanınmadı → "${cols[0]}" / "${cols[2]}"`); return; }
-    out.push({md:md||null, team_home:h, team_away:a,
-              home_score:parseInt(scoreM[1],10), away_score:parseInt(scoreM[2],10)});
+    const scoreM=cols[1].match(/^(\d+)\s*[-–]\s*(\d+)$/);
+    if(scoreM){
+      out.push({md:md||null, team_home:h, team_away:a, date_txt:null,
+                home_score:parseInt(scoreM[1],10), away_score:parseInt(scoreM[2],10)});
+    }else{
+      // Skor yok → henüz oynanmamış; tarih metniyle fikstür olarak kaydedilir
+      out.push({md:md||null, team_home:h, team_away:a, date_txt:cols[1],
+                home_score:null, away_score:null});
+    }
   });
   return {rows:out, errs};
 }
@@ -1891,12 +1939,63 @@ function renderStandings(){
     paintStandings(box,rows);
   }).catch(()=>{ box.innerHTML=standingsFallbackHTML(); });
 }
+/* ===== FİKSTÜR — tüm lig maçları, liste görünümü ===== */
+let fxMd="ALL";
+function renderFixtures(){
+  const box=$("#fixturesBox"), fb=$("#fxFilters");
+  if(!box) return;
+  if(!results.length){
+    if(fb) fb.innerHTML="";
+    box.innerHTML=`<div class="empty">Fikstür henüz yüklenmedi.<br><small style="opacity:.7">Yönetim sekmesinden maç listesini yükleyebilirsin.</small></div>`;
+    return;
+  }
+  const mds=[...new Set(results.map(r=>r.md).filter(Boolean))].sort((a,b)=>a-b);
+  // Varsayılan: oynanmamış ilk hafta (yoksa son hafta)
+  if(fxMd==="ALL" && mds.length){
+    const next=mds.find(md=>results.some(r=>r.md===md && r.home_score==null));
+    fxMd = next || mds[mds.length-1];
+  }
+  if(fb){
+    fb.innerHTML=mds.map(md=>{
+      const done=results.filter(r=>r.md===md).every(r=>r.home_score!=null);
+      return `<button class="pill ${md===fxMd?"on":""}" data-fxmd="${md}">${md}. Hafta${done?"":" ·"}</button>`;
+    }).join("")+`<button class="pill ${fxMd==="ALLX"?"on":""}" data-fxmd="ALLX">Tümü</button>`;
+    fb.querySelectorAll("[data-fxmd]").forEach(b=>b.onclick=()=>{
+      const v=b.dataset.fxmd; fxMd = v==="ALLX" ? "ALLX" : parseInt(v,10);
+      renderFixtures();
+    });
+  }
+  const show = fxMd==="ALLX" ? results : results.filter(r=>r.md===fxMd);
+  const sorted=[...show].sort((a,b)=>(a.md||0)-(b.md||0) ||
+    trName(a.team_home).localeCompare(trName(b.team_home),"tr"));
+  let html="", lastMd=null;
+  sorted.forEach(r=>{
+    if(fxMd==="ALLX" && r.md!==lastMd){ html+=`<div class="fx-hdr">${r.md}. Hafta</div>`; lastMd=r.md; }
+    const played=r.home_score!=null && r.away_score!=null;
+    const hw=played && r.home_score>r.away_score, aw=played && r.away_score>r.home_score;
+    const hl=flagUrl(r.team_home), al=flagUrl(r.team_away);
+    const mid = played
+      ? `<span class="fx-sc">${r.home_score}<i>–</i>${r.away_score}</span>`
+      : `<span class="fx-dt">${esc(r.date_txt||"")}</span>`;
+    html+=`<div class="fx-row${played?" done":""}">
+      <div class="fx-t h${hw?" win":""}" data-stteam="${esc(r.team_home)}">
+        <span>${esc(trName(r.team_home))}</span>${hl?`<img src="${hl}" alt="">`:""}</div>
+      ${mid}
+      <div class="fx-t a${aw?" win":""}" data-stteam="${esc(r.team_away)}">
+        ${al?`<img src="${al}" alt="">`:""}<span>${esc(trName(r.team_away))}</span></div>
+    </div>`;
+  });
+  box.innerHTML=html||`<div class="empty">Bu haftada maç yok.</div>`;
+}
+
 function paintStandings(box, rows, local){
   const trs=rows.map(r=>{
     const cls = r.rank<=8 ? "qual" : (r.rank<=24 ? "po" : "");
     const badge=(CHAMPION_POINTS[r.team]!=null) ? (TEAM_LOGO[r.team]||favFlagUrl(r.team)||"") : "";
-    const name=(CHAMPION_POINTS[r.team]!=null) ? trName(r.team) : r.teamRaw;
-    return `<tr class="${cls}">
+    const known=CHAMPION_POINTS[r.team]!=null;
+    const name=known ? trName(r.team) : r.teamRaw;
+    const click=known ? ` class="${cls} st-click" data-stteam="${esc(r.team)}" title="${esc(name)} karnesi"` : ` class="${cls}"`;
+    return `<tr${click}>
       <td class="num">${r.rank}</td>
       <td><div class="st-team">${badge?`<img src="${esc(badge)}" alt="">`:""}<span>${esc(name)}</span></div></td>
       <td class="num">${r.pld}</td>
@@ -2246,13 +2345,34 @@ function badgeFor(m){
   if(isLocked(m))return `<span class="badge lock">Kilitli</span>`;
   return `<span class="badge open">Açık</span>`;
 }
+// Bir takımın son N maçtaki formu (eski→yeni). Tüm lig sonuçları + tahmin maçları birlikte.
+function teamForm(team, n){
+  n=n||5;
+  const seen=new Set(), all=[];
+  matches.filter(m=>(m.team_home===team||m.team_away===team) && m.home_score!=null && m.away_score!=null)
+    .forEach(m=>{ seen.add(m.team_home+"|"+m.team_away);
+      all.push({t:new Date(m.kickoff).getTime(), h:m.team_home, hs:m.home_score, as:m.away_score}); });
+  results.filter(r=>(r.team_home===team||r.team_away===team) && r.home_score!=null && r.away_score!=null)
+    .forEach(r=>{ if(seen.has(r.team_home+"|"+r.team_away)) return;
+      all.push({t:r.kickoff?new Date(r.kickoff).getTime():(r.md||0)*1e10, h:r.team_home, hs:r.home_score, as:r.away_score}); });
+  return all.sort((a,b)=>a.t-b.t).slice(-n).map(x=>{
+    const home=x.h===team, own=home?x.hs:x.as, opp=home?x.as:x.hs;
+    return own>opp?"G":(own===opp?"B":"M");
+  });
+}
+function formPillsHTML(team){
+  const f=teamForm(team,5);
+  if(!f.length) return "";
+  return `<span class="tform">${f.map(r=>
+    `<i class="tf ${r==="G"?"w":r==="B"?"d":"l"}">${r}</i>`).join("")}</span>`;
+}
 function teamHTML(name,slot,side){
   if(name){
     const fl=flagUrl(name);
     const flg = fl?`<img class="fl" src="${fl}" alt="" loading="lazy">`:`<span class="fl ph">?</span>`;
-    return `<div class="team ${side} clickable" data-team="${esc(name)}" title="${esc(trName(name))} karnesi">${flg}<span class="nm">${esc(trName(name))}</span></div>`;
+    return `<div class="team ${side} clickable" data-team="${esc(name)}" title="${esc(trName(name))} karnesi">${flg}<div class="tnm"><span class="nm">${esc(trName(name))}</span>${formPillsHTML(name)}</div></div>`;
   }
-  return `<div class="team ${side}"><span class="fl ph">?</span><span class="nm placeholder-slot">Unknown</span></div>`;
+  return `<div class="team ${side}"><span class="fl ph">?</span><div class="tnm"><span class="nm placeholder-slot">Unknown</span></div></div>`;
 }
 function matchCard(m){
   const locked=isLocked(m), fin=m.finished, inplay=isInPlay(m), live=isLive(m);
@@ -5104,6 +5224,7 @@ function switchTab(t){
   show($("#tab-matches"),t==="matches");
   show($("#tab-me"),t==="me");
   show($("#tab-standings"),t==="standings");
+  show($("#tab-fixtures"),t==="fixtures");
   show($("#tab-how"),t==="how");
   show($("#tab-leaderboard"),t==="leaderboard");
   show($("#tab-chart"),t==="chart");
@@ -5113,6 +5234,7 @@ function switchTab(t){
   $("#appScreen").classList.toggle("lb-tab", t==="leaderboard");
   if(t==="me"){ renderMe(); }
   if(t==="standings"){ renderStandings(); }
+  if(t==="fixtures"){ renderFixtures(); }
   if(t==="admin"){ renderAdminFilters(); renderAdminAddForm(); renderResultsAdmin(); renderAdmin(); }
   if(t==="leaderboard"){ renderLeaderboardTab(); }
   if(t==="chart"){ renderChart(); }
@@ -5334,6 +5456,7 @@ function bindStaticUI(){
   document.addEventListener("click",e=>{ const g=e.target.closest("g.brk-g.clk[data-mid]"); if(g) openMatchPreds(+g.dataset.mid); });
   document.addEventListener("click",e=>{ if(e.target.closest("[data-qflock]")) showQFLockPopup(); });
   document.addEventListener("click",e=>{ const t=e.target.closest(".team.clickable[data-team]"); if(t) openTeamCard(t.dataset.team); });
+  document.addEventListener("click",e=>{ const t=e.target.closest("[data-stteam]"); if(t) openTeamCard(t.dataset.stteam); });
   document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeModal(); closePopup(); } });
 }
 
