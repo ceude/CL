@@ -240,7 +240,8 @@ img,svg,table,video,canvas{max-width:100%}
   .mrow{gap:6px}
   .team{gap:5px}
   .team .fl{width:26px;height:26px}
-  .team .nm{max-width:76px;font-size:13px}
+  .team .tnm{max-width:80px}
+  .team .nm{font-size:13px}
   .scorebox{gap:4px}
   .si{width:36px;height:42px;font-size:19px}
   .dash{font-size:16px}
@@ -251,7 +252,8 @@ img,svg,table,video,canvas{max-width:100%}
   .mact-b{font-size:11px;height:34px;padding:0 4px;gap:3px}
 }
 @media(max-width:360px){
-  .team .nm{max-width:60px;font-size:12px}
+  .team .tnm{max-width:64px}
+  .team .nm{font-size:12px}
   .si{width:32px;height:40px;font-size:17px}
 }
 .yourpred{font-weight:700;color:#bcd3c4}
@@ -553,6 +555,7 @@ img,svg,table,video,canvas{max-width:100%}
 .fm{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;font-style:normal;
   font-size:11px;font-weight:900;color:#06100c}
 .fm.w{background:var(--ok)} .fm.d{background:var(--muted)} .fm.l{background:var(--bad);color:#fff}
+.fm.e{background:transparent;border:1px dashed var(--line2);color:var(--line2)}
 .tc-split{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:10px 18px 0}
 .ts{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center}
 .ts-l{display:block;font-size:11px;color:var(--muted);font-weight:700;line-height:1.25}
@@ -581,11 +584,15 @@ img,svg,table,video,canvas{max-width:100%}
 }
 /* ===== Maç kartı: takım form rozetleri ===== */
 .tnm{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 0}
+/* .nm dikey kutunun içinde: flex kısayolu yüksekliği etkiler, sıfırlamasın */
+.tnm .nm{flex:0 0 auto;width:100%;max-width:100%;line-height:1.2}
+.team.away .tnm .nm{text-align:right}
 .team.away .tnm{align-items:flex-end}
 .tform{display:flex;gap:2px}
 .tf{width:14px;height:14px;border-radius:3px;display:grid;place-items:center;font-style:normal;
   font-size:9px;font-weight:900;color:#06100c;flex:0 0 auto}
 .tf.w{background:var(--ok)} .tf.d{background:var(--muted)} .tf.l{background:var(--bad);color:#fff}
+.tf.e{background:transparent;border:1px dashed var(--line2);color:var(--line2)}
 /* ===== Puan durumu: tıklanabilir satır ===== */
 .standings-table tr.st-click{cursor:pointer}
 .standings-table tr.st-click:hover td{background:rgba(255,255,255,.05)}
@@ -2362,9 +2369,12 @@ function teamForm(team, n){
 }
 function formPillsHTML(team){
   const f=teamForm(team,5);
-  if(!f.length) return "";
-  return `<span class="tform">${f.map(r=>
-    `<i class="tf ${r==="G"?"w":r==="B"?"d":"l"}">${r}</i>`).join("")}</span>`;
+  // Her zaman 5 kutu: eksik maçlar boş kutu olarak gösterilir ("son 5" olduğu anlaşılsın)
+  const pad=Array(Math.max(0,5-f.length)).fill(null);
+  const cells=pad.concat(f).map(r=> r===null
+    ? `<i class="tf e">–</i>`
+    : `<i class="tf ${r==="G"?"w":r==="B"?"d":"l"}">${r}</i>`).join("");
+  return `<span class="tform" title="Son 5 maç">${cells}</span>`;
 }
 function teamHTML(name,slot,side){
   if(name){
@@ -3206,7 +3216,10 @@ function openTeamCard(team){
   const fl=favFlagUrl(team);
   const diff=gf-ga, diffTxt=(diff>0?"+":"")+diff;
   const per=x=> n? (x/n).toFixed(2) : "0.00";
-  const formHTML = form.slice(-5).map(r=>`<i class="fm ${r==="G"?"w":r==="B"?"d":"l"}">${r}</i>`).join("");
+  const last5=form.slice(-5);
+  const formHTML = Array(Math.max(0,5-last5.length)).fill(null).concat(last5)
+    .map(r=> r===null ? `<i class="fm e">–</i>`
+                      : `<i class="fm ${r==="G"?"w":r==="B"?"d":"l"}">${r}</i>`).join("");
 
   const rankBlock = st ? `<div class="tc-rank">
       <div class="tr-pos"><b>${st.rank}.</b><span>SIRA</span></div>
@@ -3214,8 +3227,8 @@ function openTeamCard(team){
         <div class="tr-pts"><b>${st.pts}</b> puan · ${st.pld} maç</div>
         <div class="tr-zone ${zone[1]}">${esc(zone[0])}</div>
       </div>
-      ${form.length?`<div class="tr-form"><span>SON ${Math.min(5,form.length)}</span><div>${formHTML}</div></div>`:""}
-    </div>` : (form.length?`<div class="tc-rank"><div class="tr-form wide"><span>SON ${Math.min(5,form.length)} MAÇ</span><div>${formHTML}</div></div></div>`:"");
+      ${form.length?`<div class="tr-form"><span>SON 5</span><div>${formHTML}</div></div>`:""}
+    </div>` : (form.length?`<div class="tc-rank"><div class="tr-form wide"><span>SON 5 MAÇ</span><div>${formHTML}</div></div></div>`:"");
 
   const splitBlock = n ? `<div class="tc-split">
       <div class="ts"><span class="ts-l">🏠 İç saha</span><b>${hW}-${hD}-${hL}</b></div>
