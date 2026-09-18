@@ -2368,11 +2368,11 @@ function teamForm(team, n){
     return own>opp?"G":(own===opp?"B":"M");
   });
 }
-function formPillsHTML(team){
+function formPillsHTML(team, side){
   const f=teamForm(team,5);
-  // Her zaman 5 kutu: eksik maçlar boş kutu olarak gösterilir ("son 5" olduğu anlaşılsın)
+  // Her zaman 5 kutu. Ev sahibi soldan doldurur, deplasman sağdan — kart simetrik görünsün.
   const pad=Array(Math.max(0,5-f.length)).fill(null);
-  const cells=pad.concat(f).map(r=> r===null
+  const cells=(side==="away" ? pad.concat(f) : f.concat(pad)).map(r=> r===null
     ? `<i class="tf e">–</i>`
     : `<i class="tf ${r==="G"?"w":r==="B"?"d":"l"}">${r}</i>`).join("");
   return `<span class="tform" title="Son 5 maç">${cells}</span>`;
@@ -2381,7 +2381,7 @@ function teamHTML(name,slot,side){
   if(name){
     const fl=flagUrl(name);
     const flg = fl?`<img class="fl" src="${fl}" alt="" loading="lazy">`:`<span class="fl ph">?</span>`;
-    return `<div class="team ${side} clickable" data-team="${esc(name)}" title="${esc(trName(name))} karnesi">${flg}<div class="tnm"><span class="nm">${esc(trName(name))}</span>${formPillsHTML(name)}</div></div>`;
+    return `<div class="team ${side} clickable" data-team="${esc(name)}" title="${esc(trName(name))} karnesi">${flg}<div class="tnm"><span class="nm">${esc(trName(name))}</span>${formPillsHTML(name, side)}</div></div>`;
   }
   return `<div class="team ${side}"><span class="fl ph">?</span><div class="tnm"><span class="nm placeholder-slot">Unknown</span></div></div>`;
 }
