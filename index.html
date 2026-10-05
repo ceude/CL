@@ -1520,7 +1520,7 @@ img,svg,table,video,canvas{max-width:100%}
         <ul>
           <li>Turnuvanın şampiyonunu tahmin edersin — <b style="color:var(--ink)">1 Kasım 2026 20:00'a kadar</b> istediğin kadar değiştirebilirsin, o saatte tahminin kilitlenir.</li>
           <li>Her takımın getirisi farklıdır: favoriler düşük, sürpriz adaylar yüksek puan getirir. Tuttuğun takım şampiyon olursa o puanı kazanırsın.</li>
-          <li>Kimin hangi takımı seçtiği, turnuva bitene kadar kimseye gösterilmez.</li>
+          <li>Herkesin şampiyon tahmini lider tablosunda (bayrak + getireceği puan) açıkça görünür.</li>
         </ul>
 
         <h2>Kurallar</h2>
@@ -1530,6 +1530,8 @@ img,svg,table,video,canvas{max-width:100%}
           <li>İki takımı da belli olmayan maçlara (örn. henüz eşleşmesi netleşmemiş play-off/Son 16 maçı) tahmin yapılamaz — takımlar belli olunca açılır.</li>
           <li>Başkalarının tahminlerini ancak maç başladıktan sonra görebilirsin.</li>
           <li>Lider tablosunda bir isme tıkla → o kişinin tüm tahminlerini, neyde sonucu neyde skoru bildiğini gör.</li>
+          <li><b style="color:var(--ink)">Puan eşitliğinde</b> sırasıyla: 1) daha çok tam skor bilen, 2) şampiyonu doğru tahmin eden, 3) eleme turlarında (play-off ve sonrası) daha çok puan toplayan öne geçer. Bunlar da eşitse sıralama aynı kalır.</li>
+          <li>Maç oynanırken skorlar <b style="color:var(--ink)">otomatik ve canlı</b> gelir; puanlar maç bitene kadar geçicidir.</li>
         </ul>
         <div class="note">💡 Tahminini yazdığın an ekranın altından <b>"kaydedildi"</b> bandı kayar. Ayrıca istediğinde kutucukları değiştirip tekrar kaydedebilirsin.</div>
       </section>
@@ -1852,6 +1854,96 @@ async function loadResults(){
     if(error) throw error;
     results=data||[];
   }catch(e){ results=[]; }   // tablo yoksa sessizce boş
+}
+/* ====================================================================
+   CANLI SKOR — ESPN'in açık skor servisi (anahtar gerektirmez, tarayıcıdan çağrılabilir).
+   Herkes için: oynanan maçların skoru/dakikası bellekte maçın üstüne yazılır → geçici puanlar.
+   Admin açıksa: biten maçın skoru veritabanına otomatik kaydedilir (finished=true).
+   Tahminler 90 dk'ya göre olduğu için uzatmaya giden maçta sadece 90 dk skoru kullanılır.
+   ==================================================================== */
+const ESPN_URL="https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard";
+const ESPN_ALIAS={"Feyenoord Rotterdam":"Feyenoord","Internazionale":"Inter"};
+function espnTeam(name){
+  if(!name) return null;
+  if(ESPN_ALIAS[name]) return ESPN_ALIAS[name];
+  const hit=normalizeWikiTeamName(name); if(hit) return hit;
+  const norm=x=>(x||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]/g,"");
+  return Object.keys(CHAMPION_POINTS).find(k=>norm(SPORTSDB_NAME[k])===norm(name)) || null;
+}
+const liveInfo={};   // match id -> {hs,as,ft,clock} | {manual:true}
+const ESPN_ET_RE=/EXTRA|OVERTIME|SHOOTOUT|AET|PEN|HALFTIME_ET/;
+async function refreshLiveScores(){
+  const n=Date.now();
+  // Başlamış ama veritabanında henüz "bitti" olmayan maçlar (son 7 gün — admin geç girerse de yakalansın)
+  const cand=matches.filter(m=>{
+    if(!m.team_home || !m.team_away || m.finished || !m.kickoff) return false;
+    const k=new Date(m.kickoff).getTime(); return k<=n+5*60000 && k>=n-7*86400000;
+  });
+  if(!cand.length) return false;
+  const days=[...new Set(cand.map(m=>new Date(m.kickoff).toISOString().slice(0,10).replace(/-/g,"")))];
+  const events=[];
+  await Promise.all(days.map(async d=>{
+    try{ const j=await (await fetch(`${ESPN_URL}?dates=${d}`)).json(); (j.events||[]).forEach(e=>events.push(e)); }catch(e){}
+  }));
+  let changed=false;
+  cand.forEach(m=>{
+    let f=null;
+    events.forEach(e=>{
+      const c=e.competitions&&e.competitions[0]; if(!c || f) return;
+      if(Math.abs(new Date(e.date)-new Date(m.kickoff))>36*3600000) return;
+      const h=c.competitors.find(x=>x.homeAway==="home"), a=c.competitors.find(x=>x.homeAway==="away"); if(!h||!a) return;
+      const th=espnTeam(h.team.displayName), ta=espnTeam(a.team.displayName);
+      if(th===m.team_home && ta===m.team_away) f={c,h,a};
+      else if(th===m.team_away && ta===m.team_home) f={c,h:a,a:h};   // ev/deplasman ters girilmişse
+    });
+    if(!f) return;
+    const st=f.c.status||{}, ty=st.type||{}, name=ty.name||"";
+    if(ty.state==="pre") return;
+    const prev=liveInfo[m.id];
+    let info;
+    if(name==="STATUS_END_OF_REGULATION"){
+      info={hs:+f.h.score, as:+f.a.score, ft:true};              // 90 dk bitti → tahmin skoru bu
+    }else if(ESPN_ET_RE.test(name)){
+      const reg=c=>Array.isArray(c.linescores)&&c.linescores.length>=2 ? (+c.linescores[0].value||0)+(+c.linescores[1].value||0) : null;
+      const hs=reg(f.h), as=reg(f.a);
+      if(hs!=null && as!=null) info={hs,as,ft:true};             // devre skorlarından 90 dk
+      else if(prev && prev.ft) info=prev;                         // 90 dk sonunu daha önce yakaladık
+      else info={manual:true};                                    // bilinmiyor → admin elle girer
+    }else{
+      info={hs:+f.h.score, as:+f.a.score, ft:!!ty.completed,
+            clock: ty.completed ? null : (name==="STATUS_HALFTIME" ? "İY" : (st.displayClock||null))};
+    }
+    if(!info.manual && (isNaN(info.hs)||isNaN(info.as))) return;
+    if(JSON.stringify(info)!==JSON.stringify(prev)) changed=true;
+    liveInfo[m.id]=info;
+  });
+  applyLiveScores();
+  if(me && me.is_admin) await autoSaveFinished();
+  return changed;
+}
+// ESPN bilgisini bellekteki maçların üstüne yaz (veritabanına değil). loadAll sonrası da çağrılır.
+function applyLiveScores(){
+  matches.forEach(m=>{
+    const li=liveInfo[m.id];
+    if(m.finished || !li) return;
+    if(li.manual){ m._needsManual=true; return; }
+    if(!m._live) m._db={home_score:m.home_score, away_score:m.away_score};
+    m.home_score=li.hs; m.away_score=li.as;
+    m._live=true; m._ft=!!li.ft; m._clock=li.clock||null;
+  });
+}
+let _autoSaving=false;
+async function autoSaveFinished(){
+  if(_autoSaving) return; _autoSaving=true;
+  try{
+    for(const m of matches.filter(x=>x._live && x._ft && !x.finished)){
+      const patch={home_score:m.home_score, away_score:m.away_score, finished:true};
+      const {error}=await sb.from("cl_matches").update(patch).eq("id",m.id);
+      if(error) continue;
+      Object.assign(m,patch); delete m._live; delete m._ft; delete m._clock; delete m._db;
+      band(`${trName(m.team_home)} ${m.home_score}-${m.away_score} ${trName(m.team_away)}`,"Sonuç ESPN'den otomatik kaydedildi");
+    }
+  }finally{ _autoSaving=false; }
 }
 // Yapıştırılan Wikipedia fikstürünü ayrıştır.
 // Beklenen satır: "AEK Yunanistan <TAB> 1-0 <TAB> Avusturya LASK"
@@ -2243,6 +2335,10 @@ function userTotals(uid){
   const myBets = (uid===session.user.id && me) ? me.final_side_bets : (prof?prof.final_side_bets:null);
   const sbPts = sideBonus(myBets);
   pts += sbPts;
+  // Şampiyon bonusu (kazanan ilan edildiyse) — lider tablosuyla aynı toplam çıksın
+  const myChamp = (uid===session.user.id && me) ? me.champion : (prof?prof.champion:null);
+  const champWinner = appConfig.champion_winner;
+  if(champWinner && myChamp===champWinner) pts += CHAMPION_POINTS[champWinner]||0;
   // Tahmin adedi: tüm kullanıcılar için sunucudan (RPC) gelen gerçek sayı.
   // RPC yoksa (eski kurulum) görünür tahminlerden say.
   const picks = (predCounts && predCounts[uid]!=null) ? predCounts[uid] : picksLocal;
@@ -2342,6 +2438,7 @@ async function loadAll(){
   appConfig={}; if(!cfgq.error) (cfgq.data||[]).forEach(r=>appConfig[r.key]=r.value);
   await loadComments();
   await loadResults();
+  applyLiveScores();   // son bilinen canlı skorları taze verinin üstüne tekrar uygula
 }
 
 /* ====================================================================
@@ -2395,7 +2492,8 @@ function matchCard(m){
   if(fin){
     center=`<div class="actual"><div class="sc">${m.home_score} – ${m.away_score}</div><div class="lab">Sonuç</div></div>`;
   }else if(inplay){
-    center=`<div class="actual live"><div class="sc">${m.home_score} – ${m.away_score}</div><div class="lab"><span class="livedot"></span>CANLI</div></div>`;
+    const lab = m._ft ? "MAÇ SONU · geçici" : (m._clock ? `CANLI · ${esc(m._clock)}` : "CANLI");
+    center=`<div class="actual live"><div class="sc">${m.home_score} – ${m.away_score}</div><div class="lab"><span class="livedot"></span>${lab}</div></div>`;
   }else{
     const hv=pred?pred.home:"", av=pred?pred.away:"";
     const dis=locked?"disabled":"";
@@ -2580,7 +2678,7 @@ function renderLiveFinal(fm){
   const started = fm.home_score!=null && fm.away_score!=null;   // skor gelmiş mi
   const hs=fm.home_score, as=fm.away_score;
   const rows=buildLeaderboard();
-  const pre=rows.map(r=>({id:r.id, p:r.pts-(r.live||0)})).sort((a,b)=>b.p-a.p);
+  const pre=rows.map(r=>({id:r.id, p:r.pts-(r.livePts||0)})).sort((a,b)=>b.p-a.p);
   const preRank={}; pre.forEach((r,i)=>preRank[r.id]=i+1);
   const predByU={}; predsAll.forEach(p=>{ if(p.match_id===fm.id) predByU[p.user_id]=p; });
   const ansSign = started ? Math.sign(hs-as) : 0;
@@ -2591,7 +2689,7 @@ function renderLiveFinal(fm){
                 : (started && diff<0)?`<span class="lf-dn">▼${-diff}</span>`
                 : `<span class="lf-eq"></span>`;
     // isim altı: canlı (final) puanı, lider tablosundaki gibi
-    const sub = (started && r.live>0) ? `<div class="lf-sub">canlı <b>+${r.live}</b></div>` : "";
+    const sub = (started && r.livePts>0) ? `<div class="lf-sub">canlı <b>+${r.livePts}</b></div>` : "";
     // şampiyon çipi (isim sağında)
     let champ="";
     if(r.champion){
@@ -2880,10 +2978,11 @@ function band(title,sub,isErr){
 /* ====================================================================
    10) LİDER TABLOSU + profil modalı
    ==================================================================== */
-// Beraberlikte: puan → tam skor → isim. Eşitse aynı sıra (1,2,2,4 mantığı)
+// Beraberlik kuralı: puan → tam skor sayısı → şampiyonu bilmek → eleme turlarında toplanan puan.
+// Hepsi eşitse aynı sıra (1,2,2,4 mantığı); isim sadece listeleme sırası içindir.
+const rankCmp=(a,b)=> b.pts-a.pts || b.exact-a.exact || (b.champHit||0)-(a.champHit||0) || (b.koPts||0)-(a.koPts||0);
 function rankRows(rows){
-  let rank=0, pp=null, pe=null;
-  rows.forEach((r,i)=>{ if(pp===null||r.pts!==pp||r.exact!==pe){ rank=i+1; } r.rank=rank; pp=r.pts; pe=r.exact; });
+  rows.forEach((r,i)=>{ r.rank = (i>0 && rankCmp(rows[i-1],r)===0) ? rows[i-1].rank : i+1; });
   return rows;
 }
 let lbHasLive=false;
@@ -2896,7 +2995,7 @@ function buildLeaderboard(){
   const lastFinished = matches.filter(m=>m.finished && new Date(m.kickoff)>=CUTOFF)
     .slice().sort((a,b)=> new Date(b.kickoff)-new Date(a.kickoff))[0] || null;
   function tot(uid,excludeRecent){
-    let pts=0,exact=0,outc=0,last=0,live=0; const u=bm[uid]||{};
+    let pts=0,exact=0,outc=0,last=0,live=0,ko=0; const u=bm[uid]||{};
     fin.forEach(m=>{
       const g=grade(u[m.id]||null,m); if(!g) return;
       const isLast = lastFinished && m.id===lastFinished.id, ip=isInPlay(m);
@@ -2904,18 +3003,25 @@ function buildLeaderboard(){
       if(ip) live+=g.pts;
       if(excludeRecent && (isLast || ip)) return; // "son maç öncesi" = son biten maç + canlı hariç
       pts+=g.pts; if(g.type==="exact"){exact++;outc++;} else if(g.type==="outc"){outc++;}
+      if(m.stage!=="group") ko+=g.pts;
     });
-    return {pts,exact,outc,last,live};
+    return {pts,exact,outc,last,live,ko};
   }
   let rows=players.map(p=>{ const t=tot(p.id,false);
     return {id:p.id, username:p.username, is_admin:p.is_admin, fav:p.fav_team, champion:p.champion, pts:t.pts, exact:t.exact, outc:t.outc,
-            lastPts:t.last, livePts:t.live, picks:(predCounts&&predCounts[p.id]!=null)?predCounts[p.id]:0 }; });
+            koPts:t.ko, lastPts:t.last, livePts:t.live, picks:(predCounts&&predCounts[p.id]!=null)?predCounts[p.id]:0 }; });
   // Şampiyon bonusu: kazanan ilan edildiyse, doğru tahmin edenlere ekle
   const champWinner = appConfig.champion_winner;
   if(champWinner){
-    rows.forEach(r=>{ if(r.champion===champWinner){ r.champBonus=CHAMPION_POINTS[champWinner]||0; r.pts+=r.champBonus; } });
+    rows.forEach(r=>{ if(r.champion===champWinner){ r.champHit=1; r.champBonus=CHAMPION_POINTS[champWinner]||0; r.pts+=r.champBonus; } });
   }
-  rows.sort((a,b)=> b.pts-a.pts || b.exact-a.exact || a.username.localeCompare(b.username,"tr"));
+  // Final yan bahisleri bonusu (yönetim sonuçları girdiyse)
+  rows.forEach(r=>{
+    const p=players.find(x=>x.id===r.id);
+    const bets=(r.id===session.user.id && me) ? me.final_side_bets : (p?p.final_side_bets:null);
+    r.sbPts=sideBonus(bets); r.pts+=r.sbPts;
+  });
+  rows.sort((a,b)=> rankCmp(a,b) || a.username.localeCompare(b.username,"tr"));
   rankRows(rows);
   // Şampiyon tahmini: hayatta mı, getireceği puan ne (elenmişse 0)
   const cprob=championProbs();
@@ -2966,31 +3072,55 @@ function championProbs(){
   // aynı taban ihtimalle (tüm eleme turlarını kazanma ihtimali) başlar.
   const baseline = Math.pow(0.5, KO_ORDER.length);
   Object.keys(CHAMPION_POINTS).forEach(t=>{ out[t]=baseline; });
-  // Her takımın ulaştığı en ileri eleme turu (üçüncülük maçı şampiyonluk yolu değil)
+  // Lig aşaması bittiyse (yüklenen sonuçlarda herkes 8 maç oynadıysa): 25-36. sıra elenir,
+  // ilk 8 play-off'u atlar (bir tur eksik kazanması yeter).
+  const table=standingsFromResults();
+  if(table && table.every(r=>r.pld>=8)){
+    table.forEach(r=>{
+      if(r.rank>24) out[r.team]=0;
+      else if(r.rank<=8) out[r.team]=Math.pow(0.5, KO_ORDER.length-1);
+    });
+  }
+  const koTeams=new Set();
+  matches.forEach(m=>{ if(KO_ORDER.includes(m.stage)) [m.team_home,m.team_away].forEach(t=>{ if(t) koTeams.add(t); }); });
+  // Yedek kontrol: Son 16 veya sonraki bir turun tüm eşleşmeleri belliyse, hiçbir eleme
+  // maçında görünmeyen takım elenmiştir (lig sonuçları yüklenmemiş olsa bile).
+  const fullStage = KO_ORDER.slice(1).some(stg=>{
+    const ms=matches.filter(m=>m.stage===stg);
+    return ms.length>=STAGE_FIXED_COUNT[stg] && ms.every(m=>m.team_home && m.team_away);
+  });
+  if(fullStage) Object.keys(CHAMPION_POINTS).forEach(t=>{ if(!koTeams.has(t)) out[t]=0; });
+  // Her takımın ulaştığı en ileri eleme turu
   const far={};
   matches.forEach(m=>{
     const si=KO_ORDER.indexOf(m.stage); if(si<0) return;
     [m.team_home,m.team_away].forEach(t=>{ if(t && (far[t]==null || si>far[t])) far[t]=si; });
   });
   Object.keys(far).forEach(t=>{
-    const si=far[t];
-    const m=matches.find(x=>KO_ORDER.indexOf(x.stage)===si && (x.team_home===t||x.team_away===t));
-    if(!m) return;
+    const si=far[t], stg=KO_ORDER[si];
+    // O turdaki eşleşmenin tüm maçları (final tek maç, diğerleri çift maç: ilk maç + rövanş)
+    const first=matches.find(x=>x.stage===stg && (x.team_home===t||x.team_away===t));
+    if(!first) return;
+    const other = first.team_home===t ? first.team_away : first.team_home;
+    const legs=matches.filter(x=>x.stage===stg &&
+      ((x.team_home===t && x.team_away===other) || (x.team_home===other && x.team_away===t)));
+    const needLegs = stg==="final" ? 1 : 2;
     let stageIdx=si, advanced=1;
-    if(m.finished && m.home_score!=null && m.away_score!=null){
-      const home = m.team_home===t;
-      const own=home?m.home_score:m.away_score, opp=home?m.away_score:m.home_score;
-      const other=home?m.team_away:m.team_home;
-      if(own>opp) stageIdx=si+1;                          // kazandı → bir üst tur
+    const done = legs.length>=needLegs && legs.every(x=>x.finished && x.home_score!=null && x.away_score!=null);
+    if(done){
+      let own=0, opp=0;                                    // toplam skor (iki maç)
+      legs.forEach(x=>{ const home=x.team_home===t;
+        own+=home?x.home_score:x.away_score; opp+=home?x.away_score:x.home_score; });
+      if(own>opp) stageIdx=si+1;                          // turu geçti
       else if(own<opp) advanced=0;                        // elendi
-      else{                                                // 90 dk berabere → penaltı
+      else{                                                // toplamda eşit → uzatma/penaltı
         const otherLater = other && matches.some(x=>KO_ORDER.indexOf(x.stage)>si && (x.team_home===other||x.team_away===other));
         advanced = otherLater ? 0 : 0.5;                   // rakip üst turda görünüyorsa elenmiş
         stageIdx = si+1;
       }
     }
     if(!advanced){ out[t]=0; return; }
-    const need = KO_ORDER.length - stageIdx;              // şampiyon olmak için kazanması gereken maç
+    const need = KO_ORDER.length - stageIdx;              // şampiyon olmak için kazanması gereken tur
     out[t] = advanced * (need<=0 ? 1 : Math.pow(0.5, need));
   });
   return out;
@@ -3056,8 +3186,7 @@ function openProfile(uid, opts){
     </div>`;
   }).join("");
 
-  // Şampiyon tahmini: kendi profilinde her zaman görünür (Değiştir dahil) — nereden açıldığına bakılmaz.
-  // Başkasınınki SADECE turnuva bitince (kazanan ilan edilince) görünür.
+  // Şampiyon tahmini herkese açık; "Değiştir" butonu sadece kendi profilinde ve süre dolmadan çıkar.
   const champWinner = appConfig.champion_winner;
   let champBlock="";
   const champEditable = isSelf && showPrivate && championOpen();
@@ -3131,8 +3260,8 @@ function openProfile(uid, opts){
     ${champBlock}
     ${sideBlock}
     <div class="legend">
-      <span><i class="lg-e"></i> Skoru tam bildi (+100)</span>
-      <span><i class="lg-o"></i> Sonucu bildi (+30)</span>
+      <span><i class="lg-e"></i> Skoru tam bildi</span>
+      <span><i class="lg-o"></i> Sonucu bildi</span>
       <span><i class="lg-b"></i> Bilemedi (0)</span>
     </div>
     <div class="pgrid">${rows||'<div class="empty">Henüz biten maç yok.</div>'}</div>`;
@@ -4374,11 +4503,11 @@ function showPrizePopup(){
       letter-spacing:.6px;padding:5px 13px;border-radius:999px;margin:2px 0 4px">⏳ SENİ BEKLİYORUZ</div>
     <a class="prize-ball" href="${url}" target="_blank" rel="noopener" title="Ödülü gör"
       style="border:2px solid ${th.a};box-shadow:0 12px 30px -8px ${th.g}">
-      <img src="${ball}" alt="adidas FIFA World Cup 26 topu" loading="lazy"></a>
+      <img src="${ball}" alt="adidas futbol topu" loading="lazy"></a>
     <h3 class="pop-h" style="color:${th.a}">Ödül Havuzu 🏆</h3>
     <p class="pop-p">${hello}ödül havuzuna katılmak için tek adım kaldı: <b>5 €</b>'unu <b>Cost odasına</b> bırak, turnuva sonunda ödülünü al 🙌<br>
       Havuzda biriken bedelle birinciye, ödül olarak resmi
-      <b>adidas FIFA Şampiyonlar Ligi 26</b> futbol topu hediye! ⚽</p>
+      <b>adidas</b> futbol topu hediye! ⚽</p>
     <a class="prize-link" href="${url}" target="_blank" rel="noopener" style="color:${th.a};border-bottom-color:${th.a}">🎁 Ödülü gör →</a>
     ${listBlock}
     <button class="pop-btn cd-wait" id="popupClose2" disabled
@@ -4450,7 +4579,7 @@ function showChampionPicker(){
         <div class="cl-name">${esc(trName(me.champion))}</div>
         <div class="cl-pts">Getiri: +${CHAMPION_POINTS[me.champion]||0} puan</div></div></div>
       <p class="pop-p" style="margin-top:12px">Seçim süresi doldu, tahminin kilitli. 🔒<br>
-      <span style="font-size:13px;color:var(--muted)">Kimin hangi takımı seçtiği diğerlerine turnuva bitene kadar gösterilmeyecek. Turnuva tamamlandığında kupayı kazanan takıma göre puanlar eklenecektir.</span></p>
+      <span style="font-size:13px;color:var(--muted)">Herkesin şampiyon tahmini lider tablosunda görünür. Turnuva tamamlandığında kupayı kazanan takıma göre puanlar eklenecektir.</span></p>
       <button class="pop-btn" id="popupClose2">Tamam</button>`);
     return;
   }
@@ -4466,7 +4595,7 @@ function showChampionPicker(){
     <h3 class="pop-h">Şampiyon tahmini</h3>
     <div class="champ-deadline">⏳ Son değişiklik: ${esc(championDeadlineStr())}</div>
     <p class="pop-p">Turnuvanın şampiyonunu tahmin et. <b>${esc(championDeadlineStr())}'e kadar</b> istediğin kadar değiştirebilirsin, sonra kilitlenir. Tuttuğun takım kupayı kazanırsa karşısındaki puanı kazanırsın.<br>
-    <span style="font-size:13px;color:var(--muted)">Kimin hangi takımı seçtiği diğerlerine turnuva bitene kadar gösterilmeyecek. Turnuva tamamlandığında kupayı kazanan takıma göre puanlar eklenecektir.</span></p>
+    <span style="font-size:13px;color:var(--muted)">Herkesin şampiyon tahmini lider tablosunda görünür. Turnuva tamamlandığında kupayı kazanan takıma göre puanlar eklenecektir.</span></p>
     <div class="tpgrid champ">${grid}</div>
     <button class="pop-btn ghost" id="champLater">Daha sonra karar ver</button>`);
   document.querySelectorAll(".tpick.champ").forEach(b=>b.onclick=()=>confirmChampion(b.dataset.team));
@@ -4833,8 +4962,12 @@ function renderAdmin(){
       <div style="margin:4px 2px 0">
         <button class="btn ghost sm" data-oddsedit="${m.id}">⚡ Skor oranları ${oddsOf(m)?'✓ girildi':(m.team_home&&m.team_away?'(otomatik)':'(takımlar belli değil)')}</button>
       </div>`:"";
+    // Kutularda veritabanındaki değer durur (ESPN'in geçici canlı skoru değil)
+    const dbH = m._db ? m._db.home_score : m.home_score, dbA = m._db ? m._db.away_score : m.away_score;
+    const liveNote = m._live ? ` · <span style="color:var(--gold2)">ESPN: ${m.home_score}-${m.away_score}${m._ft?' (bitti)':(m._clock?` (${esc(m._clock)})`:'')}</span>`
+      : (m._needsManual ? ` · <span style="color:#ff8c42">⚠️ Uzatmaya gitti — 90 dk skorunu elle gir</span>` : "");
     return `<div style="margin-bottom:8px">
-      <div style="font-size:11px;color:var(--muted);font-weight:700;margin:0 2px 4px">${esc(label)} · ${fmtKick(m.kickoff)} (DE)${m.finished?' · ✅ Bitti':''}</div>
+      <div style="font-size:11px;color:var(--muted);font-weight:700;margin:0 2px 4px">${esc(label)} · ${fmtKick(m.kickoff)} (DE)${m.finished?' · ✅ Bitti':''}${liveNote}</div>
       ${teamset}
       <div class="kickoffset">
         <input type="datetime-local" data-id="${m.id}" data-f="kickoff" value="${toBerlinInputValue(m.kickoff)}">
@@ -4842,9 +4975,9 @@ function renderAdmin(){
       <div class="arow">
         <div class="arow-teams"><div class="nm">${esc(hn)}</div><div class="nm away">${esc(an)}</div></div>
         <div class="arow-scores">
-          <input data-id="${m.id}" data-f="home_score" type="number" min="0" value="${m.home_score??""}">
+          <input data-id="${m.id}" data-f="home_score" type="number" min="0" value="${dbH??""}">
           <div class="dash">–</div>
-          <input data-id="${m.id}" data-f="away_score" type="number" min="0" value="${m.away_score??""}">
+          <input data-id="${m.id}" data-f="away_score" type="number" min="0" value="${dbA??""}">
           <button class="btn gold sm" data-save="${m.id}">Kaydet</button>
         </div>
       </div>
@@ -5017,13 +5150,17 @@ async function adminSave(id,btn){
   if(hs!==""&&hs!=null && as!==""&&as!=null){
     patch.home_score=parseInt(hs,10); patch.away_score=parseInt(as,10); patch.finished=true;
   }else{
+    const cur=matches.find(m=>m.id===id);
+    if(cur && cur.finished && !confirm(`${trName(cur.team_home)} – ${trName(cur.team_away)} maçının kayıtlı skoru (${cur.home_score}-${cur.away_score}) SİLİNECEK ve maç "bitmedi" olacak. Herkesin bu maçtan aldığı puan gider.\n\nEmin misin?`)) return;
     patch.home_score=null; patch.away_score=null; patch.finished=false;
   }
   btn.disabled=true; btn.textContent="…";
   try{
     const {error}=await sb.from("cl_matches").update(patch).eq("id",id);
     if(error) throw error;
-    Object.assign(matches.find(m=>m.id===id),patch);
+    const mm=matches.find(m=>m.id===id);
+    Object.assign(mm,patch);
+    if(patch.finished){ delete mm._live; delete mm._ft; delete mm._clock; delete mm._db; }
     band("Maç güncellendi","Yönetim");
     renderLeaderboard(); renderRibbon(); renderMatches(); renderAdmin(); renderSortFilters(); renderChart();
   }catch(err){ band((err&&err.message)||"Hata","Yönetim",true); }
@@ -5039,7 +5176,6 @@ function assignColors(){
   const ps=profiles.filter(p=>!isHiddenUser(p.username)).slice().sort((a,b)=>a.username.localeCompare(b.username));
   playerColors={}; ps.forEach((p,i)=>playerColors[p.id]=PALETTE[i%PALETTE.length]);
 }
-const CHART_START="2026-06-24";  // ilk puanların kazanıldığı gün
 function shortDay(key){
   const d=new Date(key+"T12:00:00Z");
   return d.toLocaleDateString("tr-TR",{day:"2-digit",month:"short"});
@@ -5151,7 +5287,7 @@ function renderChart(){
   box.innerHTML=`
     <div class="chart-wrap">
       <div class="chart-head"><h2>📈 Puan Gidişatı</h2>
-        <span class="sub">Her maç sonrası toplam puan · lig aşaması → 19 Temmuz</span>
+        <span class="sub">Her maç sonrası toplam puan · lig aşaması → final</span>
         ${anyLive?`<span class="chart-live"><span class="livedot"></span>CANLI</span>`:""}</div>
       <div class="chart-area" id="chartArea">
         <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
@@ -5210,25 +5346,6 @@ function niceStep(x){
 }
 
 
-/* ====================================================================
-   ŞEMA (BRACKET) — Son 32 → Final. Topoloji sabit (görselden);
-   takımlar/skorlar matches'ten canlı gelir (sadece gerçek skorlar).
-   ==================================================================== */
-const BRK_LEFT=[
-  ["Germany","Paraguay"],["France","Sweden"],["South Africa","Canada"],["Netherlands","Morocco"],
-  ["Portugal","Croatia"],["Spain","Austria"],["United States","Bosnia and Herzegovina"],["Belgium","Senegal"]
-];
-const BRK_RIGHT=[
-  ["Brazil","Japan"],["Côte d'Ivoire","Norway"],["Mexico","Ecuador"],["England","DR Congo"],
-  ["Argentina","Cabo Verde"],["Australia","Egypt"],["Switzerland","Algeria"],["Colombia","Ghana"]
-];
-const BRK_CODE={Germany:"GER",Paraguay:"PAR",France:"FRA",Sweden:"SWE","South Africa":"RSA",Canada:"CAN",
-  Netherlands:"NED",Morocco:"MAR",Portugal:"POR",Croatia:"CRO",Spain:"ESP",Austria:"AUT",
-  "United States":"USA","Bosnia and Herzegovina":"BIH",Belgium:"BEL",Senegal:"SEN",Brazil:"BRA",
-  Japan:"JPN","Côte d'Ivoire":"CIV",Norway:"NOR",Mexico:"MEX",Ecuador:"ECU",England:"ENG",
-  "DR Congo":"COD",Argentina:"ARG","Cabo Verde":"CPV",Australia:"AUS",Egypt:"EGY",Switzerland:"SUI",
-  Algeria:"ALG",Colombia:"COL",Ghana:"GHA"};
-const brkCode=t=> t? (BRK_CODE[t]|| (TR[t]||t).slice(0,3).toUpperCase()) : "";
 
 
 
@@ -5358,7 +5475,7 @@ function renderPledgeWidget(){
     <div class="pw-ball">
       <img src="${gif}" alt="" loading="lazy">
     </div>
-    <div class="pw-caption">🏆 FIFA Şampiyonlar Ligi 26 Orijinal Futbol Topu sahibini bekliyor</div>`;
+    <div class="pw-caption">🏆 Orijinal adidas futbol topu sahibini bekliyor</div>`;
 }
 function renderChampMini(){
   const el=$("#champMini"); if(!el) return;
@@ -5399,6 +5516,7 @@ async function enterApp(){
   try{ await sb.from("profiles").update({last_active:new Date().toISOString()}).eq("id",session.user.id); }catch(e){}
   await loadAll();
   renderAll();
+  refreshLiveScores().then(ch=>{ if(ch){ window._chartSilent=true; renderAll(); window._chartSilent=false; } }).catch(()=>{});
   if(!enterApp._popupShown){ enterApp._popupShown=true; setTimeout(maybeShowOpeningPopup, 600); }
   startLivePolling();
   setTimeout(maybeShowInstallHint, 2500);
@@ -5432,21 +5550,26 @@ function liveActiveWindow(){
   const n=Date.now();
   return matches.some(m=> m.team_home && m.team_away && !m.finished
     && new Date(m.kickoff).getTime() <= n+5*60000
-    && new Date(m.kickoff).getTime() >= n-3.5*3600*1000) || matches.some(isInPlay);
+    && new Date(m.kickoff).getTime() >= n-3.5*3600*1000) || matches.some(m=>isInPlay(m) && !m._ft);
 }
+// Canlı pencerede: ESPN skoru her 30 sn, veritabanı her 60 sn tazelenir
 function startLivePolling(){
   if(livePoll) return;
+  let tick=0;
   livePoll=setInterval(async ()=>{
     // Kullanıcı skor kutusuna yazıyorsa veya bir pencere açıksa dokunma
     const ae=document.activeElement;
     if(ae && ae.classList && ae.classList.contains("si")) return;
     if($("#modal").classList.contains("show") || $("#popup").classList.contains("show")) return;
     if(!liveActiveWindow()) return;
+    tick++;
     try{
-      await loadAll();
+      if(tick%2===0) await loadAll();
+      await refreshLiveScores();
       window._chartSilent=true; renderAll(); window._chartSilent=false;
+      if(me && me.is_admin && !$("#tab-admin").classList.contains("hidden")) renderAdmin();
     }catch(e){}
-  }, 60000);
+  }, 30000);
 }
 
 function bindStaticUI(){
@@ -5467,7 +5590,6 @@ function bindStaticUI(){
   document.addEventListener("click",e=>{ const b=e.target.closest("[data-allpreds]"); if(b) openMatchPreds(+b.dataset.allpreds); });
   document.addEventListener("click",e=>{ const b=e.target.closest("[data-cmt]"); if(b) toggleComments(+b.dataset.cmt); });
   document.addEventListener("click",e=>{ const b=e.target.closest("[data-odds]"); if(b) showOddsTable(+b.dataset.odds); });
-  document.addEventListener("click",e=>{ const g=e.target.closest("g.brk-g.clk[data-mid]"); if(g) openMatchPreds(+g.dataset.mid); });
   document.addEventListener("click",e=>{ if(e.target.closest("[data-qflock]")) showQFLockPopup(); });
   document.addEventListener("click",e=>{ const t=e.target.closest(".team.clickable[data-team]"); if(t) openTeamCard(t.dataset.team); });
   document.addEventListener("click",e=>{ const t=e.target.closest("[data-stteam]"); if(t) openTeamCard(t.dataset.stteam); });
