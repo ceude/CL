@@ -1453,7 +1453,7 @@ img,svg,table,video,canvas{max-width:100%}
       <!-- STANDINGS -->
       <section id="tab-standings" class="hidden">
         <h2 style="margin:0 0 4px">CL Puan Durumu</h2>
-        <p class="lead" style="font-size:13px;margin:0 0 16px">Lig aşaması güncel sıralaması — Wikipedia'daki canlı puan tablosundan çekilir.</p>
+        <p class="lead" style="font-size:13px;margin:0 0 16px">Lig aşaması güncel sıralaması — maç sonuçları otomatik çekilip hesaplanır.</p>
         <div id="standingsBox"></div>
         <a class="standings-ext" href="https://www.skysports.com/champions-league-table" target="_blank" rel="noopener">
           Sky Sports'ta İngilizce tabloyu gör ↗
@@ -1848,12 +1848,77 @@ function normalizeWikiTeamName(raw){
    puan durumu için. cl_results tablosundan gelir.
    ==================================================================== */
 let results=[];
+let resultsSource="db";          // "espn" = otomatik, "db" = yönetimden yapıştırılan liste
+let _espnResCache=null, _espnResAt=0, _resSynced=false;
 async function loadResults(){
+  let dbRows=[];
   try{
     const {data,error}=await sb.from("cl_results").select("*").order("md").order("kickoff");
     if(error) throw error;
-    results=data||[];
-  }catch(e){ results=[]; }   // tablo yoksa sessizce boş
+    dbRows=data||[];
+  }catch(e){ dbRows=[]; }   // tablo yoksa sessizce boş
+  results=dbRows; resultsSource="db";
+  // Tüm lig aşaması ESPN'den (5 dk önbellek). Gelmezse yönetimden yüklenen liste kullanılır.
+  try{
+    if(!_espnResCache || Date.now()-_espnResAt > 5*60000){
+      const rows=await fetchEspnLeaguePhase();
+      if(rows && rows.length>=100){ _espnResCache=rows; _espnResAt=Date.now(); _resSynced=false; }
+    }
+  }catch(e){}
+  if(_espnResCache){
+    results=_espnResCache.map(r=>({...r})); resultsSource="espn";
+    if(me && me.is_admin && !_resSynced) syncResultsToDb(dbRows);   // yedek olarak DB'ye de yaz
+  }
+}
+// ESPN'den lig aşaması: Eylül–Ocak, ay ay (tarih aralığı desteklenmiyor). Oynanmamış maçlar fikstür olarak gelir.
+const LEAGUE_PHASE_MONTHS=["202609","202610","202611","202612","202701"];
+const LEAGUE_PHASE_END=new Date("2027-02-15T00:00:00Z");
+async function fetchEspnLeaguePhase(){
+  const evs=[];
+  await Promise.all(LEAGUE_PHASE_MONTHS.map(async mo=>{
+    const j=await (await fetch(`${ESPN_URL}?dates=${mo}&limit=500`)).json();
+    (j.events||[]).forEach(e=>evs.push(e));
+  }));
+  const rows=[], seen=new Set();
+  evs.filter(e=>new Date(e.date)<LEAGUE_PHASE_END).forEach(e=>{
+    const c=e.competitions&&e.competitions[0]; if(!c) return;
+    const h=c.competitors.find(x=>x.homeAway==="home"), a=c.competitors.find(x=>x.homeAway==="away"); if(!h||!a) return;
+    const th=espnTeam(h.team.displayName), ta=espnTeam(a.team.displayName);
+    if(!th || !ta || seen.has(th+"|"+ta)) return;
+    seen.add(th+"|"+ta);
+    const ty=(c.status&&c.status.type)||{};
+    const done=ty.state==="post" && ty.completed;
+    let date_txt=null;
+    if(!done){
+      date_txt = ty.state==="in"
+        ? `CANLI ${h.score}-${a.score}`
+        : new Date(e.date).toLocaleString("tr-TR",{timeZone:TZ,day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+    }
+    rows.push({team_home:th, team_away:ta, kickoff:new Date(e.date).toISOString(), date_txt,
+               home_score:done?+h.score:null, away_score:done?+a.score:null});
+  });
+  // Hafta numarası: maç günleri arasında 3 günden uzun boşluk → yeni hafta
+  const days=[...new Set(rows.map(r=>berlinCalKey(r.kickoff)))].sort();
+  const mdOf={}; let md=0, prev=null;
+  days.forEach(d=>{ const t=new Date(d+"T12:00:00Z").getTime(); if(prev===null || t-prev>3*86400000) md++; mdOf[d]=md; prev=t; });
+  rows.forEach(r=>r.md=mdOf[berlinCalKey(r.kickoff)]);
+  return rows.sort((x,y)=>x.md-y.md || new Date(x.kickoff)-new Date(y.kickoff));
+}
+// Admin açıksa: değişen satırları cl_results'a yaz (ESPN bir gün kapanırsa son hali elde kalsın)
+async function syncResultsToDb(dbRows){
+  _resSynced=true;
+  const key=r=>r.team_home+"|"+r.team_away;
+  const db={}; dbRows.forEach(r=>db[key(r)]=r);
+  const changed=_espnResCache.filter(r=>{ const o=db[key(r)];
+    return !o || o.md!==r.md || o.home_score!==r.home_score || o.away_score!==r.away_score || (o.date_txt||null)!==(r.date_txt||null); })
+    .filter(r=>!(r.date_txt||"").startsWith("CANLI"));          // canlı ara skorları kalıcı yazma
+  if(!changed.length) return;
+  try{
+    let {error}=await sb.from("cl_results").upsert(changed,{onConflict:"team_home,team_away"});
+    if(error && /kickoff/i.test(error.message||"")){            // tabloda kickoff kolonu yoksa onsuz dene
+      ({error}=await sb.from("cl_results").upsert(changed.map(({kickoff,...r})=>r),{onConflict:"team_home,team_away"}));
+    }
+  }catch(e){}
 }
 /* ====================================================================
    CANLI SKOR — ESPN'in açık skor servisi (anahtar gerektirmez, tarayıcıdan çağrılabilir).
@@ -2111,7 +2176,7 @@ function paintStandings(box, rows, local){
     <tbody>${trs}</tbody></table></div>
     <div class="standings-legend"><span><i class="qual"></i>İlk 8 — doğrudan Son 16</span><span><i class="po"></i>9-24 — Play-off</span></div>
     <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--muted)">${local
-      ? "Yönetim panelinden yüklenen maç sonuçlarından hesaplandı"
+      ? (resultsSource==="espn" ? "Maç sonuçları ESPN'den otomatik alınıp hesaplandı" : "Yönetim panelinden yüklenen maç sonuçlarından hesaplandı")
       : `Kaynak: <a href="https://tr.wikipedia.org/wiki/2026-27_UEFA_%C5%9Eampiyonlar_Ligi" target="_blank" rel="noopener" style="color:var(--gold2)">Wikipedia (tr.wikipedia.org)</a>`}</div>`;
 }
 function standingsFallbackHTML(){
@@ -4831,6 +4896,9 @@ function renderResultsAdmin(){
   const mds=[...new Set(results.map(r=>r.md).filter(Boolean))].sort((a,b)=>a-b);
   box.innerHTML=`
     <h3 class="ra-h">📥 Tüm Lig Sonuçlarını Yükle</h3>
+    <p class="ra-p" style="color:var(--gold2)">${resultsSource==="espn"
+      ? "✅ Lig sonuçları ESPN'den otomatik geliyor, bir şey yapmana gerek yok. Bu panel sadece ESPN çalışmazsa yedek olarak duruyor."
+      : "⚠️ ESPN'den sonuç alınamadı — aşağıdaki listeden yüklenen sonuçlar kullanılıyor."}</p>
     <p class="ra-p">Wikipedia'daki maç listesini olduğu gibi yapıştır. Bunlar <b>tahmin için değil</b> —
       takım karnesi ve CL puan durumunda kullanılır. Skor yerine tarih yazan (oynanmamış) satırlar atlanır.
       Aynı eşleşme tekrar yüklenirse üzerine yazılır.</p>
