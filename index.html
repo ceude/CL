@@ -201,6 +201,17 @@ img,svg,table,video,canvas{max-width:100%}
 .match.fin::before{background:var(--ok)}
 .match.live::before{background:var(--energy)}
 .match.open::before{background:var(--gold)}
+/* Haftanın maçları — turuncu çerçeveyle öne çıkarılır */
+.week-block{border:2px solid #ff8c42;border-radius:var(--r-lg);padding:14px 14px 3px;margin:6px 0 20px;
+  background:rgba(255,140,66,.06);box-shadow:0 0 0 4px rgba(255,140,66,.12),var(--shadow-md)}
+.week-hdr{display:flex;align-items:center;gap:8px 12px;margin:0 2px 12px;flex-wrap:wrap}
+.week-hdr .wt{font-family:'Anton';font-size:17px;letter-spacing:2px;color:#ffb27a;display:inline-flex;align-items:center;gap:7px}
+.week-hdr .wi{width:19px;height:19px;color:#ff8c42;flex-shrink:0}
+.week-hdr .ws{font-size:12px;font-weight:700;color:var(--muted)}
+.week-hdr .wb{margin-left:auto;font-size:11px;font-weight:800;color:#151007;background:#ff8c42;padding:4px 10px;border-radius:999px}
+.week-hdr .wb.ok{background:var(--ok)}
+.match.week{border-color:rgba(255,140,66,.55)}
+.match.week::before{background:#ff8c42}
 .mtop{display:flex;align-items:center;gap:10px;margin-bottom:11px;font-size:11px;flex-wrap:wrap}
 .mtop .meta{color:var(--muted);font-weight:600}
 .mtop .meta b{color:#c7dccf}
@@ -2547,7 +2558,7 @@ function teamHTML(name,slot,side){
   }
   return `<div class="team ${side}"><span class="fl ph">?</span><div class="tnm"><span class="nm placeholder-slot">Unknown</span></div></div>`;
 }
-function matchCard(m){
+function matchCard(m, isWeek){
   const locked=isLocked(m), fin=m.finished, inplay=isInPlay(m), live=isLive(m);
   const cls = fin?"fin":(inplay?"live":(live?"live":(locked?"":"open")));
   const pred=predsMine[m.id];
@@ -2607,7 +2618,7 @@ function matchCard(m){
   const oddsInfo = (DYNAMIC_STAGES.has(m.stage)&&effectiveOdds(m)) ? `<button class="mact-b odds-info" data-odds="${m.id}" title="Bu maç için skor puanları">⚡ Skor puanları</button>` : "";
   const cCount = (comments[m.id]||[]).length;
   const cmt = `<button class="mact-b cmt-toggle" data-cmt="${m.id}">💬 Yorumlar${cCount?` (${cCount})`:""}</button>`;
-  return `<div class="match ${cls}">
+  return `<div class="match ${cls}${isWeek?" week":""}">
     <div class="mtop"><span class="meta">${meta}</span>
       <span class="meta">🕑 ${fmtKick(m.kickoff)} <span style="opacity:.6">(DE)</span></span>
       ${badgeFor(m)}</div>
@@ -2660,6 +2671,16 @@ function renderStageInfo(){
     renderStageInfo();
   };
 }
+function weekMatchIds(list){
+  // Skoru girilmeyi unutulmuş eski maçlar haftayı geçmişte tutmasın: son 24 saat ve sonrası
+  const since=now().getTime()-86400000;
+  const pending=list.filter(m=>m.team_home && m.team_away && !m.finished && new Date(m.kickoff).getTime()>=since);
+  if(!pending.length) return new Set();
+  const anchor=Math.min(...pending.map(m=>new Date(m.kickoff).getTime()));
+  const span=3*86400000;
+  return new Set(list.filter(m=>m.team_home && m.team_away &&
+    Math.abs(new Date(m.kickoff).getTime()-anchor)<=span).map(m=>m.id));
+}
 function renderMatches(){
   renderStageInfo();
   const list=$("#matchList");
@@ -2680,7 +2701,21 @@ function renderMatches(){
     list.innerHTML=msg; return;
   }
   let html="", lastKey=null;
+  // Haftanın maçları: en yakın bitmemiş maç + onun ±3 gün içindeki maçlar (Salı-Çarşamba aynı hafta)
+  const weekIds=weekMatchIds(ms);
+  if(weekIds.size){
+    const wk=ms.filter(m=>weekIds.has(m.id));
+    const missing=wk.filter(m=>!m.finished && !isLocked(m) && !predsMine[m.id]).length;
+    const first=dayKey(wk[0].kickoff), last=dayKey(wk[wk.length-1].kickoff);
+    html+=`<div class="week-block">
+      <div class="week-hdr"><span class="wt"><svg class="wi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.5 3.5 5 5.5 5 10.5a5 5 0 0 1-10 0c0-2.2 1.1-3.7 2.3-4.8.3 1.6 1.2 2.6 2.2 2.8-.6-3 .1-6 .5-8.5z"/></svg>HAFTANIN MAÇLARI</span>
+        <span class="ws">${esc(first===last?first:first+" – "+last)}</span>
+        <span class="wb${missing?"":" ok"}">${missing?`${missing} tahmin eksik`:"Tahminler tamam"}</span></div>
+      ${wk.map(m=>matchCard(m,true)).join("")}
+    </div>`;
+  }
   ms.forEach(m=>{
+    if(weekIds.has(m.id)) return;   // yukarıda gösterildi
     const key = dayKey(m.kickoff);
     if(key!==lastKey){ html+=`<div class="dayhdr">${esc(key)}</div>`; lastKey=key; }
     html+=matchCard(m);
