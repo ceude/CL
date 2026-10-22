@@ -4395,6 +4395,8 @@ function maybeShowOpeningPopup(){
   }
   // 0a) Turnuva bitti: şampiyon ilan edilince herkese (admin dahil), her açılışta özet kartı
   if(me && wrapAvailable()){ showWrapPopup(session.user.id); return; }
+  // 0a2) Herkese bir kez: şifre değiştirme özelliğinin duyurusu
+  if(me && !pwInfoSeen(session.user.id)){ markPwInfoSeen(session.user.id); showPwInfoPopup(); return; }
   // 0b) Mobilde herkese bir kez GIF ödül pop-up'ı (masaüstünde sağ alt kart var)
   if(me && isMobileView() && appConfig.prize_on==="1" && !gifPopSeen(session.user.id)){
     showGifPrizePopup(); markGifPopSeen(session.user.id); return;
@@ -4717,6 +4719,23 @@ function startPrizeCountdown(sec){
   },1000);
 }
 // Ödeyenlere tek seferlik teşekkür pop-up'ı
+function pwInfoSeen(uid){ try{ return localStorage.getItem("clPwInfo_"+uid)==="1"; }catch(e){ return true; } }
+function markPwInfoSeen(uid){ try{ localStorage.setItem("clPwInfo_"+uid,"1"); }catch(e){} }
+function showPwInfoPopup(){
+  showPopup(`
+    <button class="x" id="popupClose">✕</button>
+    <div class="pop-ic">🔑</div>
+    <h3 class="pop-h">Yeni: Şifre değiştirme</h3>
+    <p class="pop-p">Eski şifreni hatırlamıyor ve yeni şifre belirlemek istiyorsan bunu
+      <b>Bana Özel</b> sekmesinden (<b>Şifre → Değiştir</b>) yapabilirsin, eski şifreni bilmen gerekmez.</p>
+    <p class="pop-p" style="font-size:13px;color:var(--muted)">Telefonda giremiyorsan önce burada yeni şifre koy, sonra telefonda onunla gir.
+      Hiçbir yerde girişli değilsen giriş ekranındaki "Şifremi unuttum" ile yöneticiden yeni şifre isteyebilirsin.</p>
+    <div style="display:flex;gap:8px">
+      <button class="pop-btn ghost" id="popupClose2">Tamam</button>
+      <button class="pop-btn" id="pwInfoGo">Şifremi değiştir</button>
+    </div>`);
+  $("#pwInfoGo").onclick=showChangePasswordPopup;
+}
 function prizeThanksSeen(uid){ try{ return localStorage.getItem("wcPrizeLeft_"+uid)==="1"; }catch(e){ return false; } }
 function markPrizeThanksSeen(uid){ try{ localStorage.setItem("wcPrizeLeft_"+uid,"1"); }catch(e){} }
 function showPrizeThanks(){
