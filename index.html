@@ -1371,6 +1371,7 @@ img,svg,table,video,canvas{max-width:100%}
       <input id="auPass" type="password" autocomplete="current-password" placeholder="••••••••"></div>
     <button class="authbtn" id="auBtn">Giriş yap</button>
     <div class="authswitch" id="auSwitch">Hesabın yok mu? <button id="auToggle">Kayıt ol</button></div>
+    <div class="authswitch" id="auForgotRow" style="margin-top:8px"><button id="auForgot">Şifremi unuttum</button></div>
   </div>
 </div>
 
@@ -1579,6 +1580,7 @@ img,svg,table,video,canvas{max-width:100%}
         <div class="champ-admin" id="champAdmin"></div>
         <div class="prize-admin" id="prizeAdmin"></div>
         <div class="sidebet-admin" id="sideBetAdmin"></div>
+        <div id="pwAdmin"></div>
       </section>
     </main>
 
@@ -2432,7 +2434,80 @@ function setRegister(on){
     ? 'Zaten hesabın var mı? <button id="auToggle">Giriş yap</button>'
     : 'Hesabın yok mu? <button id="auToggle">Kayıt ol</button>';
   $("#auToggle").onclick=()=>setRegister(!registerMode);
+  $("#auForgotRow").style.display = on?"none":"";
   authError("");
+}
+// Şifremi unuttum: hesaplarda gerçek e-posta yok (ad@tahmin.local), o yüzden istek yöneticiye gider,
+// yönetici Yönetim sekmesinden geçici şifre verir (password_reset.sql).
+function showForgotPopup(){
+  const pre=$("#auUser").value.trim().toLowerCase().replace(/\s+/g,"");
+  showPopup(`
+    <button class="x" id="popupClose">✕</button>
+    <div class="pop-ic">🔑</div>
+    <h3 class="pop-h">Şifremi unuttum</h3>
+    <p class="pop-p" style="margin:0 0 10px">Bilgisayarda/başka bir cihazda hâlâ girişliysen orada
+      <b>Bana Özel → Şifre → Değiştir</b> ile mevcut şifreni bilmeden yeni şifre koyabilirsin.</p>
+    <p class="pop-p" style="margin:0 0 12px">Hiçbir yerde girişli değilsen kullanıcı adını yaz; istek yöneticiye gider,
+      o sana geçici bir şifre verir. Girince Bana Özel'den kendi şifreni koyarsın.</p>
+    <div class="autherr" id="fgErr"></div>
+    <div class="field"><label>Kullanıcı adı</label>
+      <input id="fgUser" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="24" value="${esc(pre)}"></div>
+    <button class="pop-btn" id="fgSend">İsteği gönder</button>`);
+  const err=m=>{ const e=$("#fgErr"); e.textContent=m; e.style.display=m?"block":"none"; };
+  const send=async()=>{
+    const u=$("#fgUser").value.trim().toLowerCase().replace(/\s+/g,"");
+    if(u.length<2) return err("Kullanıcı adını yaz.");
+    $("#fgSend").disabled=true; $("#fgSend").textContent="Gönderiliyor…";
+    const {error}=await sb.rpc("request_password_reset",{p_username:u});
+    if(error){
+      $("#fgSend").disabled=false; $("#fgSend").textContent="İsteği gönder";
+      return err("Gönderilemedi: "+(error.message||error));
+    }
+    showPopup(`
+      <button class="x" id="popupClose">✕</button>
+      <div class="pop-ic">✅</div>
+      <h3 class="pop-h">İstek gönderildi</h3>
+      <p class="pop-p">Yönetici sana geçici bir şifre verecek. Hızlandırmak için ona ayrıca haber verebilirsin.</p>
+      <button class="pop-btn" id="popupClose2">Tamam</button>`);
+  };
+  $("#fgSend").onclick=send;
+  $("#fgUser").addEventListener("keydown",e=>{ if(e.key==="Enter") send(); });
+  setTimeout(()=>$("#fgUser").focus(),50);
+}
+// Bana Özel → Şifre: oturum açıkken mevcut şifre sorulmadan yeni şifre
+function showChangePasswordPopup(){
+  showPopup(`
+    <button class="x" id="popupClose">✕</button>
+    <div class="pop-ic">🔑</div>
+    <h3 class="pop-h">Şifreni değiştir</h3>
+    <p class="pop-p" style="margin:0 0 12px">Mevcut şifreni bilmen gerekmez. Yeni şifreyle telefonda da girebilirsin.</p>
+    <div class="autherr" id="cpErr"></div>
+    <div class="field"><label>Yeni şifre</label>
+      <input id="cpPass" type="password" autocomplete="new-password" placeholder="en az 6 karakter"></div>
+    <div class="field"><label>Yeni şifre (tekrar)</label>
+      <input id="cpPass2" type="password" autocomplete="new-password"></div>
+    <button class="pop-btn" id="cpSave">Kaydet</button>`);
+  const err=m=>{ const e=$("#cpErr"); e.textContent=m; e.style.display=m?"block":"none"; };
+  const save=async()=>{
+    err("");
+    const p=$("#cpPass").value, p2=$("#cpPass2").value;
+    if(p.length<6) return err("Şifre en az 6 karakter olmalı.");
+    if(p!==p2) return err("İki şifre aynı değil.");
+    $("#cpSave").disabled=true; $("#cpSave").textContent="Kaydediliyor…";
+    const {error}=await sb.auth.updateUser({password:p});
+    if(error){
+      $("#cpSave").disabled=false; $("#cpSave").textContent="Kaydet";
+      const msg=error.message||String(error);
+      if(/different from the old|same_password/i.test(msg)) return err("Yeni şifre eskisiyle aynı olamaz.");
+      if(/reauthenticat/i.test(msg)) return err("Supabase'de 'Secure password change' açık. Yönetici kapatmalı ya da çıkış yapıp tekrar girmelisin.");
+      return err(msg);
+    }
+    closePopup();
+    band("Şifren değişti — telefonda yeni şifreyle girebilirsin","Şifre");
+  };
+  $("#cpSave").onclick=save;
+  $("#cpPass2").addEventListener("keydown",e=>{ if(e.key==="Enter") save(); });
+  setTimeout(()=>$("#cpPass").focus(),50);
 }
 async function doAuth(){
   authError("");
@@ -3933,6 +4008,9 @@ function renderMe(){
     champRow=`<div class="me-set empty"><div class="me-set-ic">🏆</div>
       <div class="me-set-t"><span class="lab">Şampiyon tahmini</span><b class="dim">Seçim süresi doldu</b></div></div>`;
   }
+  const pwRow=`<div class="me-set"><div class="me-set-ic">🔑</div>
+      <div class="me-set-t"><span class="lab">Şifre</span><b class="dim">Mevcut şifreyi bilmeden yenisini koy</b></div>
+      <button class="btn ghost sm" id="mePwBtn">Değiştir</button></div>`;
 
   // --- Sayılar ---
   const nums=`<div class="me-grid">
@@ -4086,9 +4164,10 @@ function renderMe(){
     <div class="me-share-hint">İstatistiklerini tek görsele basar — WhatsApp'a atabilirsin.</div>
   </div>`;
 
-  box.innerHTML=head+`<div class="me-sets">${favRow}${champRow}</div>`+nums+bestBlock+timeBlock+habitBlock+biasBlock+teamBlock+badgeBlock+histBlock+shareBlock;
+  box.innerHTML=head+`<div class="me-sets">${favRow}${champRow}${pwRow}</div>`+nums+bestBlock+timeBlock+habitBlock+biasBlock+teamBlock+badgeBlock+histBlock+shareBlock;
   const shb=$("#meShareBtn"); if(shb) shb.onclick=()=>shareMyCard(s, badges);
   const fb=$("#meFavBtn"); if(fb) fb.onclick=()=>showTeamPicker(false);
+  $("#mePwBtn").onclick=showChangePasswordPopup;
   const cb=$("#meChampBtn"); if(cb) cb.onclick=()=>showChampionPicker();
 }
 // ===== Paylaşılabilir özet kartı (canvas → PNG → paylaş / indir) =====
@@ -5152,6 +5231,64 @@ function renderChampAdmin(){
     }catch(e){ band("Kaydedilemedi: "+((e&&e.message)||e),"Yönetim",true); }
   };
   renderPrizeAdmin();
+  renderPwAdmin();
+}
+// Yönetim: unutulan şifreler — istekleri gör, geçici şifre ver (password_reset.sql gerekir)
+function randomTempPass(){
+  const cs="abcdefghjkmnpqrstuvwxyz23456789";
+  const a=new Uint32Array(8); crypto.getRandomValues(a);
+  return Array.from(a,n=>cs[n%cs.length]).join("");
+}
+async function renderPwAdmin(){
+  const el=$("#pwAdmin"); if(!el) return;
+  const {data:reqs,error:rqErr}=await sb.rpc("pw_requests");
+  const players=profiles.slice().sort((a,b)=>a.username.localeCompare(b.username,"tr"));
+  const opts=`<option value="">— Kullanıcı seç —</option>`+
+    players.map(p=>`<option value="${p.id}">${esc(p.username)}</option>`).join("");
+  const reqList = rqErr
+    ? `<span style="color:#ff9aa3;font-size:13px">İstekler okunamadı — Supabase'de <code>password_reset.sql</code> çalıştırıldı mı?</span>`
+    : (reqs&&reqs.length
+      ? reqs.map(r=>`<span class="paid-chip">${esc(r.username)} · ${new Date(r.created_at).toLocaleDateString("tr-TR")}
+          <button data-pwpick="${esc(r.username)}" title="Şifre ver">🔑</button>
+          <button data-pwdis="${esc(r.username)}" title="İsteği kapat">✕</button></span>`).join("")
+      : `<span style="color:var(--muted);font-size:13px">Bekleyen istek yok.</span>`);
+  el.innerHTML=`
+    <h3 style="margin:22px 0 6px">🔑 Şifre Sıfırlama</h3>
+    <p style="color:var(--muted);font-size:13px;max-width:640px;margin:0 0 8px">
+      "Şifremi unuttum" diyenler burada görünür. Kişiyi seç, geçici şifre ver ve ona ilet;
+      girince Bana Özel'den kendi şifresini koyabilir.</p>
+    <div class="paid-chips" style="margin-bottom:10px">${reqList}</div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <select id="pwUserSel" class="tin" style="max-width:200px">${opts}</select>
+      <input id="pwNew" class="tin" style="max-width:150px;height:38px;background:#06100c;border:1px solid var(--line2);color:var(--ink);border-radius:10px;padding:0 8px" value="${randomTempPass()}">
+      <button class="btn gold sm" id="pwSet">Şifreyi ver</button>
+    </div>`;
+  el.querySelectorAll("[data-pwpick]").forEach(b=>b.onclick=()=>{
+    const p=profiles.find(x=>x.username===b.dataset.pwpick);
+    if(p) $("#pwUserSel").value=p.id;
+  });
+  el.querySelectorAll("[data-pwdis]").forEach(b=>b.onclick=async()=>{
+    const {error}=await sb.rpc("dismiss_pw_request",{p_username:b.dataset.pwdis});
+    if(error) return band("Kapatılamadı: "+error.message,"Yönetim",true);
+    renderPwAdmin();
+  });
+  $("#pwSet").onclick=async()=>{
+    const uid=$("#pwUserSel").value, pw=$("#pwNew").value.trim();
+    if(!uid) return band("Önce kullanıcı seç","Yönetim",true);
+    if(pw.length<6) return band("Şifre en az 6 karakter olmalı","Yönetim",true);
+    const name=(profiles.find(p=>p.id===uid)||{}).username||"";
+    if(!confirm(`${name} kullanıcısının şifresi "${pw}" olarak değiştirilsin mi?`)) return;
+    const {error}=await sb.rpc("admin_set_password",{p_user:uid,p_password:pw});
+    if(error) return band("Değiştirilemedi: "+error.message,"Yönetim",true);
+    showPopup(`
+      <button class="x" id="popupClose">✕</button>
+      <div class="pop-ic">🔑</div>
+      <h3 class="pop-h">Yeni şifre hazır</h3>
+      <p class="pop-p">Kullanıcı adı: <b>${esc(name)}</b><br>Geçici şifre: <b style="font-size:18px;letter-spacing:1px">${esc(pw)}</b></p>
+      <p class="pop-p" style="font-size:13px;color:var(--muted)">Bunu kişiye ilet. Girince Bana Özel → Şifre → Değiştir ile kendi şifresini koyabilir.</p>
+      <button class="pop-btn" id="popupClose2">Tamam</button>`);
+    renderPwAdmin();
+  };
 }
 function renderPrizeAdmin(){
   const el=$("#prizeAdmin"); if(!el) return;
@@ -5685,6 +5822,7 @@ function bindStaticUI(){
   $("#auUser").addEventListener("keydown",e=>{ if(e.key==="Enter") doAuth(); });
   $("#auPass").addEventListener("keydown",e=>{ if(e.key==="Enter") doAuth(); });
   setRegister(false);
+  $("#auForgot").onclick=showForgotPopup;
   $("#logoutBtn").onclick=async()=>{ await sb.auth.signOut(); location.reload(); };
   $("#refreshBtn").onclick=async()=>{ await loadAll(); renderAll(); if(me.is_admin)renderAdmin(); band("Güncel veriler yüklendi","Yenilendi"); };
   document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
