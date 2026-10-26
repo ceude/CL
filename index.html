@@ -3013,7 +3013,7 @@ function matchCard(m, isWeek){
   const locked=isLocked(m), fin=m.finished, inplay=isInPlay(m), live=isLive(m);
   const cls = fin?"fin":(inplay?"live":(live?"live":(locked?"":"open")));
   const pred=predsMine[m.id];
-  const meta = m.grp ? `Grup <b>${m.grp}</b>` : `<b>${esc(m.label||STAGE_LABEL[m.stage])}</b>`;
+  const meta = m.grp ? `Grup <b>${m.grp}</b>` : `<b>${esc(isDerby(m)?DERBY.label:(m.label||STAGE_LABEL[m.stage]))}</b>`;
 
   let center;
   if(fin){
@@ -4001,7 +4001,7 @@ function matchResHeadHTML(m, closeId){
       <div class="t">${esc(trName(m.team_away))}</div>
     </div>
     ${live?`<div class="mph-live"><span class="livedot"></span>CANLI · puanlar geçici</div>`:""}
-    <div class="mph-sub">${m.grp?`Grup ${esc(m.grp)}`:esc(m.label||STAGE_LABEL[m.stage])} · ${esc(fmtKick(m.kickoff))}</div>
+    <div class="mph-sub">${m.grp?`Grup ${esc(m.grp)}`:esc(isDerby(m)?DERBY.label:(m.label||STAGE_LABEL[m.stage]))} · ${esc(fmtKick(m.kickoff))}</div>
   </div>`;
 }
 function openMatchPreds(mid, opts){
@@ -5780,7 +5780,7 @@ function renderDerbyAdmin(){
     $("#derbyAddBtn").onclick=async()=>{
       const nextOrd = matches.reduce((mx,x)=>Math.max(mx,x.ord||0),0) + 1;
       const row={ord:nextOrd, stage:"group", kickoff:DERBY_KO.toISOString(), team_home:DERBY.home, team_away:DERBY.away,
-        label:DERBY.label, slot_home:"Ev sahibi", slot_away:"Deplasman", score_odds:JSON.stringify(DERBY_SCORE_ODDS)};
+        score_odds:JSON.stringify(DERBY_SCORE_ODDS)};
       try{
         const {data,error}=await sb.from("cl_matches").insert(row).select();
         if(error) throw error;
