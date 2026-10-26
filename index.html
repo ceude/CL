@@ -2028,7 +2028,7 @@ function derbyExtrasHTML(){
   const seeAll = started ? `<div class="dx-btns"><button class="mact-b seeall" data-dxall="1">👁 Herkesin ek tahminleri</button></div>` : "";
   return `<div class="dx-panel">
     <div class="dx-head">🎲 Derbi Ek Tahminleri ${my2}</div>
-    <div class="dx-note">Her doğru tahmin, yanındaki puanı getirir (oran × 10, üste yuvarlanmış). Hepsi <b>90 dakikalık</b> maç süresine göredir. <b>VAR ile iptal edilen goller, penaltılar ve kornerler sayılmaz.</b> Seçime tekrar basarsan kaldırılır.</div>
+    <div class="dx-note">Her doğru tahmin, yanındaki puanı getirir (oran × 10, üste yuvarlanmış). Hepsi <b>90 dakikalık</b> maç süresine göredir. <b>VAR ile iptal edilen goller, penaltılar, kornerler ve kartlar sayılmaz.</b> Seçime tekrar basarsan kaldırılır.</div>
     ${lock}${rows}${seeAll}
   </div>`;
 }
