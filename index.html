@@ -1041,6 +1041,85 @@ img,svg,table,video,canvas{max-width:100%}
 .sba-opt{flex:1;background:var(--panel);border:1px solid var(--line2);border-radius:10px;padding:8px;cursor:pointer;
   color:var(--ink);font-weight:800;font-size:13px}
 .sba-opt.sel{background:var(--gold);color:#151007;border-color:var(--gold)}
+/* ===== DERBİ ÖZEL (Galatasaray – Fenerbahçe) ===== */
+:root{ --gs-red:#a90432; --gs-yel:#fdb912; --fb-navy:#163a7a; --fb-yel:#ffe500; }
+body.derby-day{
+  background:
+    radial-gradient(900px 520px at -8% -6%, rgba(169,4,50,.30), transparent 60%),
+    radial-gradient(900px 520px at 108% -6%, rgba(22,58,122,.55), transparent 60%),
+    radial-gradient(700px 400px at 50% -20%, rgba(253,185,18,.10), transparent 60%),
+    var(--bg);
+}
+.derby-strip{position:relative;z-index:5;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  padding:8px 14px;font-weight:800;font-size:13px;letter-spacing:.4px;color:#fff;cursor:pointer;
+  background:linear-gradient(90deg,var(--gs-red) 0%,#d1153f 22%,#3a1640 50%,#1d3f86 78%,var(--fb-navy) 100%);
+  border-bottom:2px solid; border-image:linear-gradient(90deg,var(--gs-yel),var(--fb-yel)) 1}
+.derby-strip .ds-t{font-family:'Anton';letter-spacing:2px;font-size:15px}
+.derby-strip .ds-cd{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:2px 10px;font-variant-numeric:tabular-nums}
+.derby-strip .ds-p{background:var(--gs-yel);color:#1a1200;border-radius:999px;padding:2px 10px;font-size:12px}
+.derby-strip .ds-p.ok{background:var(--fb-yel)}
+.derby-block{position:relative;border-radius:var(--r-lg);padding:14px 14px 6px;margin:6px 0 22px;overflow:hidden;
+  background:linear-gradient(115deg,rgba(169,4,50,.22) 0%,rgba(14,23,64,.75) 45%,rgba(14,23,64,.75) 55%,rgba(22,58,122,.45) 100%);
+  border:2px solid transparent;
+  background-clip:padding-box;
+  box-shadow:0 0 0 2px var(--gs-yel),0 0 0 5px rgba(253,185,18,.15),0 14px 40px -12px rgba(169,4,50,.55),var(--shadow-md)}
+.derby-block::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;
+  background:linear-gradient(90deg,var(--gs-red) 0 25%,var(--gs-yel) 25% 50%,var(--fb-navy) 50% 75%,var(--fb-yel) 75% 100%)}
+.derby-hdr{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin:4px 2px 10px}
+.derby-hdr .dt{font-family:'Anton';font-size:22px;letter-spacing:3px;line-height:1;
+  background:linear-gradient(90deg,var(--gs-yel),#fff 50%,var(--fb-yel));-webkit-background-clip:text;background-clip:text;color:transparent}
+.derby-hdr .dsub{font-size:12px;font-weight:700;color:var(--muted)}
+.derby-hdr .dpart{margin-left:auto;font-size:11px;font-weight:800;color:#1a1200;background:var(--gs-yel);padding:4px 10px;border-radius:999px;white-space:nowrap}
+.derby-hdr .dpart.ok{background:var(--fb-yel)}
+.derby-hdr .dpart.void{background:var(--bad);color:#fff}
+.derby-rule{font-size:12px;line-height:1.5;color:#e6ebff;background:rgba(6,10,31,.55);border:1px solid rgba(253,185,18,.35);
+  border-radius:12px;padding:9px 12px;margin:0 0 12px}
+.derby-rule b{color:var(--gs-yel)}
+.derby-rule .dwait{display:block;margin-top:4px;color:#ffd2a0;font-weight:700}
+.derby-rule.void{border-color:rgba(255,81,96,.5);background:rgba(58,20,26,.6)}
+.derby-block .match{border-color:rgba(253,185,18,.35)}
+.derby-block .match::before{background:linear-gradient(180deg,var(--gs-red),var(--gs-yel) 50%,var(--fb-navy))}
+.dx-panel{background:rgba(6,10,31,.55);border:1px solid var(--line2);border-radius:14px;padding:12px 12px 4px;margin:4px 0 10px}
+.dx-head{display:flex;align-items:center;gap:8px;font-weight:900;font-size:14px;color:var(--gs-yel);margin-bottom:4px}
+.dx-head .dx-my{margin-left:auto;font-size:12px;color:var(--ink);font-weight:800}
+.dx-note{font-size:11.5px;color:var(--muted);margin:0 0 10px;line-height:1.45}
+.dx-row{margin-bottom:12px}
+.dx-q{font-weight:800;font-size:13px;color:#fff;margin-bottom:6px;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.dx-q .est{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.3px}
+.dx-q .res{font-size:11px;font-weight:800;color:var(--fb-yel)}
+.dx-opts{display:flex;gap:6px;flex-wrap:wrap}
+.dx-opt{flex:1 1 0;min-width:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  background:var(--panel);border:1px solid var(--line2);border-radius:10px;padding:7px 6px;color:var(--ink);cursor:pointer;
+  font-weight:700;font-size:12.5px;font-family:inherit;transition:border-color .15s,background .15s}
+.dx-opt b{color:var(--gs-yel);font-size:12px}
+.dx-opt:hover:not(:disabled){border-color:var(--gs-yel)}
+.dx-opt.sel{background:linear-gradient(135deg,rgba(169,4,50,.55),rgba(22,58,122,.65));border-color:var(--gs-yel);color:#fff}
+.dx-opt.correct{border-color:var(--fb-yel);box-shadow:inset 0 0 0 1px var(--fb-yel)}
+.dx-opt.sel.correct{background:linear-gradient(135deg,#7a5b00,#a88700);color:#fff}
+.dx-opt.sel.wrong{background:#2a1416;border-color:rgba(255,90,90,.45);opacity:.85}
+.dx-opt:disabled{cursor:default}
+.dx-btns{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+.dx-btns .mact-b{flex:1}
+/* Derbi pop-up */
+.pcard.derby-pop{background:linear-gradient(160deg,#3d0718 0%,#0e1740 48%,#0f2a62 100%);border:2px solid var(--gs-yel);
+  box-shadow:0 0 0 4px rgba(253,185,18,.18),0 20px 60px -10px rgba(169,4,50,.6)}
+.dp-kicker{font-family:'Anton';letter-spacing:4px;font-size:13px;color:var(--gs-yel);margin:0 0 6px;clear:both}
+.dp-title{font-family:'Anton';font-size:30px;letter-spacing:2px;line-height:1;margin:0 0 12px;
+  background:linear-gradient(90deg,var(--gs-yel),#fff 50%,var(--fb-yel));-webkit-background-clip:text;background-clip:text;color:transparent}
+.dp-vs{display:flex;align-items:center;justify-content:center;gap:14px;margin:4px 0 12px}
+.dp-team{display:flex;flex-direction:column;align-items:center;gap:6px;width:110px;font-weight:800;font-size:13px}
+.dp-team img{width:64px;height:64px;object-fit:contain;border-radius:50%;background:rgba(255,255,255,.06);padding:6px;
+  animation:dpPulse 2.2s ease-in-out infinite}
+.dp-team.away img{animation-delay:1.1s}
+.dp-x{font-family:'Anton';font-size:26px;color:#fff;text-shadow:0 0 18px rgba(253,185,18,.8)}
+@keyframes dpPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.dp-cd{font-family:'Anton';font-size:28px;letter-spacing:2px;color:#fff;font-variant-numeric:tabular-nums;margin:0 0 2px}
+.dp-cdl{font-size:11px;color:var(--muted);font-weight:700;margin-bottom:12px}
+.dp-bar{height:10px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden;margin:6px 0 6px}
+.dp-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gs-red),var(--gs-yel),var(--fb-yel));border-radius:999px}
+.dp-wait{font-size:12px;color:#ffd2a0;font-weight:700;margin:0 0 12px;line-height:1.45}
+.pcard.derby-pop .pop-btn{background:linear-gradient(135deg,var(--gs-yel),var(--fb-yel));color:#1a1200}
+@media (prefers-reduced-motion: reduce){ .dp-team img{animation:none} }
 /* 5€ pop-up kapatma geri sayımı */
 .pop-btn.cd-wait{background:#2a2f2b !important;color:#8fa298 !important;cursor:not-allowed;
   box-shadow:none !important;opacity:.9;position:relative}
@@ -1389,6 +1468,7 @@ img,svg,table,video,canvas{max-width:100%}
     <span class="adcta">App Store ↗</span>
   </a>
 
+  <div id="derbyStrip"></div>
   <div id="ribbon">
     <div class="tag">MAÇ SONUÇLARI</div>
     <div class="viewport"><div class="track" id="ribbonTrack"></div></div>
@@ -1580,6 +1660,7 @@ img,svg,table,video,canvas{max-width:100%}
         <div class="champ-admin" id="champAdmin"></div>
         <div class="prize-admin" id="prizeAdmin"></div>
         <div class="sidebet-admin" id="sideBetAdmin"></div>
+        <div id="derbyAdmin"></div>
         <div id="pwAdmin"></div>
       </section>
     </main>
@@ -1778,6 +1859,280 @@ function sideBetsOpen(){
   const m=finalMatch();
   return !!(m && m.team_home && m.team_away && new Date(m.kickoff) > new Date());
 }
+/* ====================================================================
+   DERBİ ÖZEL — Galatasaray – Fenerbahçe (Süper Lig, 26 Ekim 2026 19:30 DE)
+   - Skor tahmini normal maç kartı gibi (cl_matches satırı, stage=group, oranlar admin'den).
+   - Ek tahminler profiles.cl_derby_bets (kodlu JSON), sonuçlar cl_config.derby_results.
+   - PUANLAR SADECE DERBY_REQUIRED LİSTESİNDEKİ HERKES SKOR TAHMİNİ YAPTIYSA DAĞITILIR.
+   ==================================================================== */
+const DERBY = { home:"Galatasaray", away:"Fenerbahçe", kickoff:"2026-10-26T19:30",
+  dayStart:"2026-10-26T00:00", dayEnd:"2026-10-27T00:00", label:"Süper Lig · Derbi" };
+const DERBY_KO        = new Date(berlinInputToUTCISO(DERBY.kickoff));
+const DERBY_DAY_START = new Date(berlinInputToUTCISO(DERBY.dayStart));
+const DERBY_DAY_END   = new Date(berlinInputToUTCISO(DERBY.dayEnd));
+// Katılımı ŞART olan oyuncular (küçük harf). Hepsi skor tahmini yapmazsa derbiden kimse puan alamaz.
+const DERBY_REQUIRED  = ["canaykan","ahmet","baran","uraz","aliaksac","ilkay","kirmizimicra","onur"];
+const DERBY_ESPN_URL  = "https://site.api.espn.com/apis/site/v2/sports/soccer/tur.1/scoreboard";
+// Gerçek "Doğru Skor" oranları (admin panelinden değiştirilebilir)
+const DERBY_SCORE_ODDS = {"0-0":16.2,"0-1":13.15,"0-2":18.15,"0-3":37.5,"0-4":105,"0-5":130,"0-6":130,
+  "1-0":10.2,"1-1":6.58,"1-2":9.8,"1-3":20.2,"1-4":56,"1-5":130,"2-0":10.9,"2-1":7.62,"2-2":9.67,"2-3":21.6,"2-4":60,
+  "3-0":17.35,"3-1":12.1,"3-2":16.7,"3-3":31.5,"4-0":37,"4-1":25.5,"4-2":35.5,"5-0":100,"5-1":69,"6-0":130};
+// Ek oyunlar: puan = oran × 10, üstteki tam 10'a yuvarlanır (1.46 → 20, 2.28 → 30, 19.75 → 200)
+const up10 = odd => Math.ceil(odd - 1e-9) * 10;
+const DERBY_EXTRAS = [
+  {key:"iy",     q:"1. Yarı Sonucu",               opts:[{v:"1",label:"GS",odd:2.28},{v:"X",label:"Beraberlik",odd:2.25},{v:"2",label:"FB",odd:3.29}]},
+  {key:"first",  q:"İlk Golü Kim Atar?",           opts:[{v:"1",label:"GS",odd:1.56},{v:"0",label:"Gol olmaz",odd:19.75},{v:"2",label:"FB",odd:2.01}]},
+  {key:"goals",  q:"Toplam Gol Aralığı",           opts:[{v:"0-1",label:"0-1",odd:5.00},{v:"2-3",label:"2-3",odd:1.95},{v:"4-5",label:"4-5",odd:2.68},{v:"6+",label:"6+",odd:6.76}]},
+  {key:"half",   q:"En Çok Gol Olacak Yarı",       opts:[{v:"1",label:"1. Yarı",odd:2.78},{v:"X",label:"Eşit",odd:3.57},{v:"2",label:"2. Yarı",odd:1.83}]},
+  {key:"corn",   q:"Toplam Korner Aralığı",        opts:[{v:"0-8",label:"0-8",odd:2.17},{v:"9-11",label:"9-11",odd:2.41},{v:"12+",label:"12+",odd:2.62}]},
+  {key:"mcorn",  q:"En Çok Korneri Kim Kullanır?", opts:[{v:"1",label:"GS",odd:1.60},{v:"X",label:"Eşit",odd:6.94},{v:"2",label:"FB",odd:2.18}]},
+  {key:"yellow", q:"Toplam Sarı Kart 5,5 Alt/Üst", est:true, opts:[{v:"u",label:"Alt (0-5)",odd:2.10},{v:"o",label:"Üst (6+)",odd:1.65}]},
+  {key:"red",    q:"Kırmızı Kart Çıkar mı?",       est:true, opts:[{v:"y",label:"Çıkar",odd:2.75},{v:"n",label:"Çıkmaz",odd:1.40}]},
+  {key:"pen",    q:"Penaltı Olur mu?",             est:true, opts:[{v:"y",label:"Olur",odd:2.30},{v:"n",label:"Olmaz",odd:1.55}]},
+  {key:"var",    q:"Hakem VAR Monitörüne Gider mi?",est:true, opts:[{v:"y",label:"Gider",odd:1.95},{v:"n",label:"Gitmez",odd:1.80}]}
+];
+DERBY_EXTRAS.forEach(b=>b.opts.forEach(o=>{ o.pts=up10(o.odd); }));
+const derbyOpt = (key,v)=> ((DERBY_EXTRAS.find(b=>b.key===key)||{opts:[]}).opts.find(o=>o.v===v));
+let derbyPart = null;   // RPC'den gelen katılımcı id'leri (Set) — maç öncesi RLS yüzünden başkalarının tahmini görünmez
+
+function isDerby(m){
+  return !!(m && m.team_home===DERBY.home && m.team_away===DERBY.away && m.kickoff
+    && Math.abs(new Date(m.kickoff).getTime()-DERBY_KO.getTime()) < 3*86400000);
+}
+function derbyMatch(){ return matches.find(isDerby) || null; }
+function derbyKick(){ const m=derbyMatch(); return m ? new Date(m.kickoff) : DERBY_KO; }
+// Derbi günü (Almanya saatiyle 26 Ekim): kart en üstte, site derbi temasında
+function derbyDay(){ const n=Date.now(); return !!derbyMatch() && n>=DERBY_DAY_START.getTime() && n<DERBY_DAY_END.getTime(); }
+// Pop-up penceresi: derbi günü, maç saatine kadar
+function derbyPopupWindow(){ const m=derbyMatch(); return !!m && derbyDay() && Date.now() < derbyKick().getTime() && !m.finished; }
+function derbyStarted(){ const m=derbyMatch(); return !!m && (Date.now()>=derbyKick().getTime() || m.finished || isInPlay(m)); }
+function derbyRequired(){ return profiles.filter(p=>DERBY_REQUIRED.includes((p.username||"").trim().toLowerCase())); }
+function derbyStatus(){
+  const m=derbyMatch(); let req=derbyRequired();
+  if(!m) return {req, joined:[], missing:req, all:false, known:false};
+  const set=new Set(derbyPart||[]);
+  predsAll.forEach(p=>{ if(p.match_id===m.id) set.add(p.user_id); });
+  if(session && predsMine[m.id]) set.add(session.user.id);
+  const joined=req.filter(p=>set.has(p.id)), missing=req.filter(p=>!set.has(p.id));
+  // Listede olup profili bulunamayan kullanıcı da "eksik" sayılır (yanlışlıkla puan dağıtılmasın)
+  DERBY_REQUIRED.forEach(u=>{ if(!req.some(p=>(p.username||"").trim().toLowerCase()===u)){ missing.push({id:null,username:u}); } });
+  if(DERBY_REQUIRED.length!==req.length) req=req.concat(missing.filter(p=>p.id===null));
+  const known = derbyPart!==null || derbyStarted();   // maç başlayınca herkesin tahmini görünür → kesin
+  return {req, joined, missing, all: req.length>0 && missing.length===0, known};
+}
+function derbyAllIn(){ return derbyStatus().all; }
+function derbyResults(){ try{ return JSON.parse(appConfig.derby_results||"{}")||{}; }catch(e){ return {}; } }
+function derbyBetsOf(uid){
+  if(session && uid===session.user.id && me) return me.derby_bets||null;
+  const p=profiles.find(x=>x.id===uid); return p ? (p.derby_bets||null) : null;
+}
+// Ek tahmin puanı (sonuç girildiyse ve HERKES katıldıysa)
+function derbyExtraPts(bets, ignoreRule){
+  if(!bets) return 0;
+  if(!ignoreRule && !derbyAllIn()) return 0;
+  const res=derbyResults(); let pts=0;
+  DERBY_EXTRAS.forEach(b=>{ if(res[b.key] && bets[b.key]===res[b.key]){ const o=derbyOpt(b.key,res[b.key]); if(o) pts+=o.pts; } });
+  return pts;
+}
+function derbyExtraPtsFor(uid){ return derbyMatch() ? derbyExtraPts(derbyBetsOf(uid)) : 0; }
+function derbyBetsOpen(){ const m=derbyMatch(); return !!m && !derbyStarted(); }
+function derbyCountdown(){
+  let s=Math.max(0, Math.floor((derbyKick().getTime()-Date.now())/1000));
+  const h=Math.floor(s/3600); s-=h*3600; const mi=Math.floor(s/60); const se=s-mi*60;
+  return `${String(h).padStart(2,"0")}:${String(mi).padStart(2,"0")}:${String(se).padStart(2,"0")}`;
+}
+function derbyPartLabel(st){
+  st=st||derbyStatus();
+  return st.known ? `Katılım ${st.joined.length}/${st.req.length}` : `Katılım ?/${st.req.length}`;
+}
+async function saveDerbyBet(key, val){
+  if(!derbyBetsOpen()){ band("Derbi ek tahminleri kilitlendi","Derbi",true); return; }
+  const cur = (me&&me.derby_bets) ? {...me.derby_bets} : {};
+  if(cur[key]===val) delete cur[key]; else cur[key]=val;   // aynı seçeneğe tekrar basınca kaldır
+  try{
+    const {error}=await sb.from("profiles").update({cl_derby_bets:encSide(cur)}).eq("id",session.user.id);
+    if(error) throw error;
+    me.derby_bets=cur;
+    const mine=profiles.find(p=>p.id===session.user.id); if(mine) mine.derby_bets=cur;
+    renderMatches();
+    band(`${Object.keys(cur).length}/${DERBY_EXTRAS.length} ek tahmin`,"Derbi kaydedildi");
+  }catch(e){ band("Kaydedilemedi: "+((e&&e.message)||e),"Derbi",true); }
+}
+function derbyRuleHTML(st){
+  const m=derbyMatch(); const started=derbyStarted();
+  const finishedOrLive = m && (m.finished || isInPlay(m));
+  if(started && !st.all){
+    return `<div class="derby-rule void">⛔ <b>Herkes katılmadığı için derbiden puan dağıtılmayacak.</b>
+      <span class="dwait">Tahmin yapmayanlar: ${st.missing.map(p=>esc(p.username)).join(", ")||"—"}</span></div>`;
+  }
+  if(started && st.all){
+    return `<div class="derby-rule">✅ <b>Herkes katıldı!</b> Skor ve ek tahminlerin puanları ${finishedOrLive?"dağıtılıyor":"maçtan sonra dağıtılacak"}.</div>`;
+  }
+  const wait = st.known
+    ? (st.missing.length ? `<span class="dwait" data-derby-wait>Bekleniyor: ${st.missing.map(p=>esc(p.username)).join(", ")}</span>` : `<span class="dwait" data-derby-wait>Herkes hazır! 🔥</span>`)
+    : `<span class="dwait" data-derby-wait>Katılım bilgisi okunamadı.</span>`;
+  return `<div class="derby-rule">⚠️ Puanlar <b>sadece ${DERBY_REQUIRED.length} kişinin hepsi skor tahmini yaparsa</b> dağıtılır.
+    Bir kişi bile eksikse derbiden <b>kimse puan alamaz</b>. Ek tahminler isteğe bağlı.${wait}</div>`;
+}
+function derbyExtrasHTML(){
+  const open=derbyBetsOpen(), started=derbyStarted();
+  const res=derbyResults(), my=(me&&me.derby_bets)||{};
+  const resolved=DERBY_EXTRAS.some(b=>res[b.key]);
+  const nMine=DERBY_EXTRAS.filter(b=>my[b.key]).length;
+  const rows=DERBY_EXTRAS.map(b=>{
+    const r=res[b.key];
+    const btns=b.opts.map(o=>{
+      const sel=my[b.key]===o.v, isRes=r===o.v;
+      const cls=["dx-opt", sel?"sel":"", isRes?"correct":"", (r&&sel&&!isRes)?"wrong":""].filter(Boolean).join(" ");
+      return `<button class="${cls}" data-dx="${b.key}" data-val="${esc(o.v)}" ${open?"":"disabled"}>
+        <span>${esc(o.label)}</span><b>+${o.pts}</b></button>`;
+    }).join("");
+    const resTxt = r ? `<span class="res">Sonuç: ${esc((derbyOpt(b.key,r)||{}).label||r)}</span>` : "";
+    return `<div class="dx-row"><div class="dx-q">${esc(b.q)}${b.est?`<span class="est">· tahmini oran</span>`:""}${resTxt}</div>
+      <div class="dx-opts">${btns}</div></div>`;
+  }).join("");
+  let my2 = `<span class="dx-my">${nMine}/${DERBY_EXTRAS.length} seçildi</span>`;
+  if(resolved){
+    const raw=derbyExtraPts(my,true);
+    my2 = derbyAllIn() ? `<span class="dx-my">Ek tahminlerden: +${raw}</span>`
+                       : `<span class="dx-my" style="color:#ff9aa3">+${raw} → 0 (katılım eksik)</span>`;
+  }
+  const lock = open ? "" : `<div class="dx-note">🔒 Maç başladı, ek tahminler kilitlendi.</div>`;
+  const seeAll = started ? `<div class="dx-btns"><button class="mact-b seeall" data-dxall="1">👁 Herkesin ek tahminleri</button></div>` : "";
+  return `<div class="dx-panel">
+    <div class="dx-head">🎲 Derbi Ek Tahminleri ${my2}</div>
+    <div class="dx-note">Her doğru tahmin, yanındaki puanı getirir (oran × 10, üste yuvarlanmış). Hepsi <b>90 dakikalık</b> maç süresine göredir. Seçime tekrar basarsan kaldırılır.</div>
+    ${lock}${rows}${seeAll}
+  </div>`;
+}
+function derbyBlockHTML(m){
+  const st=derbyStatus();
+  const pcls = derbyStarted() ? (st.all?"ok":"void") : (st.known && st.all ? "ok" : "");
+  return `<div class="derby-block" id="derbyBlock">
+    <div class="derby-hdr"><span class="dt">⚔️ DERBİ ÖZEL</span>
+      <span class="dsub">${esc(trName(m.team_home))} – ${esc(trName(m.team_away))} · ${esc(dayKey(m.kickoff))}</span>
+      <span class="dpart ${pcls}" data-derby-part>${derbyPartLabel(st)}</span></div>
+    ${derbyRuleHTML(st)}
+    ${matchCard(m,true)}
+    ${derbyExtrasHTML()}
+  </div>`;
+}
+function bindDerby(scope){
+  (scope||document).querySelectorAll("[data-dx]").forEach(btn=>{
+    btn.onclick=()=>{ if(btn.disabled) return; saveDerbyBet(btn.dataset.dx, btn.dataset.val); };
+  });
+  const a=(scope||document).querySelector("[data-dxall]"); if(a) a.onclick=()=>showDerbyExtrasAll();
+}
+// Kendi skor tahminin kaydedilince sayaçları yerinde güncelle (inputları yeniden çizmeden)
+function refreshDerbyCounters(){
+  const st=derbyStatus();
+  document.querySelectorAll("[data-derby-part]").forEach(el=>{
+    el.textContent=derbyPartLabel(st); el.classList.toggle("ok", st.known && st.all);
+  });
+  document.querySelectorAll("[data-derby-wait]").forEach(el=>{
+    el.textContent = st.missing.length ? `Bekleniyor: ${st.missing.map(p=>p.username).join(", ")}` : "Herkes hazır! 🔥";
+  });
+  renderDerbyStrip();
+}
+function showDerbyExtrasAll(){
+  const m=derbyMatch(); if(!m) return;
+  const res=derbyResults(); const all=derbyAllIn();
+  const players=profiles.filter(p=>!isHiddenUser(p.username));
+  const cats=DERBY_EXTRAS.map(b=>{
+    const r=res[b.key]; const rl=r?(derbyOpt(b.key,r)||{}).label:null;
+    const rows=players.map(p=>{
+      const pick=(p.derby_bets||{})[b.key]; const o=pick?derbyOpt(b.key,pick):null;
+      const ok=r && pick===r;
+      const cls = r ? (ok?"mp exact":"mp bad") : "mp none";
+      const gained = ok ? (all?"+"+o.pts:"0") : (r?"0":(o?"+"+o.pts:""));
+      return `<div class="${cls}"><div class="mpav">${esc(initials(p.username))}</div>
+        <div class="mpn">${esc(p.username)}</div><div class="mpp">${o?esc(o.label):"—"}</div><div class="mppt">${gained}</div></div>`;
+    }).join("");
+    return `<div class="sb-cat"><div class="sb-cat-h">${esc(b.q)}${rl?` <span class="sb-cat-res">Sonuç: ${esc(rl)}</span>`:""}</div>
+      <div class="mplist">${rows}</div></div>`;
+  }).join("");
+  $("#modalCard").innerHTML=`
+    <div class="matchpred-head">
+      <button class="x" id="mCloseDX">✕</button>
+      <div class="bigres" style="font-size:15px"><div class="t">⚔️ Derbi Ek Tahminleri</div></div>
+      <div class="mph-sub">${esc(trName(m.team_home))} – ${esc(trName(m.team_away))}${all?"":" · katılım eksik, puan yok"}</div>
+    </div>${cats}`;
+  $("#modal").classList.add("show");
+  $("#mCloseDX").onclick=closeModal;
+}
+// Üst şerit + derbi teması
+function renderDerbyStrip(){
+  const el=$("#derbyStrip"); if(!el) return;
+  const m=derbyMatch(); const on=derbyDay();
+  document.body.classList.toggle("derby-day", on);
+  if(!on){ el.innerHTML=""; return; }
+  const st=derbyStatus();
+  let mid;
+  if(m.finished) mid=`<span class="ds-cd">Bitti · ${m.home_score}-${m.away_score}</span>`;
+  else if(isInPlay(m)) mid=`<span class="ds-cd">CANLI · ${m.home_score}-${m.away_score}</span>`;
+  else if(derbyStarted()) mid=`<span class="ds-cd">Başladı</span>`;
+  else mid=`<span class="ds-cd" data-dcd>${derbyCountdown()}</span>`;
+  el.innerHTML=`<div class="derby-strip" id="derbyStripBtn" title="Derbi kartına git">
+    <span class="ds-t">⚔️ DERBİ GÜNÜ</span>
+    <span>${esc(trName(m.team_home))} – ${esc(trName(m.team_away))} · ${new Date(m.kickoff).toLocaleTimeString("tr-TR",{timeZone:TZ,hour:"2-digit",minute:"2-digit"})} (DE)</span>
+    ${mid}
+    <span class="ds-p ${st.known&&st.all?"ok":""}" data-derby-part>${derbyPartLabel(st)}</span>
+  </div>`;
+  $("#derbyStripBtn").onclick=goDerby;
+}
+function goDerby(){
+  const p=$("#popup"); if(p) p.classList.remove("show");
+  switchTab("matches");
+  setTimeout(()=>{ const b=$("#derbyBlock"); if(b) b.scrollIntoView({behavior:"smooth",block:"start"}); }, 60);
+}
+function showDerbyPopup(){
+  const m=derbyMatch(); if(!m) return;
+  const st=derbyStatus();
+  const mine=!!predsMine[m.id];
+  const nX=DERBY_EXTRAS.filter(b=>me&&me.derby_bets&&me.derby_bets[b.key]).length;
+  const pct = st.req.length ? Math.round(st.joined.length/st.req.length*100) : 0;
+  const logo=t=>{ const u=flagUrl(t); return u?`<img src="${u}" alt="">`:""; };
+  const exempt = me && !DERBY_REQUIRED.includes((me.username||"").toLowerCase());
+  const myLine = exempt ? "Sen katılım şartından muafsın ama oynayabilirsin."
+    : (mine ? `✓ Skor tahminin hazır: <b>${predsMine[m.id].home}–${predsMine[m.id].away}</b> · ek tahmin ${nX}/${DERBY_EXTRAS.length}`
+            : `<b style="color:#ffb27a">Henüz skor tahmini yapmadın!</b> Sen yapmazsan kimse puan alamaz.`);
+  const wait = st.known
+    ? (st.missing.length ? `Bekleniyor: <b>${st.missing.map(p=>esc(p.username)).join(", ")}</b>` : "Herkes katıldı, puanlar dağıtılacak 🔥")
+    : "";
+  showPopup(`
+    <button class="x" id="popupClose">✕</button>
+    <div class="dp-kicker">BUGÜNE ÖZEL</div>
+    <div class="dp-title">⚔️ DERBİ ÖZEL</div>
+    <div class="dp-vs">
+      <div class="dp-team home">${logo(m.team_home)}<span>${esc(trName(m.team_home))}</span></div>
+      <div class="dp-x">VS</div>
+      <div class="dp-team away">${logo(m.team_away)}<span>${esc(trName(m.team_away))}</span></div>
+    </div>
+    <div class="dp-cd" data-dcd>${derbyCountdown()}</div>
+    <div class="dp-cdl">Tahminler ${new Date(m.kickoff).toLocaleTimeString("tr-TR",{timeZone:TZ,hour:"2-digit",minute:"2-digit"})}'da (Almanya saati) kilitlenir</div>
+    <p class="pop-p">Skor + ${DERBY_EXTRAS.length} ek tahmin (ilk gol, korner, kart, VAR…). Ama dikkat:
+      <b>herkes skor tahmini yapmazsa kimse puan alamaz!</b></p>
+    <div style="font-size:12px;font-weight:800;text-align:left">${derbyPartLabel(st)}</div>
+    <div class="dp-bar"><i style="width:${st.known?pct:0}%"></i></div>
+    <div class="dp-wait">${wait}</div>
+    <p class="pop-p">${myLine}</p>
+    <button class="pop-btn" id="derbyGo">${mine?"Derbi kartına git →":"Tahminimi yap →"}</button>`);
+  const pc=$("#popupCard"); if(pc) pc.classList.add("derby-pop");
+  $("#derbyGo").onclick=goDerby;
+}
+// Saniyelik geri sayım + maç saati gelince kilitleri tazele
+let _derbyTick=null, _derbyWasOpen=null;
+function startDerbyTicker(){
+  if(_derbyTick) return;
+  _derbyTick=setInterval(()=>{
+    if(!derbyMatch()) return;
+    const t=derbyCountdown();
+    document.querySelectorAll("[data-dcd]").forEach(el=>{ el.textContent=t; });
+    const open=derbyBetsOpen();
+    if(_derbyWasOpen===true && !open){ try{ closePopup(); renderAll(); }catch(e){} }
+    _derbyWasOpen=open;
+  },1000);
+}
 // Açıklama cümlesi için doğal tur ifadesi
 const STAGE_PHRASE = {
   group:"Lig aşamasında", po:"Play-off turunda", r16:"Son 16 turunda",
@@ -1963,6 +2318,12 @@ async function refreshLiveScores(){
   await Promise.all(days.map(async d=>{
     try{ const j=await (await fetch(`${ESPN_URL}?dates=${d}`)).json(); (j.events||[]).forEach(e=>events.push(e)); }catch(e){}
   }));
+  // Derbi Süper Lig maçı → ESPN Türkiye ligi skor tablosundan canlı skor
+  const dc=cand.find(isDerby);
+  if(dc){
+    const d=new Date(dc.kickoff).toISOString().slice(0,10).replace(/-/g,"");
+    try{ const j=await (await fetch(`${DERBY_ESPN_URL}?dates=${d}`)).json(); (j.events||[]).forEach(e=>events.push(e)); }catch(e){}
+  }
   let changed=false;
   cand.forEach(m=>{
     let f=null;
@@ -2383,6 +2744,7 @@ function dynamicBonus(m, scoreKey){
 }
 function grade(pred, m){
   if(m.home_score==null || m.away_score==null) return null; // skor yoksa puanlanmaz (biten + canlı dahil)
+  if(isDerby(m) && !derbyAllIn()) return {pts:0,type:"void"};   // derbi: herkes katılmadıysa puan yok
   if(!pred) return {pts:0,type:"none"};
   const sc=scoringFor(m.stage);
   const exact = pred.home===m.home_score && pred.away===m.away_score;
@@ -2413,6 +2775,9 @@ function userTotals(uid){
   const myBets = (uid===session.user.id && me) ? me.final_side_bets : (prof?prof.final_side_bets:null);
   const sbPts = sideBonus(myBets);
   pts += sbPts;
+  // Derbi ek tahminleri (sonuç girildiyse ve herkes katıldıysa)
+  const dxPts = derbyExtraPtsFor(uid);
+  pts += dxPts;
   // Şampiyon bonusu (kazanan ilan edildiyse) — lider tablosuyla aynı toplam çıksın
   const myChamp = (uid===session.user.id && me) ? me.champion : (prof?prof.champion:null);
   const champWinner = appConfig.champion_winner;
@@ -2548,7 +2913,9 @@ async function doAuth(){
    7) VERİ ÇEKME
    ==================================================================== */
 async function loadProfile(){
-  const {data}=await sb.from("profiles").select("id,username,is_admin,last_active,fav_team:cl_fav_team,champion:cl_champion,final_side_bets:cl_final_side_bets").eq("id",session.user.id).maybeSingle();
+  let pr=await sb.from("profiles").select("id,username,is_admin,last_active,fav_team:cl_fav_team,champion:cl_champion,final_side_bets:cl_final_side_bets,derby_bets:cl_derby_bets").eq("id",session.user.id).maybeSingle();
+  if(pr.error) pr=await sb.from("profiles").select("id,username,is_admin,last_active,fav_team:cl_fav_team,champion:cl_champion,final_side_bets:cl_final_side_bets").eq("id",session.user.id).maybeSingle();
+  const data=pr.data;
   me=data;
   if(!me){
     const u=session.user.email.split("@")[0];
@@ -2556,7 +2923,7 @@ async function loadProfile(){
     const r=await sb.from("profiles").select("id,username,is_admin,last_active,fav_team:cl_fav_team,champion:cl_champion,final_side_bets:cl_final_side_bets").eq("id",session.user.id).maybeSingle();
     me=r.data;
   }
-  if(me){ me.champion = decChampion(me.champion); me.final_side_bets = decSide(me.final_side_bets); } // DB kodlu → bellekte düz
+  if(me){ me.champion = decChampion(me.champion); me.final_side_bets = decSide(me.final_side_bets); me.derby_bets = decSide(me.derby_bets||null); } // DB kodlu → bellekte düz
 }
 async function loadAll(){
   const [mq,pq,allq,cntq]=await Promise.all([
@@ -2566,7 +2933,8 @@ async function loadAll(){
     sb.rpc("prediction_counts")
   ]);
   // profiles: champion kolonu henüz yoksa app çökmesin diye yedekli
-  let profq = await sb.from("profiles").select("id,username,is_admin,fav_team:cl_fav_team,champion:cl_champion,final_side_bets:cl_final_side_bets");
+  let profq = await sb.from("profiles").select("id,username,is_admin,fav_team:cl_fav_team,champion:cl_champion,final_side_bets:cl_final_side_bets,derby_bets:cl_derby_bets");
+  if(profq.error) profq = await sb.from("profiles").select("id,username,is_admin,fav_team:cl_fav_team,champion:cl_champion,final_side_bets:cl_final_side_bets");
   if(profq.error) profq = await sb.from("profiles").select("id,username,is_admin,fav_team:cl_fav_team,champion:cl_champion");
   if(profq.error) profq = await sb.from("profiles").select("id,username,is_admin,fav_team:cl_fav_team");
   // config: tablo henüz yoksa sessizce boş
@@ -2575,7 +2943,15 @@ async function loadAll(){
   predsMine={}; (pq.data||[]).forEach(p=>predsMine[p.match_id]=p);
   predsAll = allq.data||[];
   profiles = profq.data||[];
-  profiles.forEach(p=>{ p.champion = decChampion(p.champion); p.final_side_bets = decSide(p.final_side_bets); }); // kodlu → düz
+  profiles.forEach(p=>{ p.champion = decChampion(p.champion); p.final_side_bets = decSide(p.final_side_bets); p.derby_bets = decSide(p.derby_bets||null); }); // kodlu → düz
+  if(me){ const mp=profiles.find(p=>p.id===session.user.id); if(mp && mp.derby_bets!==undefined) me.derby_bets=mp.derby_bets; }
+  // Derbi katılımcıları (RLS'i atlayan RPC — sadece kimin tahmin yaptığını döndürür, skoru değil)
+  derbyPart=null;
+  const dmx=matches.find(isDerby);
+  if(dmx){
+    try{ const r=await sb.rpc("derby_participants",{p_match:dmx.id});
+      if(!r.error && Array.isArray(r.data)) derbyPart=new Set(r.data.map(x=>(x&&x.user_id)||x)); }catch(e){}
+  }
   // Kişi başı tahmin sayısı: önce görünen (predsAll) veriden bir TABAN sayı çıkarılır — ama RLS
   // gereği başkalarının HENÜZ BAŞLAMAMIŞ maçlardaki tahminleri predsAll'da görünmez (gizlilik kuralı:
   // "başkalarının tahminleri ancak maç başlayınca görülür"), o yüzden bu taban eksik sayabilir
@@ -2605,7 +2981,7 @@ function badgeFor(m){
 function teamForm(team, n){
   n=n||5;
   const seen=new Set(), all=[];
-  matches.filter(m=>(m.team_home===team||m.team_away===team) && m.home_score!=null && m.away_score!=null)
+  matches.filter(m=>!isDerby(m) && (m.team_home===team||m.team_away===team) && m.home_score!=null && m.away_score!=null)
     .forEach(m=>{ seen.add(m.team_home+"|"+m.team_away);
       all.push({t:new Date(m.kickoff).getTime(), h:m.team_home, hs:m.home_score, as:m.away_score}); });
   results.filter(r=>(r.team_home===team||r.team_away===team) && r.home_score!=null && r.away_score!=null)
@@ -2667,6 +3043,7 @@ function matchCard(m, isWeek){
     let pill="";
     if(g.type==="exact") pill=`<span class="yp exact">SKOR TAM · +${g.pts}</span>`;
     else if(g.type==="outc") pill=`<span class="yp outc">SONUÇ · +${g.pts}</span>`;
+    else if(g.type==="void") pill=`<span class="yp bad">PUAN YOK · katılım eksik</span>`;
     else pill=`<span class="yp bad">0 PUAN</span>`;
     foot=`${yp}${pill}`;
   }else if(inplay){
@@ -2767,6 +3144,13 @@ function renderMatches(){
 
   ms=[...ms];
   ms.sort((a,b)=> new Date(a.kickoff)-new Date(b.kickoff));
+  // DERBİ: derbi günü boyunca her sekmede en üstte özel blok; sonra kartlar arasında kronolojik
+  const dmTop = derbyDay() ? derbyMatch() : null;
+  const derbyHTML = dmTop ? derbyBlockHTML(dmTop) : "";
+  if(dmTop) ms=ms.filter(m=>!isDerby(m));
+  if(!ms.length && derbyHTML){
+    list.innerHTML=derbyHTML; bindScoreInputs(list); bindDerby(list); restoreOpenComments(); return;
+  }
   if(!ms.length){
     const allInStage=matches.filter(m=>m.stage===curStage);
     let msg=`<div class="empty">Bu sekmede maç yok.</div>`;
@@ -2775,9 +3159,9 @@ function renderMatches(){
     }
     list.innerHTML=msg; return;
   }
-  let html="", lastKey=null;
+  let html=derbyHTML, lastKey=null;
   // Haftanın maçları: en yakın bitmemiş maç + onun ±3 gün içindeki maçlar (Salı-Çarşamba aynı hafta)
-  const weekIds=weekMatchIds(ms);
+  const weekIds=weekMatchIds(ms.filter(m=>!isDerby(m)));   // derbi haftanın maçlarına girmez
   if(weekIds.size){
     const wk=ms.filter(m=>weekIds.has(m.id));
     const missing=wk.filter(m=>!m.finished && !isLocked(m) && !predsMine[m.id]).length;
@@ -2797,6 +3181,7 @@ function renderMatches(){
   });
   list.innerHTML=html;
   bindScoreInputs(list);
+  bindDerby(list);
   if(curStage==="final"){
     const fm=finalMatch();
     if(fm && !fm.finished && liveFinalWindowOpen(fm)){
@@ -3124,6 +3509,7 @@ async function trySave(mid,box){
     document.querySelectorAll(`.si[data-m="${mid}"][data-side="h"]`).forEach(el=>{ el.value=hv; el.classList.add("act"); });
     document.querySelectorAll(`.si[data-m="${mid}"][data-side="a"]`).forEach(el=>{ el.value=av; el.classList.add("act"); });
     band(`${trName(m.team_home)} ${hv} – ${av} ${trName(m.team_away)}`,"Tahmin kaydedildi");
+    if(isDerby(m)){ if(derbyPart) derbyPart.add(session.user.id); refreshDerbyCounters(); }
     // Tahmin (iki skor da) kaydedildikten sonra ödemeyenlere 5€ hatırlatması tekrar
     maybeNudgePrize();
   }catch(err){
@@ -3173,12 +3559,13 @@ function buildLeaderboard(){
     let pts=0,exact=0,outc=0,last=0,live=0,ko=0; const u=bm[uid]||{};
     fin.forEach(m=>{
       const g=grade(u[m.id]||null,m); if(!g) return;
+      const gp = g.pts + (isDerby(m) ? derbyExtraPtsFor(uid) : 0);   // derbi ek tahminleri de bu maçla birlikte
       const isLast = lastFinished && m.id===lastFinished.id, ip=isInPlay(m);
-      if(isLast) last+=g.pts;
-      if(ip) live+=g.pts;
+      if(isLast) last+=gp;
+      if(ip) live+=gp;
       if(excludeRecent && (isLast || ip)) return; // "son maç öncesi" = son biten maç + canlı hariç
-      pts+=g.pts; if(g.type==="exact"){exact++;outc++;} else if(g.type==="outc"){outc++;}
-      if(m.stage!=="group") ko+=g.pts;
+      pts+=gp; if(g.type==="exact"){exact++;outc++;} else if(g.type==="outc"){outc++;}
+      if(m.stage!=="group") ko+=gp;
     });
     return {pts,exact,outc,last,live,ko};
   }
@@ -3669,6 +4056,7 @@ function showSideBetsAll(){
 }
 function closePopup(){ if(window._popupLocked) return; const p=$("#popup"); if(p) p.classList.remove("show"); }
 function showPopup(html){
+  $("#popupCard").classList.remove("derby-pop");
   $("#popupCard").innerHTML=html;
   $("#popup").classList.add("show");
   const c=$("#popupClose"); if(c) c.onclick=closePopup;
@@ -4395,6 +4783,8 @@ function maybeShowOpeningPopup(){
   }
   // 0a) Turnuva bitti: şampiyon ilan edilince herkese (admin dahil), her açılışta özet kartı
   if(me && wrapAvailable()){ showWrapPopup(session.user.id); return; }
+  // 0a1) DERBİ GÜNÜ: maç saatine kadar HER GİRİŞTE derbi pop-up'ı
+  if(me && derbyPopupWindow()){ showDerbyPopup(); return; }
   // 0a2) Herkese bir kez: şifre değiştirme özelliğinin duyurusu
   if(me && !pwInfoSeen(session.user.id)){ markPwInfoSeen(session.user.id); showPwInfoPopup(); return; }
   // 0b) Mobilde herkese bir kez GIF ödül pop-up'ı (masaüstünde sağ alt kart var)
@@ -5358,6 +5748,7 @@ function renderPrizeAdmin(){
     const s=paidSet(); s.delete(b.dataset.rm); await savePaid([...s]);
   });
   renderSideBetAdmin();
+  renderDerbyAdmin();
 }
 // Yönetim: Final yan bahis sonuçlarını gir
 function renderSideBetAdmin(){
@@ -5377,6 +5768,59 @@ function renderSideBetAdmin(){
     <div style="margin-top:8px"><button class="btn ghost sm" id="sbaClear">Sonuçları temizle</button></div>`;
   el.querySelectorAll("[data-sbres]").forEach(btn=>btn.onclick=()=>saveSideResult(btn.dataset.sbres, btn.dataset.val));
   $("#sbaClear").onclick=()=>saveSideResult(null,null,true);
+}
+// Yönetim: Derbi — maç ekle, katılım durumu, ek tahmin sonuçları
+function renderDerbyAdmin(){
+  const el=$("#derbyAdmin"); if(!el) return;
+  const m=derbyMatch();
+  if(!m){
+    el.innerHTML=`<h3 style="margin:22px 0 6px">⚔️ Derbi Özel</h3>
+      <p style="color:var(--muted);font-size:13px;max-width:640px;margin:0 0 8px">Derbi maçı henüz yok. Tek tıkla ekle (Galatasaray – Fenerbahçe, ${esc(fmtKick(DERBY_KO.toISOString()))} DE, skor oranları hazır).</p>
+      <button class="btn gold sm" id="derbyAddBtn">⚔️ Derbi maçını ekle</button>`;
+    $("#derbyAddBtn").onclick=async()=>{
+      const nextOrd = matches.reduce((mx,x)=>Math.max(mx,x.ord||0),0) + 1;
+      const row={ord:nextOrd, stage:"group", kickoff:DERBY_KO.toISOString(), team_home:DERBY.home, team_away:DERBY.away,
+        label:DERBY.label, slot_home:"Ev sahibi", slot_away:"Deplasman", score_odds:JSON.stringify(DERBY_SCORE_ODDS)};
+      try{
+        const {data,error}=await sb.from("cl_matches").insert(row).select();
+        if(error) throw error;
+        if(data && data[0]) matches.push(data[0]);
+        band("Derbi maçı eklendi","Yönetim"); renderAll(); renderAdmin();
+      }catch(e){ band("Eklenemedi: "+((e&&e.message)||e),"Yönetim",true); }
+    };
+    return;
+  }
+  const st=derbyStatus(); const res=derbyResults();
+  const chips=st.req.map(p=>{
+    const ok=st.joined.some(j=>j.id===p.id);
+    return `<span class="paid-chip" style="${ok?"":"border-color:rgba(255,81,96,.5);color:#ff9aa3"}">${ok?"✓":"✕"} ${esc(p.username)}</span>`;
+  }).join("");
+  const rows=DERBY_EXTRAS.map(b=>{
+    const opts=b.opts.map(o=>`<button class="sba-opt ${res[b.key]===o.v?'sel':''}" data-dxres="${b.key}" data-val="${esc(o.v)}">${esc(o.label)} (+${o.pts})</button>`).join("");
+    return `<div class="sba-row"><div class="sba-q">${esc(b.q)}</div><div class="sba-opts" style="flex-wrap:wrap">${opts}</div></div>`;
+  }).join("");
+  el.innerHTML=`
+    <h3 style="margin:22px 0 6px">⚔️ Derbi Özel — Katılım &amp; Ek Tahmin Sonuçları</h3>
+    <p style="color:var(--muted);font-size:13px;max-width:640px;margin:0 0 8px">
+      Skoru <b>Lig Aşaması</b> listesindeki derbi satırından girersin (ESPN'den otomatik de gelebilir). Skor oranlarını da oradaki ⚡ butonundan değiştirebilirsin.
+      Puanlar sadece aşağıdaki herkes ✓ ise dağıtılır. ${st.known?"":"<b style='color:#ff9aa3'>Katılım okunamadı — derby.sql çalıştırıldı mı?</b>"}</p>
+    <div class="paid-chips" style="margin-bottom:12px">${chips}</div>
+    ${rows}
+    <div style="margin-top:8px"><button class="btn ghost sm" id="dxaClear">Ek tahmin sonuçlarını temizle</button></div>`;
+  el.querySelectorAll("[data-dxres]").forEach(btn=>btn.onclick=()=>saveDerbyResult(btn.dataset.dxres, btn.dataset.val));
+  $("#dxaClear").onclick=()=>saveDerbyResult(null,null,true);
+}
+async function saveDerbyResult(key,val,clear){
+  const cur=derbyResults();
+  const res = clear ? {} : {...cur, [key]:(cur[key]===val?undefined:val)};
+  Object.keys(res).forEach(k=>{ if(res[k]===undefined) delete res[k]; });
+  try{
+    const { error } = await sb.from("cl_config").upsert({key:"derby_results", value:JSON.stringify(res)});
+    if(error) throw error;
+    appConfig.derby_results = JSON.stringify(res);
+    band(clear?"Derbi sonuçları temizlendi":"Derbi sonucu kaydedildi","Yönetim");
+    renderDerbyAdmin(); renderAll();
+  }catch(e){ band("Kaydedilemedi: "+((e&&e.message)||e),"Yönetim",true); }
 }
 async function saveSideResult(key,val,clear){
   const res = clear ? {} : {...sideResults(), [key]:val};
@@ -5465,7 +5909,7 @@ function computeProgression(){
   const series=players.map(pl=>{
     let cum=0;
     const pts=evs.map(ev=>{
-      ev.ms.forEach(m=>{ const g=grade(predBy[pl.id+"|"+m.id]||null,m); cum+=g?g.pts:0; });
+      ev.ms.forEach(m=>{ const g=grade(predBy[pl.id+"|"+m.id]||null,m); cum+=g?g.pts:0; if(isDerby(m)) cum+=derbyExtraPtsFor(pl.id); });
       return cum;
     });
     return {id:pl.id,name:pl.username,color:playerColors[pl.id]||"#9bb",pts,_cum:cum};
@@ -5561,7 +6005,8 @@ function renderChart(){
 
   // çizgi çizim animasyonu (canlı/sessiz yenilemede atla)
   if(!window._chartSilent) box.querySelectorAll(".pline").forEach(pl=>{
-    const len=pl.getTotalLength ? pl.getTotalLength() : 0;
+    // Grafik sekmesi gizliyken Chrome getTotalLength'te hata fırlatıyor → renderAll yarıda kalmasın
+    let len=0; try{ len=pl.getTotalLength ? pl.getTotalLength() : 0; }catch(e){ len=0; }
     if(len){ pl.style.strokeDasharray=len; pl.style.strokeDashoffset=len;
       pl.getBoundingClientRect(); pl.style.transition="stroke-dashoffset 1.1s ease"; pl.style.strokeDashoffset=0; }
   });
@@ -5711,6 +6156,7 @@ function showBadgePop(queue, summary){
 
 function renderAll(){
   assignColors();
+  renderDerbyStrip();
   renderRibbon(); renderStageFilters(); renderGroupFilters(); renderSortFilters();
   renderMatches(); renderLeaderboard(); renderLeaderboardTab(); renderChart(); renderStats(); renderChampMini(); renderFavMini();
   if(!$("#tab-me").classList.contains("hidden")) renderMe();
@@ -5778,6 +6224,7 @@ async function enterApp(){
   refreshLiveScores().then(ch=>{ if(ch){ window._chartSilent=true; renderAll(); window._chartSilent=false; } }).catch(()=>{});
   if(!enterApp._popupShown){ enterApp._popupShown=true; setTimeout(maybeShowOpeningPopup, 600); }
   startLivePolling();
+  startDerbyTicker();
   setTimeout(maybeShowInstallHint, 2500);
 }
 // iOS Safari asla otomatik "yükle" önerisi göstermez — bir kereye mahsus, kapatılabilir ipucu.
