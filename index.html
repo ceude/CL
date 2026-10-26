@@ -1882,11 +1882,10 @@ const up10 = odd => Math.ceil(odd - 1e-9) * 10;
 const DERBY_EXTRAS = [
   {key:"iy",     q:"1. Yarı Sonucu",               opts:[{v:"1",label:"GS",odd:2.28},{v:"X",label:"Beraberlik",odd:2.25},{v:"2",label:"FB",odd:3.29}]},
   {key:"first",  q:"İlk Golü Kim Atar?",           opts:[{v:"1",label:"GS",odd:1.56},{v:"0",label:"Gol olmaz",odd:19.75},{v:"2",label:"FB",odd:2.01}]},
-  {key:"goals",  q:"Toplam Gol Aralığı",           opts:[{v:"0-1",label:"0-1",odd:5.00},{v:"2-3",label:"2-3",odd:1.95},{v:"4-5",label:"4-5",odd:2.68},{v:"6+",label:"6+",odd:6.76}]},
   {key:"half",   q:"En Çok Gol Olacak Yarı",       opts:[{v:"1",label:"1. Yarı",odd:2.78},{v:"X",label:"Eşit",odd:3.57},{v:"2",label:"2. Yarı",odd:1.83}]},
   {key:"corn",   q:"Toplam Korner Aralığı",        opts:[{v:"0-8",label:"0-8",odd:2.17},{v:"9-11",label:"9-11",odd:2.41},{v:"12+",label:"12+",odd:2.62}]},
   {key:"mcorn",  q:"En Çok Korneri Kim Kullanır?", opts:[{v:"1",label:"GS",odd:1.60},{v:"X",label:"Eşit",odd:6.94},{v:"2",label:"FB",odd:2.18}]},
-  {key:"yellow", q:"Toplam Sarı Kart 5,5 Alt/Üst", est:true, opts:[{v:"u",label:"Alt (0-5)",odd:2.10},{v:"o",label:"Üst (6+)",odd:1.65}]},
+  {key:"yellow", q:"Toplam Sarı Kart 5,5 Alt/Üst", est:true, opts:[{v:"u",label:"Alt (0-5,5)",odd:2.10},{v:"o",label:"Üst (5,5+)",odd:1.65}]},
   {key:"red",    q:"Kırmızı Kart Çıkar mı?",       est:true, opts:[{v:"y",label:"Çıkar",odd:2.75},{v:"n",label:"Çıkmaz",odd:1.40}]},
   {key:"pen",    q:"Penaltı Olur mu?",             est:true, opts:[{v:"y",label:"Olur",odd:2.30},{v:"n",label:"Olmaz",odd:1.55}]},
   {key:"var",    q:"Hakem VAR Monitörüne Gider mi?",est:true, opts:[{v:"y",label:"Gider",odd:1.95},{v:"n",label:"Gitmez",odd:1.80}]}
